@@ -44,7 +44,16 @@ export default defineConfig({
           }
           // Vendor chunks
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+            // React and React-dependent libraries should be in react-vendor
+            if (
+              id.includes('react') || 
+              id.includes('react-dom') || 
+              id.includes('react-router') ||
+              id.includes('next-themes') ||
+              id.includes('sonner') ||
+              id.includes('react-hook-form') ||
+              id.includes('@hookform')
+            ) {
               return 'react-vendor'
             }
             if (id.includes('@radix-ui')) {
