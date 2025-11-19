@@ -43,9 +43,11 @@ export const Navbar = memo(function Navbar() {
       <div className="container flex h-16 items-center px-4 md:px-6">
         <div className="mr-4 hidden md:flex items-center">
           <Link to="/" className="mr-6 flex items-center gap-2 transition-opacity hover:opacity-80">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 dark:shadow-blue-400/50 dark:glow-primary">
-              <Code2 className="h-5 w-5 text-white" />
-            </div>
+            <img 
+              src="/websitelogo.png" 
+              alt={siteConfig.name}
+              className="h-12 md:h-[100px] w-auto object-contain"
+            />
             <span className="hidden font-bold text-lg sm:inline-block bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
               {siteConfig.name}
             </span>
@@ -70,9 +72,11 @@ export const Navbar = memo(function Navbar() {
         </div>
         <div className="flex md:hidden items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <Code2 className="h-5 w-5 text-white" />
-            </div>
+            <img 
+              src="/websitelogo.png" 
+              alt={siteConfig.name}
+              className="h-12 md:h-[100px] w-auto object-contain"
+            />
             <span className="font-bold text-base">{siteConfig.name}</span>
           </Link>
         </div>
@@ -92,9 +96,11 @@ export const Navbar = memo(function Navbar() {
               className="flex items-center gap-2 mb-8"
               onClick={() => setIsOpen(false)}
             >
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg">
-                <Code2 className="h-5 w-5 text-white" />
-              </div>
+              <img 
+                src="/websitelogo.png" 
+                alt={siteConfig.name}
+                className="h-8 w-auto object-contain"
+              />
               <span className="font-bold text-lg">{siteConfig.name}</span>
             </Link>
             <div className="flex flex-col gap-4 pr-6">

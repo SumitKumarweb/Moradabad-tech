@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Moradabad Tech",
+  name: "Moradabads",
   description: "The premier platform for modern web development education. Master HTML, CSS, JavaScript, and React with our interactive tools and expert guides.",
   links: {
     github: "https://github.com",

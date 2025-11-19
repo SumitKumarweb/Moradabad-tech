@@ -64,12 +64,14 @@ export default function LoginPage() {
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-4 group">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 transition-transform group-hover:scale-110">
-              <Code2 className="h-7 w-7 text-white" />
-            </div>
+            <img 
+              src="/websitelogo.png" 
+              alt="Moradabads"
+              className="h-20 md:h-[100px] w-auto object-contain transition-transform group-hover:scale-110"
+            />
           </Link>
           <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back</h1>
-          <p className="text-muted-foreground">Sign in to your Moradabad Tech account</p>
+          <p className="text-muted-foreground">Sign in to your Moradabads account</p>
         </div>
 
         {/* Main Form Card */}

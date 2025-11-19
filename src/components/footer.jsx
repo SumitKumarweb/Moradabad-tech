@@ -9,9 +9,11 @@ export function Footer() {
         <div className="grid gap-8 py-12 md:py-16 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg">
-                <Code2 className="h-5 w-5 text-white" />
-              </div>
+              <img 
+                src="/websitelogo.png" 
+                alt={siteConfig.name}
+                className="h-16 md:h-[100px] w-auto object-contain"
+              />
               <span className="font-bold text-lg">{siteConfig.name}</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
@@ -56,7 +58,7 @@ export function Footer() {
         <div className="border-t border-border/40 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
             <p className="text-center sm:text-left">
-              © {new Date().getFullYear()} Moradabad Tech. All rights reserved.
+              © {new Date().getFullYear()} Moradabads. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
               <Link to="#" className="hover:text-primary transition-colors">Privacy</Link>

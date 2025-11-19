@@ -6,7 +6,7 @@ export const articles = [
     excerpt: "Master HTML from basics to advanced concepts with real-world examples.",
     category: "HTML",
     image: "/html-code-snippet.png",
-    author: "Moradabad Tech Team",
+    author: "Moradabads Team",
     difficulty: "Beginner",
     readTime: "15 min read",
     tags: ["HTML5", "Web Development", "Markup"],
@@ -127,7 +127,7 @@ export const articles = [
     excerpt: "Transform your web pages with modern CSS techniques and best practices.",
     category: "CSS",
     image: "/css-styling.jpg",
-    author: "Moradabad Tech Team",
+    author: "Moradabads Team",
     difficulty: "Intermediate",
     readTime: "20 min read",
     tags: ["CSS3", "Styling", "Flexbox", "Grid"],
@@ -384,7 +384,7 @@ top: 0;</code></pre>
     excerpt: "Learn JavaScript from fundamentals to advanced concepts with hands-on examples.",
     category: "JavaScript",
     image: "/javascript-code.png",
-    author: "Moradabad Tech Team",
+    author: "Moradabads Team",
     difficulty: "Intermediate",
     readTime: "25 min read",
     tags: ["JavaScript", "ES6+", "Programming", "DOM"],
@@ -748,7 +748,7 @@ if (age < 0) {
     excerpt: "Master React fundamentals and build dynamic, interactive web applications.",
     category: "React",
     image: "/react-js-logo.png",
-    author: "Moradabad Tech Team",
+    author: "Moradabads Team",
     difficulty: "Advanced",
     readTime: "30 min read",
     tags: ["React", "Components", "Hooks", "State Management"],
@@ -1018,8 +1018,8 @@ const memoizedCallback = useCallback(() => {
 function Button() {
   return (
     &lt;button onClick={() => console.log("Clicked!")}&gt;
-      Click me
-    &lt;/button&gt;
+        Click me
+      &lt;/button&gt;
   );
 }</code></pre>
       

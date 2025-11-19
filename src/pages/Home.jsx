@@ -65,7 +65,7 @@ export default function Home() {
                   </span>
                 </h1>
                 <p className="mx-auto lg:mx-0 max-w-[600px] text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed">
-                  Moradabad Tech is your premier destination for full-stack development. 
+                  Moradabads is your premier destination for full-stack development. 
                   From HTML basics to advanced React patterns, we empower the next generation of developers.
                 </p>
               </div>

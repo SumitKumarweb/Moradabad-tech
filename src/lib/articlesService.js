@@ -53,7 +53,7 @@ export const getAllArticles = async () => {
     
     // If Firebase returns articles, use them; otherwise fall back to static articles
     if (articles.length > 0) {
-      return articles
+    return articles
     } else {
       // Fallback to static articles
       console.log('No articles found in Firebase, using static articles')
@@ -92,11 +92,11 @@ export const getArticleBySlug = async (slug) => {
     const querySnapshot = await getDocs(q)
     
     if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0]
-      return {
-        id: doc.id,
-        ...doc.data()
-      }
+    const doc = querySnapshot.docs[0]
+    return {
+      id: doc.id,
+      ...doc.data()
+    }
     }
     
     // Fallback to static articles
