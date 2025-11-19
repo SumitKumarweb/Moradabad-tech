@@ -21,6 +21,8 @@ const DSAPage = lazy(() => import('@/pages/DSAPage'))
 const DSASolvePage = lazy(() => import('@/pages/DSASolvePage'))
 const TopDSAPage = lazy(() => import('@/pages/TopDSAPage'))
 const TopDSASolvePage = lazy(() => import('@/pages/TopDSASolvePage'))
+const JavaScriptQuestionsPage = lazy(() => import('@/pages/JavaScriptQuestionsPage'))
+const JavaScriptQuestionPage = lazy(() => import('@/pages/JavaScriptQuestionPage'))
 
 // Loading fallback component
 const PageLoader = () => (
@@ -59,6 +61,8 @@ function App() {
                 <Route path="/dsa/:slug" element={<DSASolvePage />} />
                 <Route path="/top-dsa" element={<TopDSAPage />} />
                 <Route path="/top-dsa/:slug" element={<TopDSASolvePage />} />
+                <Route path="/javascript-questions" element={<JavaScriptQuestionsPage />} />
+                <Route path="/javascript-questions/:questionId" element={<JavaScriptQuestionPage />} />
                 <Route
                   path="/profile"
                   element={
