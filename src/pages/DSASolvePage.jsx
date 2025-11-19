@@ -5,7 +5,7 @@ import { generateSlug } from "@/lib/utils"
 import { ChevronLeft, Play, CheckCircle2, XCircle, Loader2, Lightbulb, Code2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import SEO from "@/components/SEO"
-git import StructuredData, { generateBreadcrumbSchema, generateWebPageSchema } from "@/components/StructuredData"
+import StructuredData, { generateBreadcrumbSchema, generateWebPageSchema } from "@/components/StructuredData"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
