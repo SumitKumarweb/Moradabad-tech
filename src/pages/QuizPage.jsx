@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import SEO from "@/components/SEO"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -42,6 +43,17 @@ export default function QuizPage() {
 
   const currentQuestionData = quiz.questions[currentQuestion]
   const progress = ((currentQuestion + 1) / quiz.questions.length) * 100
+
+  // Generate keywords
+  const quizKeywords = [
+    article.category,
+    article.difficulty,
+    'quiz',
+    'programming quiz',
+    'web development quiz',
+    'coding test',
+    'interactive quiz'
+  ].filter(Boolean).join(', ')
 
   const handleOptionSelect = (optionIndex) => {
     if (!isAnswered) {
@@ -88,7 +100,16 @@ export default function QuizPage() {
     const passed = percentage >= 70
 
     return (
-      <div className="min-h-screen bg-background">
+      <>
+        <SEO
+          title={`${quiz.title} - Quiz Results`}
+          description={`Quiz results for ${quiz.title}. Test your knowledge of ${article.category} concepts.`}
+          keywords={quizKeywords}
+          ogTitle={`${quiz.title} - Quiz Results`}
+          ogDescription={`Quiz results for ${quiz.title}`}
+          ogImage="/websitelogo.png"
+        />
+        <div className="min-h-screen bg-background">
         <div className="relative border-b border-border/40">
           <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
           <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
@@ -242,11 +263,23 @@ export default function QuizPage() {
           </div>
         </div>
       </div>
+      </>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title={quiz.title}
+        description={quiz.description || `Take the ${quiz.title} quiz to test your knowledge of ${article.category} concepts.`}
+        keywords={quizKeywords}
+        ogTitle={quiz.title}
+        ogDescription={quiz.description || `Test your knowledge with ${quiz.title} quiz`}
+        ogImage="/websitelogo.png"
+        ogUrl={typeof window !== 'undefined' ? window.location.href : ''}
+        type="article"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
@@ -403,6 +436,7 @@ export default function QuizPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

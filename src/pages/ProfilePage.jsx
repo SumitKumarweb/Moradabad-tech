@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from 'sonner'
+import SEO from '@/components/SEO'
 
 export default function ProfilePage() {
   const { currentUser } = useAuth()
@@ -278,7 +279,17 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title="Profile Settings"
+        description="Manage your profile information and preferences. Update your personal details, professional links, and upload your resume."
+        keywords="profile, account settings, user profile, profile management, update profile, resume upload, LinkedIn profile, LeetCode profile"
+        ogTitle="Profile Settings - Moradabads"
+        ogDescription="Manage your profile information and preferences."
+        ogImage="/websitelogo.png"
+        robots="noindex, follow"
+      />
+      <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16 max-w-7xl">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
@@ -535,6 +546,7 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

@@ -6,6 +6,7 @@ import { getQuestionById, getAllQuestions, getTotalQuestions } from "@/lib/javas
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import SEO from "@/components/SEO"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -61,7 +62,18 @@ export default function JavaScriptQuestionPage() {
   const isCorrect = selectedAnswer === question.correctAnswer
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title={`JavaScript Question ${question.number}`}
+        description={question.question || `JavaScript output-based question ${question.number} - Test your understanding of JavaScript concepts`}
+        keywords={`JavaScript question, JavaScript output question, JavaScript interview question, JavaScript quiz, JavaScript practice, ${question.question?.substring(0, 50)}`}
+        ogTitle={`JavaScript Question ${question.number}`}
+        ogDescription={question.question || `JavaScript output-based question ${question.number}`}
+        ogImage="/websitelogo.png"
+        ogUrl={typeof window !== 'undefined' ? window.location.href : ''}
+        type="article"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
@@ -270,6 +282,7 @@ export default function JavaScriptQuestionPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

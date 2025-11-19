@@ -5,6 +5,7 @@ import { ArticleCard } from "@/components/article-card"
 import { BookOpen, Search, X, Loader2 } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import SEO from "@/components/SEO"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -60,7 +61,16 @@ export default function ArticlesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title="Articles"
+        description="Explore our collection of in-depth tutorials, guides, and technical deep dives. From beginner-friendly introductions to advanced techniques covering web development, programming, and modern technologies."
+        keywords="programming articles, web development tutorials, coding guides, technical articles, programming tutorials, web development guides, HTML tutorials, CSS tutorials, JavaScript tutorials, React tutorials, programming education, coding education"
+        ogTitle="Articles - Learn Web Development"
+        ogDescription="Comprehensive collection of programming and web development articles, tutorials, and guides."
+        ogImage="/websitelogo.png"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40 bg-muted/30">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20 max-w-7xl">
@@ -171,6 +181,7 @@ export default function ArticlesPage() {
         )}
       </div>
     </div>
+    </>
   )
 }
 

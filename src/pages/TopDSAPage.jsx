@@ -5,6 +5,7 @@ import { generateSlug } from "@/lib/utils"
 import { Code2, Search, X, Loader2, TrendingUp, TrendingDown, Minus, Star } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import SEO from "@/components/SEO"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Pagination } from "@/components/ui/pagination"
@@ -163,7 +164,16 @@ export default function TopDSAPage() {
   }, [problems])
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title="Top DSA Questions"
+        description="Comprehensive collection of top Data Structures and Algorithms problems. Practice with problems ranging from easy to hard difficulty levels across all major topics including arrays, strings, trees, graphs, dynamic programming, and more."
+        keywords="top DSA questions, popular coding problems, LeetCode top problems, interview DSA questions, most asked coding problems, data structures problems, algorithm problems, coding interview preparation, FAANG interview questions, competitive programming problems"
+        ogTitle="Top DSA Questions - Master Popular Coding Problems"
+        ogDescription="Practice the most popular and frequently asked Data Structures and Algorithms problems for coding interviews."
+        ogImage="/websitelogo.png"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40 bg-muted/30">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20 max-w-7xl">
@@ -402,6 +412,7 @@ export default function TopDSAPage() {
         )}
       </div>
     </div>
+    </>
   )
 }
 

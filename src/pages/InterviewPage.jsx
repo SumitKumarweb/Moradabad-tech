@@ -5,13 +5,23 @@ import { getAllSections, getTotalSections } from "@/lib/interviewTopics"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import SEO from "@/components/SEO"
 
 export default function InterviewPage() {
   const totalSections = getTotalSections()
   const sections = getAllSections()
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title="Interview Preparation"
+        description="Master key concepts and topics for technical interviews. Comprehensive guides covering fundamental to advanced topics including data structures, algorithms, system design, and programming languages."
+        keywords="interview preparation, coding interview, technical interview, interview questions, programming interview, software engineering interview, FAANG interview, interview guide, interview tips, coding interview preparation, system design interview, algorithm interview, data structure interview"
+        ogTitle="Interview Preparation - Master Technical Interviews"
+        ogDescription="Comprehensive guides and resources to help you ace technical interviews and land your dream job."
+        ogImage="/websitelogo.png"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20 max-w-7xl">
@@ -117,6 +127,7 @@ export default function InterviewPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

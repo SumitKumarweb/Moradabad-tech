@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import SEO from "@/components/SEO"
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -82,7 +83,17 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
+    <>
+      <SEO
+        title="Sign Up"
+        description="Create your free Moradabads account to start your coding journey. Access personalized learning paths, track your progress, save your code, and unlock premium features."
+        keywords="sign up, create account, register, Moradabads signup, programming account, coding account, web development account, free account"
+        ogTitle="Sign Up - Moradabads"
+        ogDescription="Create your free account and start your coding journey with Moradabads."
+        ogImage="/websitelogo.png"
+        robots="noindex, follow"
+      />
+      <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
       <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
@@ -288,6 +299,7 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
+    </>
   )
 }
 

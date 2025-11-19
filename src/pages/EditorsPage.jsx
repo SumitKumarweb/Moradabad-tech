@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Code2, ArrowRight, FileCode, Terminal, Zap } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import SEO from '@/components/SEO'
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -96,7 +97,16 @@ const editors = [
 
 export default function EditorsPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title="Code Editors"
+        description="Select a programming language or framework to start coding. Each editor is optimized for its specific language. Write and execute JavaScript, React, Python, C++, Java, and more directly in your browser."
+        keywords="code editor, browser IDE, online code editor, JavaScript editor, Python editor, React editor, C++ editor, Java editor, HTML editor, CSS editor, online compiler, code playground, web IDE, programming editor, code execution"
+        ogTitle="Code Editors - Browser IDE"
+        ogDescription="Write and execute code in your browser. Choose from 10+ programming languages and frameworks."
+        ogImage="/websitelogo.png"
+      />
+      <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 pt-6 max-w-7xl">
         <Breadcrumb>
           <BreadcrumbList>
@@ -179,6 +189,7 @@ export default function EditorsPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

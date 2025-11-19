@@ -5,13 +5,23 @@ import { getAllQuestions, getTotalQuestions } from "@/lib/javascriptQuestions"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import SEO from "@/components/SEO"
 
 export default function JavaScriptQuestionsPage() {
   const totalQuestions = getTotalQuestions()
   const questions = getAllQuestions()
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title="JavaScript Questions"
+        description={`Test your JavaScript knowledge with ${totalQuestions} output-based questions. From basic to advanced: challenge yourself and master JavaScript concepts including closures, promises, async/await, hoisting, and more.`}
+        keywords="JavaScript questions, JavaScript output questions, JavaScript interview questions, JavaScript quiz, JavaScript practice, JavaScript concepts, JavaScript closures, JavaScript promises, JavaScript async await, JavaScript hoisting, JavaScript scope, JavaScript this keyword, JavaScript ES6, JavaScript fundamentals"
+        ogTitle="JavaScript Questions - Test Your Knowledge"
+        ogDescription={`Practice ${totalQuestions} JavaScript output-based questions to master JavaScript concepts.`}
+        ogImage="/websitelogo.png"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20 max-w-7xl">
@@ -121,6 +131,7 @@ export default function JavaScriptQuestionsPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

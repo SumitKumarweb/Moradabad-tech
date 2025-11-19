@@ -5,6 +5,7 @@ import { generateSlug } from "@/lib/utils"
 import { Code2, Search, X, Loader2, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import SEO from "@/components/SEO"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Pagination } from "@/components/ui/pagination"
@@ -188,7 +189,16 @@ export default function DSAPage() {
   }, [problems])
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title="DSA Problems"
+        description="Solve coding problems to improve your problem-solving skills. Practice with Data Structures and Algorithms problems ranging from easy to hard difficulty levels. Master arrays, strings, trees, graphs, and more."
+        keywords="DSA problems, data structures, algorithms, coding problems, programming challenges, LeetCode problems, algorithm practice, data structure practice, coding interview preparation, problem solving, competitive programming, array problems, string problems, tree problems, graph problems"
+        ogTitle="DSA Problems - Practice Data Structures & Algorithms"
+        ogDescription="Master Data Structures and Algorithms with our comprehensive collection of coding problems from easy to hard difficulty."
+        ogImage="/websitelogo.png"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40 bg-muted/30">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20 max-w-7xl">
@@ -423,6 +433,7 @@ export default function DSAPage() {
         )}
       </div>
     </div>
+    </>
   )
 }
 

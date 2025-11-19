@@ -4,6 +4,7 @@ import { getDSAProblemBySlug } from "@/lib/dsaService"
 import { generateSlug } from "@/lib/utils"
 import { ChevronLeft, Play, CheckCircle2, XCircle, Loader2, Lightbulb, Code2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import SEO from "@/components/SEO"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -405,8 +406,31 @@ int main() {
   const totalTests = problem.testCases.length
   const progress = totalTests > 0 ? (passedTests / totalTests) * 100 : 0
 
+  // Generate keywords from problem data
+  const problemKeywords = [
+    problem.difficulty,
+    ...(problem.tags || []),
+    'DSA problem',
+    'coding problem',
+    'algorithm',
+    'data structure',
+    'programming challenge',
+    'coding interview'
+  ].filter(Boolean).join(', ')
+
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title={problem.title}
+        description={problem.description || `Solve ${problem.title} - ${problem.difficulty} difficulty DSA problem`}
+        keywords={problemKeywords}
+        ogTitle={problem.title}
+        ogDescription={problem.description || `Solve ${problem.title} - ${problem.difficulty} difficulty problem`}
+        ogImage="/websitelogo.png"
+        ogUrl={typeof window !== 'undefined' ? window.location.href : ''}
+        type="article"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
@@ -680,6 +704,7 @@ int main() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

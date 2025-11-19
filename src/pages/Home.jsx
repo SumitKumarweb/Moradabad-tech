@@ -4,6 +4,7 @@ import { ArrowRight, Code, Terminal, BookOpen, Cpu, Globe, Zap, Brain } from 'lu
 import { Button } from "@/components/ui/button"
 import { articles } from "@/lib/articles"
 import { ArticleCard } from "@/components/article-card"
+import SEO from "@/components/SEO"
 
 // Lazy load heavy 3D component
 const Hero3D = lazy(() => import('@/components/hero-3d').then(module => ({ default: module.Hero3D })))
@@ -51,7 +52,16 @@ export default function Home() {
   ], [])
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <>
+      <SEO
+        title="Home"
+        description="Moradabads is your premier destination for full-stack development. Master HTML, CSS, JavaScript, React, and more with our interactive browser IDE, comprehensive articles, coding challenges, and quizzes."
+        keywords="web development, programming, coding, HTML, CSS, JavaScript, React, full-stack development, learn to code, coding tutorials, programming education, web development courses, browser IDE, code editor, coding challenges, DSA problems, interview preparation"
+        ogTitle="Moradabads - Master Modern Coding"
+        ogDescription="Premier platform for full-stack development education. Learn HTML, CSS, JavaScript, React, and more with interactive tools and expert guides."
+        ogImage="/websitelogo.png"
+      />
+      <div className="flex flex-col min-h-screen bg-background">
       <section className="relative w-full py-12 md:py-20 lg:py-32 xl:py-40 overflow-hidden border-b">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 z-10 max-w-7xl">
@@ -175,6 +185,7 @@ export default function Home() {
         </div>
       </section>
     </div>
+    </>
   )
 }
 

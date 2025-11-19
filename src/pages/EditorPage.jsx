@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { CodeEditor } from "@/components/code-editor"
 import { Code2, Zap, Terminal } from 'lucide-react'
+import SEO from '@/components/SEO'
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -39,8 +40,32 @@ export default function EditorPage() {
   
   const displayName = languageNames[normalizedLanguage] || languageNames[languageKey] || 'Code Editor'
 
+  // Generate keywords based on language
+  const languageKeywords = {
+    javascript: 'JavaScript editor, JS editor, JavaScript IDE, JavaScript playground, JavaScript code editor',
+    react: 'React editor, React JS editor, React IDE, React playground, React code editor, JSX editor',
+    python: 'Python editor, Python IDE, Python playground, Python code editor, Python online compiler',
+    cpp: 'C++ editor, C++ IDE, C++ compiler, C++ code editor, C++ online compiler',
+    java: 'Java editor, Java IDE, Java compiler, Java code editor, Java online compiler',
+    html: 'HTML editor, CSS editor, JavaScript editor, web development editor, HTML CSS JS editor',
+    angular: 'Angular editor, Angular IDE, Angular playground, TypeScript editor',
+    vue: 'Vue editor, Vue JS editor, Vue IDE, Vue playground',
+    node: 'Node.js editor, Node JS editor, Node IDE, server-side JavaScript editor'
+  }
+
+  const keywords = languageKeywords[languageKey] || `${displayName} editor, ${displayName} IDE, ${displayName} code editor, online ${displayName} compiler`
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <>
+      <SEO
+        title={`${displayName} Editor`}
+        description={`Write, test, and execute ${displayName} code in your browser. No setup required—start coding instantly with our online ${displayName} editor.`}
+        keywords={keywords}
+        ogTitle={`${displayName} Editor - Browser IDE`}
+        ogDescription={`Write and execute ${displayName} code directly in your browser. No installation required.`}
+        ogImage="/websitelogo.png"
+      />
+      <div className="min-h-screen bg-background flex flex-col">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 pt-6 max-w-7xl">
         <Breadcrumb>
           <BreadcrumbList>
@@ -100,6 +125,7 @@ export default function EditorPage() {
         <CodeEditor initialLanguage={languageKey} />
       </div>
     </div>
+    </>
   )
 }
 

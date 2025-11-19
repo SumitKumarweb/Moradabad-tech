@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import SEO from "@/components/SEO"
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -54,7 +55,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
+    <>
+      <SEO
+        title="Login"
+        description="Sign in to your Moradabads account to access personalized learning, track your progress, save your code, and unlock premium features."
+        keywords="login, sign in, account login, Moradabads login, programming account, coding account, web development account"
+        ogTitle="Login - Moradabads"
+        ogDescription="Sign in to your Moradabads account to continue your learning journey."
+        ogImage="/websitelogo.png"
+        robots="noindex, follow"
+      />
+      <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
@@ -201,6 +212,7 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+    </>
   )
 }
 

@@ -5,6 +5,7 @@ import { getSectionById, getTopicsBySection, getTotalTopicsInSection } from "@/l
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import SEO from "@/components/SEO"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -34,7 +35,16 @@ export default function InterviewSectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title={section.title}
+        description={section.description || `Explore ${totalTopics} interview topics in ${section.title}. Master key concepts for technical interviews.`}
+        keywords={`${section.title}, interview preparation, interview questions, technical interview, coding interview, ${section.title} interview questions, interview guide`}
+        ogTitle={section.title}
+        ogDescription={section.description || `Master ${section.title} concepts for technical interviews.`}
+        ogImage="/websitelogo.png"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
@@ -132,6 +142,7 @@ export default function InterviewSectionPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

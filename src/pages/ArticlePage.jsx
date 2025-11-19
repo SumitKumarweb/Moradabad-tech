@@ -5,6 +5,7 @@ import { ChevronLeft, Calendar, Clock, Share2, Loader2 } from 'lucide-react'
 import { getArticleBySlug, getAllArticles } from "@/lib/articlesService"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import SEO from "@/components/SEO"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -57,8 +58,30 @@ export default function ArticlePage() {
     return <Navigate to="/articles" replace />
   }
 
+  // Generate keywords from article data
+  const articleKeywords = [
+    article.category,
+    article.difficulty,
+    ...(article.tags || []),
+    'programming',
+    'web development',
+    'tutorial',
+    'coding guide'
+  ].filter(Boolean).join(', ')
+
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title={article.title}
+        description={article.description || article.excerpt || `Learn about ${article.title} - ${article.category} tutorial`}
+        keywords={articleKeywords}
+        ogTitle={article.title}
+        ogDescription={article.description || article.excerpt || `Learn about ${article.title}`}
+        ogImage={article.image || "/websitelogo.png"}
+        ogUrl={typeof window !== 'undefined' ? window.location.href : ''}
+        type="article"
+      />
+      <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
@@ -212,10 +235,11 @@ export default function ArticlePage() {
                 </Link>
               ))}
           </div>
-        </div>
+          </div>
         )}
       </div>
     </div>
+    </>
   )
 }
 
