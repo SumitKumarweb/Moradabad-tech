@@ -16,7 +16,7 @@ const firebaseResolutionPlugin = () => {
   }
 }
 
-// Plugin to ensure react-vendor loads before other vendor chunks
+// Plugin to ensure react-vendor loads synchronously before other vendor chunks
 const reactVendorFirstPlugin = () => {
   return {
     name: 'react-vendor-first',
@@ -27,7 +27,17 @@ const reactVendorFirstPlugin = () => {
       
       // Separate react-vendor from others
       const reactVendorPreload = preloads.find(link => link.includes('react-vendor'))
-      const otherPreloads = preloads.filter(link => !link.includes('react-vendor'))
+      const vendorPreload = preloads.find(link => 
+        link.includes('vendor') && 
+        !link.includes('react-vendor') && 
+        !link.includes('firebase-vendor') && 
+        !link.includes('editor-vendor') && 
+        !link.includes('3d-vendor')
+      )
+      const otherPreloads = preloads.filter(link => 
+        link !== reactVendorPreload && 
+        link !== vendorPreload
+      )
       
       if (reactVendorPreload) {
         // Remove all preload links
@@ -36,8 +46,13 @@ const reactVendorFirstPlugin = () => {
         // Find the script tag position
         const scriptMatch = html.match(/<script[^>]*src="[^"]*index[^"]*\.js"[^>]*>/)
         if (scriptMatch) {
-          // Insert react-vendor first, then others, before the script tag
-          const preloadsToInsert = [reactVendorPreload, ...otherPreloads].join('\n    ')
+          // Insert react-vendor FIRST, then vendor (if exists), then others, before the script tag
+          // This ensures React loads before vendor chunk executes
+          const preloadsToInsert = [
+            reactVendorPreload,
+            ...(vendorPreload ? [vendorPreload] : []),
+            ...otherPreloads
+          ].join('\n    ')
           newHtml = newHtml.replace(
             scriptMatch[0],
             `${preloadsToInsert}\n    ${scriptMatch[0]}`
@@ -83,6 +98,7 @@ export default defineConfig({
             // React and ALL React-dependent libraries should be in react-vendor
             // This ensures React is available when these libraries need it
             // IMPORTANT: React must be in this chunk and load first
+            // Be VERY aggressive - include anything that might use React
             if (
               id.includes('react') || 
               id.includes('react-dom') || 
@@ -101,7 +117,10 @@ export default defineConfig({
               id.includes('vaul') ||
               id.includes('@radix-ui') || // Radix UI components need React
               id.includes('class-variance-authority') || // Used with React components
-              id.includes('zod') // Often used with React Hook Form
+              id.includes('zod') || // Often used with React Hook Form
+              id.includes('tailwind-merge') || // Often used with React components
+              id.includes('clsx') || // Often used with React components
+              id.includes('date-fns') // Sometimes used in React components
             ) {
               return 'react-vendor'
             }
@@ -111,6 +130,8 @@ export default defineConfig({
             if (id.includes('three') || id.includes('@react-three')) {
               return '3d-vendor'
             }
+            // Only truly non-React libraries should be in vendor
+            // This should be minimal - mostly build tools
             return 'vendor'
           }
         },
