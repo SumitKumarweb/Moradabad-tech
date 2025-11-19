@@ -40,7 +40,7 @@ function App() {
               <Route path="/quizzes" element={<QuizzesPage />} />
               <Route path="/quiz/:quizId" element={<QuizPage />} />
               <Route path="/dsa" element={<DSAPage />} />
-              <Route path="/dsa/:id" element={<DSASolvePage />} />
+              <Route path="/dsa/:slug" element={<DSASolvePage />} />
               <Route
                 path="/profile"
                 element={

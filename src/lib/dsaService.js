@@ -126,6 +126,28 @@ export const getDSAProblemById = async (id) => {
   }
 }
 
+// Get a single DSA problem by slug
+export const getDSAProblemBySlug = async (slug) => {
+  try {
+    const problemsRef = collection(db, DSA_COLLECTION)
+    const q = query(problemsRef, where('slug', '==', slug))
+    const querySnapshot = await getDocs(q)
+    
+    if (querySnapshot.empty) {
+      return null
+    }
+    
+    const doc = querySnapshot.docs[0]
+    return {
+      id: doc.id,
+      ...doc.data()
+    }
+  } catch (error) {
+    console.error('Error fetching DSA problem by slug:', error)
+    throw error
+  }
+}
+
 // Create a new DSA problem
 export const createDSAProblem = async (problemData) => {
   try {

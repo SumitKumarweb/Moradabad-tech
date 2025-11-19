@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { getAllDSAProblems } from "@/lib/dsaService"
+import { generateSlug } from "@/lib/utils"
 import { Code2, Search, X, Loader2, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -40,14 +41,20 @@ export default function DSAPage() {
       if (!data || data.length === 0) {
         console.log("No problems found in Firebase, loading sample problems...")
         const { dsaProblems } = await import("@/lib/generateDSAProblems")
-        // Convert sample problems to have IDs
+        // Convert sample problems to have IDs and slugs
         const sampleProblems = dsaProblems.map((problem, index) => ({
           id: `sample-${index}`,
+          slug: problem.slug || generateSlug(problem.title),
           ...problem
         }))
         setProblems(sampleProblems)
       } else {
-        setProblems(data)
+        // Ensure all problems have slugs
+        const problemsWithSlugs = data.map((problem) => ({
+          ...problem,
+          slug: problem.slug || generateSlug(problem.title)
+        }))
+        setProblems(problemsWithSlugs)
       }
     } catch (error) {
       console.error("Error loading DSA problems:", error)
@@ -56,6 +63,7 @@ export default function DSAPage() {
         const { dsaProblems } = await import("@/lib/generateDSAProblems")
         const sampleProblems = dsaProblems.map((problem, index) => ({
           id: `sample-${index}`,
+          slug: problem.slug || generateSlug(problem.title),
           ...problem
         }))
         setProblems(sampleProblems)
@@ -264,7 +272,7 @@ export default function DSAPage() {
                         {problem.description || 'No description available'}
                       </CardDescription>
                       <Button asChild className="w-full">
-                        <Link to={`/dsa/${problem.id}`}>
+                        <Link to={`/dsa/${problem.slug || generateSlug(problem.title)}`}>
                           Solve Problem
                         </Link>
                       </Button>

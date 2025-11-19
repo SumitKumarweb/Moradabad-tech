@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Link, useParams, Navigate } from "react-router-dom"
-import { getDSAProblemById } from "@/lib/dsaService"
+import { getDSAProblemBySlug } from "@/lib/dsaService"
+import { generateSlug } from "@/lib/utils"
 import { ChevronLeft, Play, CheckCircle2, XCircle, Loader2, Lightbulb, Code2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,7 +25,7 @@ import {
 import { toast } from "sonner"
 
 export default function DSASolvePage() {
-  const { id } = useParams()
+  const { slug } = useParams()
   const [problem, setProblem] = useState(null)
   const [loading, setLoading] = useState(true)
   const [code, setCode] = useState("")
@@ -37,21 +38,27 @@ export default function DSASolvePage() {
 
   useEffect(() => {
     loadProblem()
-  }, [id])
+  }, [slug])
 
   const loadProblem = async () => {
     try {
       setLoading(true)
-      let data = await getDSAProblemById(id)
+      let data = await getDSAProblemBySlug(slug)
       
-      // If not found in Firebase and ID starts with "sample-", load from sample problems
-      if (!data && id.startsWith("sample-")) {
-        const index = parseInt(id.replace("sample-", ""))
+      // If not found in Firebase, try to find in sample problems by matching slug
+      if (!data) {
         const { dsaProblems } = await import("@/lib/generateDSAProblems")
-        if (dsaProblems[index]) {
+        // Try to find a problem with matching slug
+        const matchingProblem = dsaProblems.find((p, index) => {
+          const problemSlug = p.slug || generateSlug(p.title)
+          return problemSlug === slug
+        })
+        
+        if (matchingProblem) {
           data = {
-            id: id,
-            ...dsaProblems[index]
+            id: `sample-${dsaProblems.indexOf(matchingProblem)}`,
+            slug: generateSlug(matchingProblem.title),
+            ...matchingProblem
           }
         }
       }
@@ -65,18 +72,21 @@ export default function DSASolvePage() {
       console.error("Error loading problem:", error)
       // Try to load from sample problems as fallback
       try {
-        if (id.startsWith("sample-")) {
-          const index = parseInt(id.replace("sample-", ""))
-          const { dsaProblems } = await import("@/lib/generateDSAProblems")
-          if (dsaProblems[index]) {
-            const data = {
-              id: id,
-              ...dsaProblems[index]
-            }
-            setProblem(data)
-            setCode(getCodeTemplate(data, language))
-            return
+        const { dsaProblems } = await import("@/lib/generateDSAProblems")
+        const matchingProblem = dsaProblems.find((p) => {
+          const problemSlug = p.slug || generateSlug(p.title)
+          return problemSlug === slug
+        })
+        
+        if (matchingProblem) {
+          const data = {
+            id: `sample-${dsaProblems.indexOf(matchingProblem)}`,
+            slug: generateSlug(matchingProblem.title),
+            ...matchingProblem
           }
+          setProblem(data)
+          setCode(getCodeTemplate(data, language))
+          return
         }
       } catch (importError) {
         console.error("Error loading sample problem:", importError)
