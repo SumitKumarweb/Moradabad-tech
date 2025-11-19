@@ -22,7 +22,7 @@ function App() {
     <BrowserRouter>
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
+        defaultTheme="light"
         enableSystem
         disableTransitionOnChange
       >
