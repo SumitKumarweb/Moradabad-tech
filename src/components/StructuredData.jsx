@@ -1,17 +1,5 @@
 import { Helmet } from 'react-helmet-async'
 
-export default function StructuredData({ data }) {
-  if (!data) return null
-
-  return (
-    <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(data, null, 2)}
-      </script>
-    </Helmet>
-  )
-}
-
 // Helper functions to generate schema data
 export const generateOrganizationSchema = () => ({
   "@context": "https://schema.org",
@@ -176,4 +164,102 @@ export const generateItemListSchema = (list) => ({
     "description": item.description
   })) || []
 })
+
+export const generateWebPageSchema = (page) => ({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": page.name || page.title,
+  "description": page.description,
+  "url": typeof window !== 'undefined' ? window.location.href : '',
+  "inLanguage": "en-US",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Moradabads",
+    "url": typeof window !== 'undefined' ? window.location.origin : ''
+  },
+  "about": {
+    "@type": "Thing",
+    "name": page.name || page.title
+  }
+})
+
+// Schema validation utility
+export const validateSchema = (schema) => {
+  const errors = []
+  
+  if (!schema) {
+    errors.push("Schema is null or undefined")
+    return { valid: false, errors }
+  }
+  
+  // Check required fields
+  if (!schema["@context"]) {
+    errors.push("Missing @context field")
+  } else if (schema["@context"] !== "https://schema.org") {
+    errors.push("@context must be 'https://schema.org'")
+  }
+  
+  if (!schema["@type"]) {
+    errors.push("Missing @type field")
+  }
+  
+  // Type-specific validations
+  if (schema["@type"] === "Article") {
+    if (!schema.headline) errors.push("Article schema missing 'headline'")
+    if (!schema.author) errors.push("Article schema missing 'author'")
+    if (!schema.publisher) errors.push("Article schema missing 'publisher'")
+  }
+  
+  if (schema["@type"] === "BreadcrumbList") {
+    if (!schema.itemListElement || !Array.isArray(schema.itemListElement)) {
+      errors.push("BreadcrumbList schema missing 'itemListElement' array")
+    }
+  }
+  
+  if (schema["@type"] === "ItemList") {
+    if (!schema.itemListElement || !Array.isArray(schema.itemListElement)) {
+      errors.push("ItemList schema missing 'itemListElement' array")
+    }
+  }
+  
+  if (schema["@type"] === "Organization") {
+    if (!schema.name) errors.push("Organization schema missing 'name'")
+    if (!schema.url) errors.push("Organization schema missing 'url'")
+  }
+  
+  if (schema["@type"] === "WebSite") {
+    if (!schema.name) errors.push("WebSite schema missing 'name'")
+    if (!schema.url) errors.push("WebSite schema missing 'url'")
+  }
+  
+  if (schema["@type"] === "Quiz") {
+    if (!schema.name) errors.push("Quiz schema missing 'name'")
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  }
+}
+
+// Enhanced StructuredData component with validation (optional)
+export default function StructuredData({ data, validate = false }) {
+  if (!data) return null
+
+  if (validate) {
+    const validation = validateSchema(data)
+    if (!validation.valid) {
+      console.warn("Schema validation errors:", validation.errors)
+      console.warn("Schema data:", data)
+    }
+  }
+
+  return (
+    <Helmet>
+      <script type="application/ld+json">
+        {JSON.stringify(data, null, 2)}
+      </script>
+    </Helmet>
+  )
+}
 

@@ -6,6 +6,7 @@ import { Code2, Search, X, Loader2, TrendingUp, TrendingDown, Minus } from 'luci
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import SEO from "@/components/SEO"
+import StructuredData, { generateItemListSchema, generateBreadcrumbSchema } from "@/components/StructuredData"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Pagination } from "@/components/ui/pagination"
@@ -188,6 +189,24 @@ export default function DSAPage() {
     }
   }, [problems])
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "DSA Problems", url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
+  // Generate ItemList schema for DSA problems
+  const problemListSchema = generateItemListSchema({
+    name: "DSA Problems",
+    description: "Collection of Data Structures and Algorithms problems for practice",
+    items: filteredProblems.map(problem => ({
+      name: problem.title,
+      title: problem.title,
+      url: typeof window !== 'undefined' ? `${window.location.origin}/dsa/${problem.slug || generateSlug(problem.title)}` : '',
+      description: problem.description
+    }))
+  })
+
   return (
     <>
       <SEO
@@ -198,6 +217,8 @@ export default function DSAPage() {
         ogDescription="Master Data Structures and Algorithms with our comprehensive collection of coding problems from easy to hard difficulty."
         ogImage="/websitelogo.png"
       />
+      <StructuredData data={problemListSchema} />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
     <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40 bg-muted/30">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />

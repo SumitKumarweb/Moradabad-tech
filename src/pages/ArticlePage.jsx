@@ -6,6 +6,7 @@ import { getArticleBySlug, getAllArticles } from "@/lib/articlesService"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import SEO from "@/components/SEO"
+import StructuredData, { generateArticleSchema, generateBreadcrumbSchema } from "@/components/StructuredData"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -69,6 +70,14 @@ export default function ArticlePage() {
     'coding guide'
   ].filter(Boolean).join(', ')
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "Articles", url: typeof window !== 'undefined' ? `${window.location.origin}/articles` : '' },
+    { name: article.category, url: typeof window !== 'undefined' ? `${window.location.origin}/articles/category/${article.category.toLowerCase()}` : '' },
+    { name: article.title, url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
   return (
     <>
       <SEO
@@ -81,6 +90,8 @@ export default function ArticlePage() {
         ogUrl={typeof window !== 'undefined' ? window.location.href : ''}
         type="article"
       />
+      <StructuredData data={generateArticleSchema(article)} />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
     <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />

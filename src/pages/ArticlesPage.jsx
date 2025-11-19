@@ -6,6 +6,7 @@ import { BookOpen, Search, X, Loader2 } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import SEO from "@/components/SEO"
+import StructuredData, { generateItemListSchema, generateBreadcrumbSchema } from "@/components/StructuredData"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -71,6 +72,32 @@ export default function ArticlesPage() {
     setSearchQuery("")
   }
 
+  // Generate breadcrumb items
+  const breadcrumbItems = category
+    ? [
+        { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+        { name: "Articles", url: typeof window !== 'undefined' ? `${window.location.origin}/articles` : '' },
+        { name: category.charAt(0).toUpperCase() + category.slice(1), url: typeof window !== 'undefined' ? window.location.href : '' }
+      ]
+    : [
+        { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+        { name: "Articles", url: typeof window !== 'undefined' ? window.location.href : '' }
+      ]
+
+  // Generate ItemList schema for articles
+  const articleListSchema = generateItemListSchema({
+    name: category ? `${category.charAt(0).toUpperCase() + category.slice(1)} Articles` : "Articles",
+    description: category 
+      ? `Collection of ${category} articles and tutorials`
+      : "Comprehensive collection of programming and web development articles, tutorials, and guides.",
+    items: filteredArticles.map(article => ({
+      name: article.title,
+      title: article.title,
+      url: typeof window !== 'undefined' ? `${window.location.origin}/articles/${article.slug}` : '',
+      description: article.description || article.excerpt
+    }))
+  })
+
   return (
     <>
       <SEO
@@ -81,6 +108,8 @@ export default function ArticlesPage() {
         ogDescription="Comprehensive collection of programming and web development articles, tutorials, and guides."
         ogImage="/websitelogo.png"
       />
+      <StructuredData data={articleListSchema} />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
     <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40 bg-muted/30">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />

@@ -5,6 +5,7 @@ import { generateSlug } from "@/lib/utils"
 import { ChevronLeft, Play, CheckCircle2, XCircle, Loader2, Lightbulb, Code2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import SEO from "@/components/SEO"
+git import StructuredData, { generateBreadcrumbSchema, generateWebPageSchema } from "@/components/StructuredData"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -418,6 +419,13 @@ int main() {
     'coding interview'
   ].filter(Boolean).join(', ')
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "DSA Problems", url: typeof window !== 'undefined' ? `${window.location.origin}/dsa` : '' },
+    { name: problem.title, url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
   return (
     <>
       <SEO
@@ -430,6 +438,12 @@ int main() {
         ogUrl={typeof window !== 'undefined' ? window.location.href : ''}
         type="article"
       />
+      <StructuredData data={generateWebPageSchema({
+        name: problem.title,
+        title: problem.title,
+        description: problem.description || `Solve ${problem.title} - ${problem.difficulty} difficulty DSA problem`
+      })} />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
     <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />

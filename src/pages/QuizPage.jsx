@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import SEO from "@/components/SEO"
+import StructuredData, { generateQuizSchema, generateBreadcrumbSchema, generateFAQPageSchema } from "@/components/StructuredData"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -99,6 +100,14 @@ export default function QuizPage() {
     const percentage = (score / quiz.questions.length) * 100
     const passed = percentage >= 70
 
+    // Generate breadcrumb items for results page
+    const breadcrumbItemsResults = [
+      { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+      { name: "Articles", url: typeof window !== 'undefined' ? `${window.location.origin}/articles` : '' },
+      { name: article.title, url: typeof window !== 'undefined' ? `${window.location.origin}/articles/${article.slug}` : '' },
+      { name: "Quiz Results", url: typeof window !== 'undefined' ? window.location.href : '' }
+    ]
+
     return (
       <>
         <SEO
@@ -109,6 +118,7 @@ export default function QuizPage() {
           ogDescription={`Quiz results for ${quiz.title}`}
           ogImage="/websitelogo.png"
         />
+        <StructuredData data={generateBreadcrumbSchema(breadcrumbItemsResults)} />
       <div className="min-h-screen bg-background">
         <div className="relative border-b border-border/40">
           <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
@@ -267,6 +277,20 @@ export default function QuizPage() {
     )
   }
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "Articles", url: typeof window !== 'undefined' ? `${window.location.origin}/articles` : '' },
+    { name: article.title, url: typeof window !== 'undefined' ? `${window.location.origin}/articles/${article.slug}` : '' },
+    { name: quiz.title, url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
+  // Generate FAQ schema from quiz questions
+  const faqQuestions = quiz.questions.map(q => ({
+    question: q.question,
+    answer: q.explanation || `The correct answer is option ${q.correctAnswer + 1}. ${q.explanation || ''}`
+  }))
+
   return (
     <>
       <SEO
@@ -279,6 +303,9 @@ export default function QuizPage() {
         ogUrl={typeof window !== 'undefined' ? window.location.href : ''}
         type="article"
       />
+      <StructuredData data={generateQuizSchema(quiz, article)} />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
+      <StructuredData data={generateFAQPageSchema(faqQuestions)} />
     <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />

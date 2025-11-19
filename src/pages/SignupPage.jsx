@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import SEO from "@/components/SEO"
+import StructuredData, { generateWebPageSchema } from "@/components/StructuredData"
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -93,6 +94,11 @@ export default function SignupPage() {
         ogImage="/websitelogo.png"
         robots="noindex, follow"
       />
+      <StructuredData data={generateWebPageSchema({
+        name: "Sign Up",
+        title: "Sign Up - Moradabads",
+        description: "Create your free Moradabads account to start your coding journey. Access personalized learning paths, track your progress, save your code, and unlock premium features."
+      })} />
     <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
