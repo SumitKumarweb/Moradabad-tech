@@ -19,6 +19,10 @@ export const siteConfig = {
       href: "/quizzes",
     },
     {
+      title: "DSA",
+      href: "/dsa",
+    },
+    {
       title: "Code Editor",
       href: "/editor",
     },
