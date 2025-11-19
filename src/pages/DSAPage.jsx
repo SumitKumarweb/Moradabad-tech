@@ -28,6 +28,7 @@ export default function DSAPage() {
   const [problems, setProblems] = useState([])
   const [loading, setLoading] = useState(true)
   const [difficultyFilter, setDifficultyFilter] = useState("all")
+  const [selectedTags, setSelectedTags] = useState([])
 
   useEffect(() => {
     loadProblems()
@@ -76,6 +77,17 @@ export default function DSAPage() {
     }
   }
 
+  // Get all unique tags from problems
+  const allTags = useMemo(() => {
+    const tagSet = new Set()
+    problems.forEach((problem) => {
+      if (problem.tags && Array.isArray(problem.tags)) {
+        problem.tags.forEach((tag) => tagSet.add(tag))
+      }
+    })
+    return Array.from(tagSet).sort()
+  }, [problems])
+
   const filteredProblems = useMemo(() => {
     let filtered = problems
 
@@ -84,6 +96,18 @@ export default function DSAPage() {
       filtered = filtered.filter((problem) => 
         problem.difficulty?.toLowerCase() === difficultyFilter.toLowerCase()
       )
+    }
+
+    // Filter by tags
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter((problem) => {
+        if (!problem.tags || !Array.isArray(problem.tags)) return false
+        return selectedTags.some((tag) => 
+          problem.tags.some((problemTag) => 
+            problemTag.toLowerCase() === tag.toLowerCase()
+          )
+        )
+      })
     }
 
     // Filter by search query
@@ -98,7 +122,17 @@ export default function DSAPage() {
     }
 
     return filtered
-  }, [searchQuery, problems, difficultyFilter])
+  }, [searchQuery, problems, difficultyFilter, selectedTags])
+
+  const toggleTag = (tag) => {
+    setSelectedTags((prev) => {
+      if (prev.includes(tag)) {
+        return prev.filter((t) => t !== tag)
+      } else {
+        return [...prev, tag]
+      }
+    })
+  }
 
   const getDifficultyBadgeVariant = (difficulty) => {
     switch (difficulty?.toLowerCase()) {
@@ -221,6 +255,38 @@ export default function DSAPage() {
               </SelectContent>
             </Select>
           </div>
+          
+          {/* Tag Filters */}
+          {allTags.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-muted-foreground">Filter by Tags:</div>
+              <div className="flex flex-wrap gap-2">
+                {allTags.map((tag) => {
+                  const isSelected = selectedTags.includes(tag)
+                  return (
+                    <Badge
+                      key={tag}
+                      variant={isSelected ? "default" : "outline"}
+                      className="cursor-pointer hover:bg-primary/80 transition-colors px-3 py-1"
+                      onClick={() => toggleTag(tag)}
+                    >
+                      {tag}
+                    </Badge>
+                  )
+                })}
+                {selectedTags.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedTags([])}
+                    className="h-7 text-xs"
+                  >
+                    Clear Tags
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Loading State */}
@@ -233,7 +299,7 @@ export default function DSAPage() {
             {/* Results Count */}
             <div className="flex items-center justify-between mb-4 md:mb-6">
               <div className="text-xs md:text-sm text-muted-foreground">
-                {searchQuery || difficultyFilter !== "all" ? (
+                {searchQuery || difficultyFilter !== "all" || selectedTags.length > 0 ? (
                   <>
                     Found <span className="font-semibold text-foreground">{filteredProblems.length}</span> problem{filteredProblems.length !== 1 ? 's' : ''}
                   </>
@@ -271,6 +337,20 @@ export default function DSAPage() {
                       <CardDescription className="mb-4 line-clamp-3">
                         {problem.description || 'No description available'}
                       </CardDescription>
+                      {problem.tags && problem.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {problem.tags.slice(0, 3).map((tag, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                          {problem.tags.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{problem.tags.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
                       <Button asChild className="w-full">
                         <Link to={`/dsa/${problem.slug || generateSlug(problem.title)}`}>
                           Solve Problem
@@ -287,13 +367,14 @@ export default function DSAPage() {
                 </div>
                 <h3 className="text-lg md:text-xl font-semibold mb-2">No problems found</h3>
                 <p className="text-sm md:text-base text-muted-foreground mb-4">
-                  {searchQuery || difficultyFilter !== "all" ? (
+                  {searchQuery || difficultyFilter !== "all" || selectedTags.length > 0 ? (
                     <>
                       Try adjusting your filters or{" "}
                       <button
                         onClick={() => {
                           setSearchQuery("")
                           setDifficultyFilter("all")
+                          setSelectedTags([])
                         }}
                         className="text-primary hover:underline font-medium"
                       >
