@@ -1,9 +1,67 @@
+import { useParams } from 'react-router-dom'
 import { CodeEditor } from "@/components/code-editor"
 import { Code2, Zap, Terminal } from 'lucide-react'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+import { Link } from 'react-router-dom'
+
+const languageNames = {
+  javascript: 'JavaScript',
+  js: 'JavaScript',
+  python: 'Python',
+  c: 'C',
+  cpp: 'C++',
+  cplusplus: 'C++',
+  java: 'Java',
+  html: 'HTML/CSS/JS',
+  react: 'React JS',
+  angular: 'Angular',
+  vue: 'Vue JS',
+  node: 'Node JS',
+  nodejs: 'Node JS',
+}
 
 export default function EditorPage() {
+  const { language } = useParams()
+  
+  // Normalize language parameter
+  const normalizedLanguage = language?.toLowerCase() || 'javascript'
+  const languageKey = normalizedLanguage === 'js' ? 'javascript' : 
+                      normalizedLanguage === 'cplusplus' ? 'cpp' :
+                      normalizedLanguage === 'nodejs' ? 'node' :
+                      normalizedLanguage
+  
+  const displayName = languageNames[normalizedLanguage] || languageNames[languageKey] || 'Code Editor'
+
   return (
     <div className="min-h-screen bg-background">
+      <div className="container px-4 md:px-6 lg:px-8 pt-6">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/">Home</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/editor">Code Editors</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{displayName} Editor</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
       <div className="relative border-b border-border/40 bg-muted/30">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative px-4 md:px-6 lg:px-8 py-12 md:py-16">
@@ -13,11 +71,11 @@ export default function EditorPage() {
               <span>Browser IDE</span>
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-              Code Editor
+              {displayName} Editor
             </h1>
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              Write, test, and execute code in JavaScript, C, C++, Python, and HTML. 
-              No setup required—start coding instantly in your browser.
+              Write, test, and execute {displayName} code in your browser. 
+              No setup required—start coding instantly.
             </p>
             
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -39,7 +97,7 @@ export default function EditorPage() {
       </div>
 
       <div className="container px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
-        <CodeEditor />
+        <CodeEditor initialLanguage={languageKey} />
       </div>
     </div>
   )

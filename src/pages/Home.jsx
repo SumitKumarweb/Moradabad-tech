@@ -16,12 +16,9 @@ export default function Home() {
           <div className="grid gap-8 lg:gap-12 xl:gap-16 lg:grid-cols-2 items-center max-w-7xl mx-auto">
             <div className="flex flex-col justify-center space-y-6 md:space-y-8 text-center lg:text-left order-2 lg:order-1">
               <div className="space-y-4 md:space-y-6">
-                <div className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary/10 text-primary hover:bg-primary/20 hover:scale-105 mx-auto lg:mx-0">
-                  v2.0 Now Available
-                </div>
                 <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight">
                   Master the Art of <br className="hidden sm:block" />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-blue-400 dark:via-cyan-300 dark:to-purple-400 animate-gradient">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-blue-400 dark:via-cyan-300 dark:to-purple-400 dark:drop-shadow-[0_0_15px_rgba(100,200,255,0.5)] animate-gradient">
                     Modern Coding
                   </span>
                 </h1>
@@ -31,12 +28,12 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
-                <Button asChild size="lg" className="w-full sm:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:scale-105">
+                <Button asChild size="lg" className="w-full sm:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:scale-105 dark:shadow-primary/40 dark:hover:shadow-primary/50">
                   <Link to="/articles">
                     Start Learning <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button variant="outline" size="lg" asChild className="w-full sm:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base backdrop-blur-sm bg-background/50 hover:bg-background/80 transition-all duration-300 hover:scale-105">
+                <Button variant="outline" size="lg" asChild className="w-full sm:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base backdrop-blur-sm bg-background/50 hover:bg-background/80 transition-all duration-300 hover:scale-105 dark:border-primary/30 dark:hover:border-primary/50">
                   <Link to="/editor">
                     Open Editor <Terminal className="ml-2 h-4 w-4" />
                   </Link>
@@ -122,7 +119,7 @@ export default function Home() {
                 <div className="relative">
                   <div className="mb-4 flex items-center gap-4">
                     <div className="inline-flex p-3 rounded-xl bg-primary/5 text-primary ring-1 ring-inset ring-primary/10 group-hover:bg-primary/10 group-hover:ring-primary/20 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20">
-                      <feature.icon className="h-5 w-5 md:h-6 md:w-6" />
+                    <feature.icon className="h-5 w-5 md:h-6 md:w-6" />
                     </div>
                     {feature.image && (
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border/50 bg-muted/50 group-hover:border-primary/50 transition-all duration-300">

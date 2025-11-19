@@ -8,6 +8,8 @@ function Card({ className, ...props }) {
       data-slot="card"
       className={cn(
         'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
+        'dark:shadow-lg dark:shadow-primary/5 dark:hover:shadow-xl dark:hover:shadow-primary/10',
+        'dark:transition-shadow dark:duration-300',
         className,
       )}
       {...props}

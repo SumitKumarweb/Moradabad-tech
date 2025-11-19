@@ -5,6 +5,7 @@ import { Footer } from '@/components/footer'
 import Home from '@/pages/Home'
 import ArticlesPage from '@/pages/ArticlesPage'
 import ArticlePage from '@/pages/ArticlePage'
+import EditorsPage from '@/pages/EditorsPage'
 import EditorPage from '@/pages/EditorPage'
 import LoginPage from '@/pages/LoginPage'
 import SignupPage from '@/pages/SignupPage'
@@ -27,7 +28,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/articles" element={<ArticlesPage />} />
               <Route path="/articles/:slug" element={<ArticlePage />} />
-              <Route path="/editor" element={<EditorPage />} />
+              <Route path="/editor" element={<EditorsPage />} />
+              <Route path="/editor/:language" element={<EditorPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/quizzes" element={<QuizzesPage />} />

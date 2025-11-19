@@ -14,11 +14,11 @@ export function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm dark:border-border/60 dark:shadow-lg dark:shadow-primary/5">
       <div className="container flex h-16 items-center px-4 md:px-6">
         <div className="mr-4 hidden md:flex items-center">
           <Link to="/" className="mr-6 flex items-center gap-2 transition-opacity hover:opacity-80">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 dark:shadow-blue-400/50 dark:glow-primary">
               <Code2 className="h-5 w-5 text-white" />
             </div>
             <span className="hidden font-bold text-lg sm:inline-block bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
@@ -37,7 +37,7 @@ export function Navbar() {
               >
                 {item.title}
                 {pathname === item.href && (
-                  <span className="absolute -bottom-[17px] left-0 right-0 h-0.5 bg-primary rounded-full" />
+                  <span className="absolute -bottom-[17px] left-0 right-0 h-0.5 bg-primary rounded-full dark:shadow-[0_0_8px_rgba(100,200,255,0.6)]" />
                 )}
               </Link>
             ))}

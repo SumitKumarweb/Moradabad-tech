@@ -1,14 +1,63 @@
+import { useState, useMemo } from "react"
+import { Link } from "react-router-dom"
 import { articles } from "@/lib/articles"
 import { ArticleCard } from "@/components/article-card"
-import { BookOpen } from 'lucide-react'
+import { BookOpen, Search, X } from 'lucide-react'
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb"
 
 export default function ArticlesPage() {
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredArticles = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return articles
+    }
+
+    const query = searchQuery.toLowerCase().trim()
+    return articles.filter((article) => {
+      return (
+        article.title.toLowerCase().includes(query) ||
+        article.description.toLowerCase().includes(query) ||
+        article.excerpt.toLowerCase().includes(query) ||
+        article.category.toLowerCase().includes(query) ||
+        article.tags?.some(tag => tag.toLowerCase().includes(query)) ||
+        article.author.toLowerCase().includes(query)
+      )
+    })
+  }, [searchQuery])
+
+  const clearSearch = () => {
+    setSearchQuery("")
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40 bg-muted/30">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
-        <div className="container relative px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
-          <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl">
+        <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20 max-w-7xl">
+          <Breadcrumb className="mb-4 md:mb-6">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Articles</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl mx-auto lg:mx-0">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
               <BookOpen className="h-3 w-3" />
               <span>Knowledge Base</span>
@@ -27,17 +76,70 @@ export default function ArticlesPage() {
         </div>
       </div>
 
-      <div className="container px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
-        <div className="flex items-center justify-between mb-8 md:mb-12">
-          <div className="text-sm text-muted-foreground">
-            Showing <span className="font-semibold text-foreground">{articles.length}</span> articles
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-12 max-w-7xl">
+        {/* Search Bar */}
+        <div className="mb-6 md:mb-8">
+          <div className="relative max-w-2xl mx-auto">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search articles by title, category, tags, or author..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10 h-11 md:h-12 text-sm md:text-base"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={clearSearch}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-muted"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
-        <div className="grid gap-6 md:gap-8 lg:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {articles.map((article) => (
+
+        {/* Results Count */}
+        <div className="flex items-center justify-between mb-4 md:mb-6">
+          <div className="text-xs md:text-sm text-muted-foreground">
+            {searchQuery ? (
+              <>
+                Found <span className="font-semibold text-foreground">{filteredArticles.length}</span> article{filteredArticles.length !== 1 ? 's' : ''} for &quot;<span className="font-semibold text-foreground">{searchQuery}</span>&quot;
+              </>
+            ) : (
+              <>
+                Showing <span className="font-semibold text-foreground">{articles.length}</span> article{articles.length !== 1 ? 's' : ''}
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Articles Grid */}
+        {filteredArticles.length > 0 ? (
+          <div className="grid gap-3 md:gap-4 lg:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredArticles.map((article) => (
             <ArticleCard key={article.slug} article={article} />
           ))}
         </div>
+        ) : (
+          <div className="text-center py-12 md:py-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
+              <Search className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg md:text-xl font-semibold mb-2">No articles found</h3>
+            <p className="text-sm md:text-base text-muted-foreground mb-4">
+              Try searching with different keywords or{" "}
+              <button
+                onClick={clearSearch}
+                className="text-primary hover:underline font-medium"
+              >
+                clear your search
+              </button>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )
