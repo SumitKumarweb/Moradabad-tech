@@ -341,6 +341,102 @@ export const quizzes = [
         ],
         correctAnswer: 1,
         explanation: "The &lt;a&gt; tag with the 'href' attribute is used to create hyperlinks."
+      },
+      {
+        id: "q6",
+        question: "Which HTML5 element is used for navigation links?",
+        options: ["&lt;nav&gt;", "&lt;navigation&gt;", "&lt;menu&gt;", "&lt;navigate&gt;"],
+        correctAnswer: 0,
+        explanation: "The &lt;nav&gt; element is used to define a set of navigation links."
+      },
+      {
+        id: "q7",
+        question: "What is the purpose of the &lt;meta&gt; tag?",
+        options: [
+          "To create metadata about the HTML document",
+          "To create a new page",
+          "To add images",
+          "To create links"
+        ],
+        correctAnswer: 0,
+        explanation: "The &lt;meta&gt; tag provides metadata about the HTML document, such as character encoding, description, and keywords."
+      },
+      {
+        id: "q8",
+        question: "Which HTML element is used to define important text?",
+        options: ["&lt;important&gt;", "&lt;strong&gt;", "&lt;bold&gt;", "&lt;b&gt;"],
+        correctAnswer: 1,
+        explanation: "&lt;strong&gt; is used to define text with strong importance, typically displayed in bold."
+      },
+      {
+        id: "q9",
+        question: "What does the &lt;form&gt; element do?",
+        options: [
+          "Creates a table",
+          "Creates an input form for user data",
+          "Creates a list",
+          "Creates a button"
+        ],
+        correctAnswer: 1,
+        explanation: "The &lt;form&gt; element is used to create an HTML form for user input."
+      },
+      {
+        id: "q10",
+        question: "Which attribute is used to make an input field required?",
+        code: "&lt;input type='text' ? /&gt;",
+        options: ["mandatory", "required", "must", "necessary"],
+        correctAnswer: 1,
+        explanation: "The 'required' attribute specifies that an input field must be filled out before submitting the form."
+      },
+      {
+        id: "q11",
+        question: "What is the correct HTML for creating an ordered list?",
+        options: [
+          "&lt;list&gt;&lt;li&gt;Item&lt;/li&gt;&lt;/list&gt;",
+          "&lt;ol&gt;&lt;li&gt;Item&lt;/li&gt;&lt;/ol&gt;",
+          "&lt;ul&gt;&lt;li&gt;Item&lt;/li&gt;&lt;/ul&gt;",
+          "&lt;order&gt;&lt;li&gt;Item&lt;/li&gt;&lt;/order&gt;"
+        ],
+        correctAnswer: 1,
+        explanation: "&lt;ol&gt; creates an ordered (numbered) list, while &lt;ul&gt; creates an unordered (bulleted) list."
+      },
+      {
+        id: "q12",
+        question: "Which HTML5 element represents a section of a page that contains content that is tangentially related?",
+        options: ["&lt;aside&gt;", "&lt;section&gt;", "&lt;article&gt;", "&lt;div&gt;"],
+        correctAnswer: 0,
+        explanation: "The &lt;aside&gt; element represents content that is tangentially related to the content around it."
+      },
+      {
+        id: "q13",
+        question: "What is the purpose of the &lt;header&gt; element?",
+        options: [
+          "To create a table header",
+          "To define a header for a document or section",
+          "To create a navigation bar",
+          "To add a title"
+        ],
+        correctAnswer: 1,
+        explanation: "The &lt;header&gt; element represents introductory content, typically containing headings, logos, or navigation."
+      },
+      {
+        id: "q14",
+        question: "Which HTML element is used to embed a video?",
+        options: ["&lt;video&gt;", "&lt;movie&gt;", "&lt;media&gt;", "&lt;embed-video&gt;"],
+        correctAnswer: 0,
+        explanation: "The &lt;video&gt; element is used to embed video content in an HTML document."
+      },
+      {
+        id: "q15",
+        question: "What does the &lt;footer&gt; element typically contain?",
+        options: [
+          "Navigation links",
+          "Copyright information and contact details",
+          "Main content",
+          "Images"
+        ],
+        correctAnswer: 1,
+        explanation: "The &lt;footer&gt; element typically contains copyright information, contact details, and related links."
       }
     ]
   },
@@ -395,6 +491,103 @@ export const quizzes = [
         ],
         correctAnswer: 1,
         explanation: "'font-weight: bold' is the correct syntax to make text bold."
+      },
+      {
+        id: "q6",
+        question: "Which CSS property is used to change the text color?",
+        options: ["text-color", "color", "font-color", "text-style"],
+        correctAnswer: 1,
+        explanation: "The 'color' property is used to set the color of text."
+      },
+      {
+        id: "q7",
+        question: "How do you make text italic in CSS?",
+        options: [
+          "font-style: italic;",
+          "text-style: italic;",
+          "font: italic;",
+          "style: italic;"
+        ],
+        correctAnswer: 0,
+        explanation: "'font-style: italic;' is used to make text italic."
+      },
+      {
+        id: "q8",
+        question: "Which CSS property is used to add space between letters?",
+        options: ["letter-spacing", "word-spacing", "text-spacing", "character-spacing"],
+        correctAnswer: 0,
+        explanation: "'letter-spacing' controls the spacing between characters in text."
+      },
+      {
+        id: "q9",
+        question: "What does 'display: flex' do?",
+        code: ".container { display: flex; }",
+        options: [
+          "Makes elements invisible",
+          "Creates a flexible box layout",
+          "Changes text direction",
+          "Adds borders"
+        ],
+        correctAnswer: 1,
+        explanation: "'display: flex' creates a flexible box layout, enabling flexible items to be laid out efficiently."
+      },
+      {
+        id: "q10",
+        question: "Which property is used to align flex items along the main axis?",
+        options: ["align-items", "justify-content", "align-content", "flex-align"],
+        correctAnswer: 1,
+        explanation: "'justify-content' aligns flex items along the main axis (horizontally in a row)."
+      },
+      {
+        id: "q11",
+        question: "What is the CSS box model composed of?",
+        options: [
+          "Content, padding, border, margin",
+          "Width, height, color, background",
+          "Top, right, bottom, left",
+          "Header, body, footer, sidebar"
+        ],
+        correctAnswer: 0,
+        explanation: "The CSS box model consists of content, padding, border, and margin."
+      },
+      {
+        id: "q12",
+        question: "Which CSS property is used to create rounded corners?",
+        options: ["border-radius", "corner-radius", "round-border", "border-round"],
+        correctAnswer: 0,
+        explanation: "'border-radius' is used to create rounded corners on elements."
+      },
+      {
+        id: "q13",
+        question: "What does 'position: absolute' do?",
+        options: [
+          "Positions element relative to its parent",
+          "Positions element relative to the viewport",
+          "Positions element relative to its normal position",
+          "Makes element float"
+        ],
+        correctAnswer: 0,
+        explanation: "'position: absolute' positions an element relative to its nearest positioned ancestor."
+      },
+      {
+        id: "q14",
+        question: "Which CSS property is used to control the stacking order of elements?",
+        options: ["z-index", "stack-order", "layer", "depth"],
+        correctAnswer: 0,
+        explanation: "'z-index' controls the stacking order of positioned elements."
+      },
+      {
+        id: "q15",
+        question: "What does 'grid-template-columns: repeat(3, 1fr)' create?",
+        code: ".grid { display: grid; grid-template-columns: repeat(3, 1fr); }",
+        options: [
+          "3 rows of equal height",
+          "3 columns of equal width",
+          "3 items per row",
+          "3px spacing between items"
+        ],
+        correctAnswer: 1,
+        explanation: "This creates a grid with 3 columns, each taking up 1 fraction (1fr) of the available space."
       }
     ]
   },
@@ -449,6 +642,54 @@ export const quizzes = [
         ],
         correctAnswer: 0,
         explanation: "JSON.parse() converts a JSON string into a JavaScript object."
+      },
+      {
+        id: "q6",
+        question: "What will be the output of: console.log(2 + '2')?",
+        code: "console.log(2 + '2');",
+        options: ["4", "'22'", "22", "Error"],
+        correctAnswer: 1,
+        explanation: "When adding a number and a string, JavaScript converts the number to a string and concatenates them, resulting in '22'."
+      },
+      {
+        id: "q7",
+        question: "Which method removes the last element from an array?",
+        options: ["shift()", "pop()", "remove()", "delete()"],
+        correctAnswer: 1,
+        explanation: "pop() removes and returns the last element from an array."
+      },
+      {
+        id: "q8",
+        question: "What is the result of: '5' == 5?",
+        code: "'5' == 5",
+        options: ["true", "false", "undefined", "Error"],
+        correctAnswer: 0,
+        explanation: "The == operator performs type coercion, so '5' is converted to 5, making the comparison true."
+      },
+      {
+        id: "q9",
+        question: "What is a closure in JavaScript?",
+        options: [
+          "A function that has access to variables in its outer scope",
+          "A way to close a file",
+          "A method to stop execution",
+          "A type of loop"
+        ],
+        correctAnswer: 0,
+        explanation: "A closure is a function that has access to variables in its outer (enclosing) lexical scope, even after the outer function has returned."
+      },
+      {
+        id: "q10",
+        question: "What does the 'this' keyword refer to in a regular function?",
+        code: "function test() { console.log(this); }",
+        options: [
+          "The function itself",
+          "The global object (or undefined in strict mode)",
+          "The parent object",
+          "Always null"
+        ],
+        correctAnswer: 1,
+        explanation: "In a regular function, 'this' refers to the global object (window in browsers), or undefined in strict mode."
       }
     ]
   },
@@ -513,6 +754,70 @@ export const quizzes = [
         ],
         correctAnswer: 1,
         explanation: "The virtual DOM is a lightweight JavaScript representation of the real DOM that React uses for efficient updates."
+      },
+      {
+        id: "q6",
+        question: "What is the purpose of the key prop in React lists?",
+        code: "{items.map(item => &lt;div key={item.id}&gt;{item.name}&lt;/div&gt;)}",
+        options: [
+          "To style elements",
+          "To help React identify which items have changed",
+          "To add event handlers",
+          "To make elements clickable"
+        ],
+        correctAnswer: 1,
+        explanation: "The key prop helps React identify which items have changed, been added, or removed, improving rendering performance."
+      },
+      {
+        id: "q7",
+        question: "What does the second parameter of useEffect control?",
+        code: "useEffect(() => { /* effect */ }, [dependencies]);",
+        options: [
+          "The effect function",
+          "When the effect runs (dependency array)",
+          "The cleanup function",
+          "The return value"
+        ],
+        correctAnswer: 1,
+        explanation: "The dependency array controls when the effect runs. If empty [], it runs once on mount. If it has dependencies, it runs when they change."
+      },
+      {
+        id: "q8",
+        question: "What is the difference between controlled and uncontrolled components?",
+        options: [
+          "Controlled components use state, uncontrolled use refs",
+          "Controlled components are faster",
+          "Uncontrolled components don't render",
+          "There is no difference"
+        ],
+        correctAnswer: 0,
+        explanation: "Controlled components have their value controlled by React state, while uncontrolled components use refs to access form values directly."
+      },
+      {
+        id: "q9",
+        question: "What is the purpose of React.memo()?",
+        code: "const MemoizedComponent = React.memo(MyComponent);",
+        options: [
+          "To create a new component",
+          "To prevent unnecessary re-renders",
+          "To add state to a component",
+          "To handle events"
+        ],
+        correctAnswer: 1,
+        explanation: "React.memo() is a higher-order component that prevents a component from re-rendering if its props haven't changed."
+      },
+      {
+        id: "q10",
+        question: "What is the correct way to update state based on previous state?",
+        code: "const [count, setCount] = useState(0);",
+        options: [
+          "setCount(count + 1)",
+          "setCount(prevCount => prevCount + 1)",
+          "count = count + 1",
+          "setCount(count++)"
+        ],
+        correctAnswer: 1,
+        explanation: "When updating state based on previous state, use the functional form: setCount(prevCount => prevCount + 1) to avoid stale closures."
       }
     ]
   }

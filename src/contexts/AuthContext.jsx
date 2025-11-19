@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -24,26 +24,26 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const signup = async (email, password, displayName) => {
+  const signup = useCallback(async (email, password, displayName) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     if (displayName && userCredential.user) {
       await updateProfile(userCredential.user, { displayName })
     }
     return userCredential
-  }
+  }, [])
 
-  const login = (email, password) => {
+  const login = useCallback((email, password) => {
     return signInWithEmailAndPassword(auth, email, password)
-  }
+  }, [])
 
-  const logout = () => {
+  const logout = useCallback(() => {
     return signOut(auth)
-  }
+  }, [])
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
-  }
+  }, [])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -54,13 +54,13 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe
   }, [])
 
-  const value = {
+  const value = useMemo(() => ({
     currentUser,
     signup,
     login,
     logout,
     loginWithGoogle
-  }
+  }), [currentUser, signup, login, logout, loginWithGoogle])
 
   return (
     <AuthContext.Provider value={value}>

@@ -1,4 +1,5 @@
 import * as React from "react"
+import { memo, useCallback, useMemo } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Menu, Code2, User, LogOut } from 'lucide-react'
 
@@ -18,14 +19,14 @@ import {
 import { useAuth } from "@/contexts/AuthContext"
 import { toast } from "sonner"
 
-export function Navbar() {
+export const Navbar = memo(function Navbar() {
   const location = useLocation()
   const pathname = location.pathname
   const [isOpen, setIsOpen] = React.useState(false)
   const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       await logout()
       toast.success('Logged out successfully')
@@ -33,7 +34,9 @@ export function Navbar() {
     } catch (error) {
       toast.error('Failed to logout')
     }
-  }
+  }, [logout, navigate])
+  
+  const mainNavItems = useMemo(() => siteConfig.mainNav, [])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm dark:border-border/60 dark:shadow-lg dark:shadow-primary/5">
@@ -48,7 +51,7 @@ export function Navbar() {
             </span>
           </Link>
           <nav className="flex items-center gap-6 text-sm font-medium">
-            {siteConfig.mainNav.map((item) => (
+            {mainNavItems.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
@@ -95,7 +98,7 @@ export function Navbar() {
               <span className="font-bold text-lg">{siteConfig.name}</span>
             </Link>
             <div className="flex flex-col gap-4 pr-6">
-              {siteConfig.mainNav.map((item) => (
+              {mainNavItems.map((item) => (
                 <Link
                   key={item.href}
                   to={item.href}
@@ -145,6 +148,7 @@ export function Navbar() {
                       <img 
                         src={currentUser.photoURL} 
                         alt={currentUser.displayName || 'User'} 
+                        loading="lazy"
                         className="h-8 w-8 rounded-full object-cover"
                       />
                     ) : (
@@ -183,5 +187,5 @@ export function Navbar() {
       </div>
     </header>
   )
-}
+})
 

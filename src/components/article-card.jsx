@@ -1,9 +1,10 @@
+import { memo } from "react"
 import { Link } from "react-router-dom"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, ArrowUpRight } from 'lucide-react'
 
-export function ArticleCard({ article }) {
+export const ArticleCard = memo(function ArticleCard({ article }) {
   return (
     <Link to={`/articles/${article.slug}`} className="group block h-full">
       <Card className="h-full overflow-hidden border border-border/50 bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 dark:hover:border-primary/60 dark:hover:shadow-xl dark:hover:shadow-primary/20 dark:hover:glow-primary">
@@ -12,6 +13,7 @@ export function ArticleCard({ article }) {
             <img
               src={article.image || "/placeholder.svg"}
               alt={article.title}
+              loading="lazy"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
           ) : (
@@ -50,5 +52,5 @@ export function ArticleCard({ article }) {
       </Card>
     </Link>
   )
-}
+})
 

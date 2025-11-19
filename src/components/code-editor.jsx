@@ -1582,11 +1582,13 @@ console.log('All users:', userService.getAllUsers())`,
     URL.revokeObjectURL(url)
   }
 
-  const filteredFiles = Object.keys(files).filter(fileName =>
-    fileName.toLowerCase().includes(fileSearchQuery.toLowerCase())
+  const filteredFiles = React.useMemo(() => 
+    Object.keys(files).filter(fileName =>
+      fileName.toLowerCase().includes(fileSearchQuery.toLowerCase())
+    ), [files, fileSearchQuery]
   )
 
-  const searchInCode = (query) => {
+  const searchInCode = React.useCallback((query) => {
     if (!query) return []
     const results = []
     Object.entries(files).forEach(([fileName, file]) => {
@@ -1598,9 +1600,9 @@ console.log('All users:', userService.getAllUsers())`,
       })
     })
     return results
-  }
+  }, [files])
 
-  const searchResults = searchInCode(searchQuery)
+  const searchResults = React.useMemo(() => searchInCode(searchQuery), [searchInCode, searchQuery])
 
   return (
     <div className="flex-1 flex flex-col bg-[#1e1e1e] text-[#cccccc] rounded-lg overflow-hidden border border-[#333] min-h-0">

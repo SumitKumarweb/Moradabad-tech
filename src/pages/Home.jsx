@@ -1,12 +1,54 @@
 import { Link } from "react-router-dom"
+import { lazy, Suspense, useMemo } from "react"
 import { ArrowRight, Code, Terminal, BookOpen, Cpu, Globe, Zap, Brain } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { articles } from "@/lib/articles"
 import { ArticleCard } from "@/components/article-card"
-import { Hero3D } from "@/components/hero-3d"
+
+// Lazy load heavy 3D component
+const Hero3D = lazy(() => import('@/components/hero-3d').then(module => ({ default: module.Hero3D })))
 
 export default function Home() {
-  const featuredArticles = articles.slice(0, 3)
+  const featuredArticles = useMemo(() => articles.slice(0, 3), [])
+  
+  const features = useMemo(() => [
+    {
+      icon: BookOpen,
+      title: "Comprehensive Guides",
+      desc: "Deep dive into web technologies with our structured learning paths.",
+      image: "/html-code-snippet.png"
+    },
+    {
+      icon: Terminal,
+      title: "Browser IDE",
+      desc: "Write and execute JavaScript, C++, and Python directly in your browser.",
+      image: "/javascript-code.png"
+    },
+    {
+      icon: Zap,
+      title: "Instant Feedback",
+      desc: "Real-time code execution and syntax highlighting for rapid prototyping.",
+      image: "/css-styling.jpg"
+    },
+    {
+      icon: Globe,
+      title: "Modern Stack",
+      desc: "Learn the latest frameworks including React, and Tailwind CSS.",
+      image: "/react-js-logo.png"
+    },
+    {
+      icon: Brain,
+      title: "Interactive Quizzes",
+      desc: "Test your knowledge with engaging quizzes after each article.",
+      image: "/placeholder.jpg"
+    },
+    {
+      icon: Code,
+      title: "Clean Architecture",
+      desc: "Learn best practices for scalable and maintainable codebases.",
+      image: "/placeholder.jpg"
+    }
+  ], [])
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -53,7 +95,13 @@ export default function Home() {
             <div className="relative w-full max-w-md mx-auto lg:max-w-none h-[300px] sm:h-[400px] lg:h-[500px] xl:h-[600px] rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm shadow-2xl overflow-hidden group order-1 lg:order-2">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <Hero3D />
+              <Suspense fallback={
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+              }>
+                <Hero3D />
+              </Suspense>
               <div className="absolute top-0 left-0 right-0 h-10 bg-muted/90 backdrop-blur-md border-b border-border/50 flex items-center px-4 gap-2 shadow-sm">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-red-500/90 shadow-inner transition-transform hover:scale-110" />
@@ -76,44 +124,7 @@ export default function Home() {
             </p>
           </div>
           <div className="grid gap-px bg-border rounded-xl overflow-hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 shadow-lg">
-            {[
-              {
-                icon: BookOpen,
-                title: "Comprehensive Guides",
-                desc: "Deep dive into web technologies with our structured learning paths.",
-                image: "/html-code-snippet.png"
-              },
-              {
-                icon: Terminal,
-                title: "Browser IDE",
-                desc: "Write and execute JavaScript, C++, and Python directly in your browser.",
-                image: "/javascript-code.png"
-              },
-              {
-                icon: Zap,
-                title: "Instant Feedback",
-                desc: "Real-time code execution and syntax highlighting for rapid prototyping.",
-                image: "/css-styling.jpg"
-              },
-              {
-                icon: Globe,
-                title: "Modern Stack",
-                desc: "Learn the latest frameworks including React, and Tailwind CSS.",
-                image: "/react-js-logo.png"
-              },
-              {
-                icon: Brain,
-                title: "Interactive Quizzes",
-                desc: "Test your knowledge with engaging quizzes after each article.",
-                image: "/placeholder.jpg"
-              },
-              {
-                icon: Code,
-                title: "Clean Architecture",
-                desc: "Learn best practices for scalable and maintainable codebases.",
-                image: "/placeholder.jpg"
-              }
-            ].map((feature, i) => (
+            {features.map((feature, i) => (
               <div key={i} className="group relative bg-background p-6 md:p-8 hover:bg-muted/50 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative">
@@ -126,6 +137,7 @@ export default function Home() {
                         <img 
                           src={feature.image} 
                           alt={feature.title}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                       </div>

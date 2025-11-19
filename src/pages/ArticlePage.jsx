@@ -135,6 +135,7 @@ export default function ArticlePage() {
                 <img
                   src={article.image || "/placeholder.svg"}
                   alt={article.title}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
