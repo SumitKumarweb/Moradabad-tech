@@ -23,6 +23,10 @@ export const siteConfig = {
       href: "/javascript-questions",
     },
     {
+      title: "Interview",
+      href: "/interview",
+    },
+    {
       title: "DSA",
       href: "/dsa",
     },

@@ -23,6 +23,9 @@ const TopDSAPage = lazy(() => import('@/pages/TopDSAPage'))
 const TopDSASolvePage = lazy(() => import('@/pages/TopDSASolvePage'))
 const JavaScriptQuestionsPage = lazy(() => import('@/pages/JavaScriptQuestionsPage'))
 const JavaScriptQuestionPage = lazy(() => import('@/pages/JavaScriptQuestionPage'))
+const InterviewPage = lazy(() => import('@/pages/InterviewPage'))
+const InterviewSectionPage = lazy(() => import('@/pages/InterviewSectionPage'))
+const InterviewTopicPage = lazy(() => import('@/pages/InterviewTopicPage'))
 
 // Loading fallback component
 const PageLoader = () => (
@@ -63,6 +66,9 @@ function App() {
                 <Route path="/top-dsa/:slug" element={<TopDSASolvePage />} />
                 <Route path="/javascript-questions" element={<JavaScriptQuestionsPage />} />
                 <Route path="/javascript-questions/:questionId" element={<JavaScriptQuestionPage />} />
+                <Route path="/interview" element={<InterviewPage />} />
+                <Route path="/interview/:sectionId" element={<InterviewSectionPage />} />
+                <Route path="/interview/:sectionId/:topicId" element={<InterviewTopicPage />} />
                 <Route
                   path="/profile"
                   element={
