@@ -14,6 +14,7 @@ import SignupPage from '@/pages/SignupPage'
 import QuizzesPage from '@/pages/QuizzesPage'
 import QuizPage from '@/pages/QuizPage'
 import AdminPanel from '@/pages/AdminPanel'
+import ProfilePage from '@/pages/ProfilePage'
 
 function App() {
   return (
@@ -37,6 +38,14 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/quizzes" element={<QuizzesPage />} />
               <Route path="/quiz/:quizId" element={<QuizPage />} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/admin"
                 element={

@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
+import { getStorage, connectStorageEmulator } from 'firebase/storage'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -48,6 +49,19 @@ try {
   throw error
 }
 
-export { auth, db }
+// Initialize Cloud Storage and get a reference to the service
+let storage
+try {
+  storage = getStorage(app)
+  // Only connect to emulator in development if needed
+  // if (import.meta.env.DEV) {
+  //   connectStorageEmulator(storage, 'localhost', 9199)
+  // }
+} catch (error) {
+  console.error('Firebase Storage initialization error:', error)
+  throw error
+}
+
+export { auth, db, storage }
 export default app
 
