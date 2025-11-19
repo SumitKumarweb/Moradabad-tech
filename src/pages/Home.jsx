@@ -12,8 +12,8 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background">
       <section className="relative w-full py-12 md:py-20 lg:py-32 xl:py-40 overflow-hidden border-b">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]" />
-        <div className="container relative mx-auto px-4 md:px-6 lg:px-8 z-10">
-          <div className="grid gap-8 lg:gap-12 xl:gap-16 lg:grid-cols-2 items-center max-w-7xl mx-auto">
+        <div className="container relative mx-auto px-4 md:px-6 lg:px-8 z-10 max-w-7xl">
+          <div className="grid gap-8 lg:gap-12 xl:gap-16 lg:grid-cols-2 items-center">
             <div className="flex flex-col justify-center space-y-6 md:space-y-8 text-center lg:text-left order-2 lg:order-1">
               <div className="space-y-4 md:space-y-6">
                 <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight">

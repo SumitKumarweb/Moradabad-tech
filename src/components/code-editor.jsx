@@ -1614,7 +1614,7 @@ console.log('All users:', userService.getAllUsers())`,
             </div>
           <div className="h-4 w-px bg-[#333] mx-2" />
           <Code2 className="h-4 w-4 text-blue-400" />
-          <span className="text-xs font-medium">VS Code Editor</span>
+          <span className="text-xs font-medium">Sumit Code Editor</span>
           </div>
           <div className="flex items-center gap-2">
           <Button

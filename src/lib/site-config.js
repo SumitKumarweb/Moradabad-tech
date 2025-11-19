@@ -22,10 +22,6 @@ export const siteConfig = {
       title: "Code Editor",
       href: "/editor",
     },
-    {
-      title: "Login",
-      href: "/login",
-    },
   ],
 }
 

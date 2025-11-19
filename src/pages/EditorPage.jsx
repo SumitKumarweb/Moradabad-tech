@@ -41,7 +41,7 @@ export default function EditorPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="container px-4 md:px-6 lg:px-8 pt-6">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 pt-6 max-w-7xl">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -64,7 +64,7 @@ export default function EditorPage() {
       </div>
       <div className="relative border-b border-border/40 bg-muted/30">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
-        <div className="container relative px-4 md:px-6 lg:px-8 py-12 md:py-16">
+        <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 max-w-7xl">
           <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
               <Code2 className="h-3 w-3" />
@@ -96,7 +96,7 @@ export default function EditorPage() {
         </div>
       </div>
 
-      <div className="flex-1 container px-4 md:px-6 lg:px-8 py-6 md:py-8 flex flex-col min-h-0">
+      <div className="flex-1 container mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 flex flex-col min-h-0 max-w-7xl">
         <CodeEditor initialLanguage={languageKey} />
       </div>
     </div>
