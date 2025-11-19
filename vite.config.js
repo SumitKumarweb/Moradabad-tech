@@ -29,7 +29,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-    dedupe: ['firebase'],
+    dedupe: ['react', 'react-dom', 'firebase'],
     conditions: ['import', 'module', 'browser', 'default'],
     mainFields: ['module', 'jsnext:main', 'jsnext'],
   },
@@ -44,7 +44,12 @@ export default defineConfig({
           }
           // Vendor chunks
           if (id.includes('node_modules')) {
-            // React and React-dependent libraries should be in react-vendor
+            // Core React libraries - ensure they load first
+            if (id.includes('/react/') || id.includes('/react-dom/')) {
+              return 'react-core'
+            }
+            // React and ALL React-dependent libraries should be in react-vendor
+            // This ensures React is available when these libraries need it
             if (
               id.includes('react') || 
               id.includes('react-dom') || 
@@ -52,12 +57,18 @@ export default defineConfig({
               id.includes('next-themes') ||
               id.includes('sonner') ||
               id.includes('react-hook-form') ||
-              id.includes('@hookform')
+              id.includes('@hookform') ||
+              id.includes('cmdk') ||
+              id.includes('embla-carousel-react') ||
+              id.includes('input-otp') ||
+              id.includes('lucide-react') ||
+              id.includes('react-day-picker') ||
+              id.includes('react-resizable-panels') ||
+              id.includes('recharts') ||
+              id.includes('vaul') ||
+              id.includes('@radix-ui') // Radix UI components need React
             ) {
               return 'react-vendor'
-            }
-            if (id.includes('@radix-ui')) {
-              return 'ui-vendor'
             }
             if (id.includes('@monaco-editor')) {
               return 'editor-vendor'
