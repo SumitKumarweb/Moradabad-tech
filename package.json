@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run generate-sitemap && vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "generate-sitemap": "node scripts/generateSitemap.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
