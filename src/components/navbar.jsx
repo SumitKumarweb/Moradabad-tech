@@ -46,7 +46,7 @@ export const Navbar = memo(function Navbar() {
             <img 
               src="/websitelogo.png" 
               alt={siteConfig.name}
-              className="h-12 md:h-[100px] w-auto object-contain"
+              className="h-4 w-auto object-contain max-h-12 max-w-32"
             />
             <span className="hidden font-bold text-lg sm:inline-block bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
               {siteConfig.name}
@@ -75,9 +75,9 @@ export const Navbar = memo(function Navbar() {
             <img 
               src="/websitelogo.png" 
               alt={siteConfig.name}
-              className="h-12 md:h-[100px] w-auto object-contain"
+              className="h-4 w-auto object-contain max-h-12 max-w-32"
             />
-            <span className="font-bold text-base">{siteConfig.name}</span>
+            <span className="font-bold text-sm sm:text-base">{siteConfig.name}</span>
           </Link>
         </div>
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -99,7 +99,7 @@ export const Navbar = memo(function Navbar() {
               <img 
                 src="/websitelogo.png" 
                 alt={siteConfig.name}
-                className="h-8 w-auto object-contain"
+                className="h-4 w-auto object-contain max-h-12 max-w-32"
               />
               <span className="font-bold text-lg">{siteConfig.name}</span>
             </Link>

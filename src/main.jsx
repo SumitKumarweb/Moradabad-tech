@@ -8,9 +8,9 @@ import './index.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <HelmetProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
     </HelmetProvider>
   </React.StrictMode>,
 )

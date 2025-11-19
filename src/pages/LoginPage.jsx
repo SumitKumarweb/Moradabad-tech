@@ -65,7 +65,7 @@ export default function LoginPage() {
         ogImage="/websitelogo.png"
         robots="noindex, follow"
       />
-      <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
@@ -78,7 +78,7 @@ export default function LoginPage() {
             <img 
               src="/websitelogo.png" 
               alt="Moradabads"
-              className="h-20 md:h-[100px] w-auto object-contain transition-transform group-hover:scale-110"
+              className="h-6 w-auto object-contain max-h-20 max-w-48 transition-transform group-hover:scale-110"
             />
           </Link>
           <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back</h1>

@@ -106,7 +106,7 @@ export default function EditorsPage() {
         ogDescription="Write and execute code in your browser. Choose from 10+ programming languages and frameworks."
         ogImage="/websitelogo.png"
       />
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 pt-6 max-w-7xl">
         <Breadcrumb>
           <BreadcrumbList>

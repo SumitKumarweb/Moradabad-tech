@@ -12,7 +12,7 @@ export function Footer() {
               <img 
                 src="/websitelogo.png" 
                 alt={siteConfig.name}
-                className="h-16 md:h-[100px] w-auto object-contain"
+                className="h-5 w-auto object-contain max-h-16 max-w-40"
               />
               <span className="font-bold text-lg">{siteConfig.name}</span>
             </div>

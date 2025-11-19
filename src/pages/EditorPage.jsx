@@ -65,7 +65,7 @@ export default function EditorPage() {
         ogDescription={`Write and execute ${displayName} code directly in your browser. No installation required.`}
         ogImage="/websitelogo.png"
       />
-      <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 pt-6 max-w-7xl">
         <Breadcrumb>
           <BreadcrumbList>

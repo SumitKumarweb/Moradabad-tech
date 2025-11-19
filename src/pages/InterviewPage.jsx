@@ -21,7 +21,7 @@ export default function InterviewPage() {
         ogDescription="Comprehensive guides and resources to help you ace technical interviews and land your dream job."
         ogImage="/websitelogo.png"
       />
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20 max-w-7xl">

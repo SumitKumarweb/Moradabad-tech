@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { articles } from "@/lib/articles"
 import { ArticleCard } from "@/components/article-card"
 import SEO from "@/components/SEO"
+import StructuredData, { generateOrganizationSchema, generateWebSiteSchema } from "@/components/StructuredData"
 
 // Lazy load heavy 3D component
 const Hero3D = lazy(() => import('@/components/hero-3d').then(module => ({ default: module.Hero3D })))
@@ -61,6 +62,8 @@ export default function Home() {
         ogDescription="Premier platform for full-stack development education. Learn HTML, CSS, JavaScript, React, and more with interactive tools and expert guides."
         ogImage="/websitelogo.png"
       />
+      <StructuredData data={generateOrganizationSchema()} />
+      <StructuredData data={generateWebSiteSchema()} />
       <div className="flex flex-col min-h-screen bg-background">
       <section className="relative w-full py-12 md:py-20 lg:py-32 xl:py-40 overflow-hidden border-b">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]" />

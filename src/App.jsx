@@ -53,6 +53,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/articles" element={<ArticlesPage />} />
+                <Route path="/articles/category/:category" element={<ArticlesPage />} />
                 <Route path="/articles/:slug" element={<ArticlePage />} />
                 <Route path="/editor" element={<EditorsPage />} />
                 <Route path="/editor/:language" element={<EditorPage />} />
