@@ -7,9 +7,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3011,
-    host: true, // Listen on all addresses
-    open: true, // Automatically open browser
-    strictPort: false, // If port is in use, try next available port
+    host: true,  
+    open: true,  
+    strictPort: false, 
   },
   resolve: {
     alias: {
