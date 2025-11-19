@@ -5,6 +5,7 @@ import {
   FileCode, Monitor, Code2, Settings, FileText, Image, FileJson
 } from 'lucide-react'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import Editor from '@monaco-editor/react'
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -236,15 +237,666 @@ const getLanguageFromFileName = (fileName) => {
   return langMap[ext] || 'javascript'
 }
 
+const getExtensionFromLanguage = (language) => {
+  const extMap = {
+    javascript: 'js',
+    python: 'py',
+    c: 'c',
+    cpp: 'cpp',
+    java: 'java',
+    html: 'html',
+    css: 'css',
+    json: 'json',
+    react: 'jsx',
+    vue: 'vue',
+    angular: 'ts',
+    node: 'js',
+  }
+  return extMap[language] || 'js'
+}
+
+// Map our language names to Monaco Editor language IDs
+const getMonacoLanguage = (language) => {
+  const langMap = {
+    javascript: 'javascript',
+    python: 'python',
+    c: 'c',
+    cpp: 'cpp',
+    java: 'java',
+    html: 'html',
+    css: 'css',
+    json: 'json',
+    react: 'javascript', // React uses JavaScript syntax
+    vue: 'javascript', // Vue uses JavaScript syntax
+    angular: 'typescript', // Angular uses TypeScript
+    node: 'javascript', // Node.js uses JavaScript
+  }
+  return langMap[language] || 'javascript'
+}
+
 export function CodeEditor({ initialLanguage = "javascript" }) {
-  const [files, setFiles] = React.useState({
-    'index.js': {
-      content: languageTemplates.javascript,
-      language: 'javascript',
+  const extension = getExtensionFromLanguage(initialLanguage)
+  const indexFile = `index.${extension}`
+  const userFile = `user.${extension}`
+  
+  // User CRUD template based on language
+  const getUserCrudTemplate = (lang) => {
+    const templates = {
+      javascript: `// User CRUD Operations
+class UserService {
+  constructor() {
+    this.users = []
+  }
+
+  // Create a new user
+  createUser(user) {
+    this.users.push({ id: Date.now(), ...user })
+    return this.users[this.users.length - 1]
+  }
+
+  // Read all users
+  getAllUsers() {
+    return this.users
+  }
+
+  // Read a user by ID
+  getUserById(id) {
+    return this.users.find(user => user.id === id)
+  }
+
+  // Update a user
+  updateUser(id, updatedData) {
+    const index = this.users.findIndex(user => user.id === id)
+    if (index !== -1) {
+      this.users[index] = { ...this.users[index], ...updatedData }
+      return this.users[index]
+    }
+    return null
+  }
+
+  // Delete a user
+  deleteUser(id) {
+    const index = this.users.findIndex(user => user.id === id)
+    if (index !== -1) {
+      return this.users.splice(index, 1)[0]
+    }
+    return null
+  }
+}
+
+// Example usage
+const userService = new UserService()
+userService.createUser({ name: 'John Doe', email: 'john@example.com' })
+console.log('All users:', userService.getAllUsers())`,
+      python: `# User CRUD Operations
+class UserService:
+    def __init__(self):
+        self.users = []
+    
+    # Create a new user
+    def create_user(self, user):
+        user['id'] = len(self.users) + 1
+        self.users.append(user)
+        return self.users[-1]
+    
+    # Read all users
+    def get_all_users(self):
+        return self.users
+    
+    # Read a user by ID
+    def get_user_by_id(self, user_id):
+        for user in self.users:
+            if user.get('id') == user_id:
+                return user
+        return None
+    
+    # Update a user
+    def update_user(self, user_id, updated_data):
+        for user in self.users:
+            if user.get('id') == user_id:
+                user.update(updated_data)
+                return user
+        return None
+    
+    # Delete a user
+    def delete_user(self, user_id):
+        for i, user in enumerate(self.users):
+            if user.get('id') == user_id:
+                return self.users.pop(i)
+        return None
+
+# Example usage
+user_service = UserService()
+user_service.create_user({'name': 'John Doe', 'email': 'john@example.com'})
+print('All users:', user_service.get_all_users())`,
+      java: `// User CRUD Operations
+import java.util.*;
+
+class User {
+    private int id;
+    private String name;
+    private String email;
+    
+    public User(int id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+    
+    // Getters and setters
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public void setName(String name) { this.name = name; }
+    public void setEmail(String email) { this.email = email; }
+}
+
+class UserService {
+    private List<User> users = new ArrayList<>();
+    private int nextId = 1;
+    
+    // Create a new user
+    public User createUser(String name, String email) {
+        User user = new User(nextId++, name, email);
+        users.add(user);
+        return user;
+    }
+    
+    // Read all users
+    public List<User> getAllUsers() {
+        return new ArrayList<>(users);
+    }
+    
+    // Read a user by ID
+    public User getUserById(int id) {
+        return users.stream()
+            .filter(u -> u.getId() == id)
+            .findFirst()
+            .orElse(null);
+    }
+    
+    // Update a user
+    public User updateUser(int id, String name, String email) {
+        User user = getUserById(id);
+        if (user != null) {
+            user.setName(name);
+            user.setEmail(email);
+        }
+        return user;
+    }
+    
+    // Delete a user
+    public User deleteUser(int id) {
+        User user = getUserById(id);
+        if (user != null) {
+            users.remove(user);
+        }
+        return user;
+    }
+}
+
+// Example usage
+class Main {
+    public static void main(String[] args) {
+        UserService userService = new UserService();
+        userService.createUser("John Doe", "john@example.com");
+        System.out.println("All users: " + userService.getAllUsers());
+    }
+}`,
+      cpp: `// User CRUD Operations
+#include <iostream>
+#include <vector>
+#include <string>
+
+struct User {
+    int id;
+    std::string name;
+    std::string email;
+    
+    User(int id, std::string name, std::string email) 
+        : id(id), name(name), email(email) {}
+};
+
+class UserService {
+private:
+    std::vector<User> users;
+    int nextId = 1;
+    
+public:
+    // Create a new user
+    User createUser(std::string name, std::string email) {
+        User user(nextId++, name, email);
+        users.push_back(user);
+        return user;
+    }
+    
+    // Read all users
+    std::vector<User> getAllUsers() {
+        return users;
+    }
+    
+    // Read a user by ID
+    User* getUserById(int id) {
+        for (auto& user : users) {
+            if (user.id == id) {
+                return &user;
+            }
+        }
+        return nullptr;
+    }
+    
+    // Update a user
+    bool updateUser(int id, std::string name, std::string email) {
+        User* user = getUserById(id);
+        if (user != nullptr) {
+            user->name = name;
+            user->email = email;
+            return true;
+        }
+        return false;
+    }
+    
+    // Delete a user
+    bool deleteUser(int id) {
+        for (auto it = users.begin(); it != users.end(); ++it) {
+            if (it->id == id) {
+                users.erase(it);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+// Example usage
+int main() {
+    UserService userService;
+    userService.createUser("John Doe", "john@example.com");
+    std::cout << "User created successfully" << std::endl;
+    return 0;
+}`,
+      c: `// User CRUD Operations
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char name[100];
+    char email[100];
+} User;
+
+typedef struct {
+    User* users;
+    int count;
+    int capacity;
+} UserService;
+
+UserService* createUserService() {
+    UserService* service = (UserService*)malloc(sizeof(UserService));
+    service->users = (User*)malloc(10 * sizeof(User));
+    service->count = 0;
+    service->capacity = 10;
+    return service;
+}
+
+// Create a new user
+User* createUser(UserService* service, const char* name, const char* email) {
+    if (service->count >= service->capacity) {
+        service->capacity *= 2;
+        service->users = (User*)realloc(service->users, service->capacity * sizeof(User));
+    }
+    User* user = &service->users[service->count++];
+    user->id = service->count;
+    strcpy(user->name, name);
+    strcpy(user->email, email);
+    return user;
+}
+
+// Example usage
+int main() {
+    UserService* userService = createUserService();
+    createUser(userService, "John Doe", "john@example.com");
+    printf("User created successfully\\n");
+    return 0;
+}`,
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .user-form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+        .user-list {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>User CRUD Operations</h1>
+    <div class="user-form">
+        <input type="text" id="name" placeholder="Name">
+        <input type="email" id="email" placeholder="Email">
+        <button onclick="createUser()">Create User</button>
+    </div>
+    <div class="user-list" id="userList"></div>
+    
+    <script>
+        let users = [];
+        let editingId = null;
+        
+        function createUser() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            if (name && email) {
+                users.push({ id: Date.now(), name, email });
+                renderUsers();
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+            }
+        }
+        
+        function renderUsers() {
+            const list = document.getElementById('userList');
+            list.innerHTML = users.map(user => \`
+                <div>
+                    <strong>\${user.name}</strong> - \${user.email}
+                    <button onclick="deleteUser(\${user.id})">Delete</button>
+                </div>
+            \`).join('');
+        }
+    </script>
+</body>
+</html>`,
+      react: `// User CRUD Operations
+import React, { useState } from 'react';
+
+function UserCRUD() {
+  const [users, setUsers] = useState([]);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [editingId, setEditingId] = useState(null);
+
+  // Create a new user
+  const createUser = () => {
+    if (name && email) {
+      setUsers([...users, { id: Date.now(), name, email }]);
+      setName('');
+      setEmail('');
+    }
+  };
+
+  // Read all users
+  const getAllUsers = () => users;
+
+  // Update a user
+  const updateUser = (id) => {
+    const user = users.find(u => u.id === id);
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+      setEditingId(id);
+    }
+  };
+
+  // Delete a user
+  const deleteUser = (id) => {
+    setUsers(users.filter(u => u.id !== id));
+  };
+
+  return (
+    <div className="user-crud">
+      <h1>User CRUD Operations</h1>
+      <div>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Name"
+        />
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+        <button onClick={createUser}>
+          {editingId ? 'Update' : 'Create'} User
+        </button>
+      </div>
+      <ul>
+        {users.map(user => (
+          <li key={user.id}>
+            {user.name} - {user.email}
+            <button onClick={() => updateUser(user.id)}>Edit</button>
+            <button onClick={() => deleteUser(user.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default UserCRUD;`,
+      vue: `<!-- User CRUD Operations -->
+<template>
+  <div class="user-crud">
+    <h1>User CRUD Operations</h1>
+    <div>
+      <input v-model="name" placeholder="Name" />
+      <input v-model="email" placeholder="Email" />
+      <button @click="createUser">Create User</button>
+    </div>
+    <ul>
+      <li v-for="user in users" :key="user.id">
+        {{ user.name }} - {{ user.email }}
+        <button @click="deleteUser(user.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'UserCRUD',
+  data() {
+    return {
+      users: [],
+      name: '',
+      email: ''
+    }
+  },
+  methods: {
+    createUser() {
+      if (this.name && this.email) {
+        this.users.push({
+          id: Date.now(),
+          name: this.name,
+          email: this.email
+        });
+        this.name = '';
+        this.email = '';
+      }
+    },
+    deleteUser(id) {
+      this.users = this.users.filter(u => u.id !== id);
+    }
+  }
+}
+</script>`,
+      angular: `// User CRUD Operations
+import { Component } from '@angular/core';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+@Component({
+  selector: 'app-user-crud',
+  template: \`
+    <div class="user-crud">
+      <h1>User CRUD Operations</h1>
+      <div>
+        <input [(ngModel)]="name" placeholder="Name" />
+        <input [(ngModel)]="email" placeholder="Email" />
+        <button (click)="createUser()">Create User</button>
+      </div>
+      <ul>
+        <li *ngFor="let user of users">
+          {{ user.name }} - {{ user.email }}
+          <button (click)="deleteUser(user.id)">Delete</button>
+        </li>
+      </ul>
+    </div>
+  \`
+})
+export class UserCRUDComponent {
+  users: User[] = [];
+  name: string = '';
+  email: string = '';
+
+  createUser() {
+    if (this.name && this.email) {
+      this.users.push({
+        id: Date.now(),
+        name: this.name,
+        email: this.email
+      });
+      this.name = '';
+      this.email = '';
+    }
+  }
+
+  deleteUser(id: number) {
+    this.users = this.users.filter(u => u.id !== id);
+  }
+}`,
+      node: `// User CRUD Operations
+class UserService {
+  constructor() {
+    this.users = []
+  }
+
+  // Create a new user
+  createUser(user) {
+    this.users.push({ id: Date.now(), ...user })
+    return this.users[this.users.length - 1]
+  }
+
+  // Read all users
+  getAllUsers() {
+    return this.users
+  }
+
+  // Read a user by ID
+  getUserById(id) {
+    return this.users.find(user => user.id === id)
+  }
+
+  // Update a user
+  updateUser(id, updatedData) {
+    const index = this.users.findIndex(user => user.id === id)
+    if (index !== -1) {
+      this.users[index] = { ...this.users[index], ...updatedData }
+      return this.users[index]
+    }
+    return null
+  }
+
+  // Delete a user
+  deleteUser(id) {
+    const index = this.users.findIndex(user => user.id === id)
+    if (index !== -1) {
+      return this.users.splice(index, 1)[0]
+    }
+    return null
+  }
+}
+
+// Example usage
+const userService = new UserService()
+userService.createUser({ name: 'John Doe', email: 'john@example.com' })
+console.log('All users:', userService.getAllUsers())`,
+      css: `/* User CRUD Styles */
+.user-crud {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.user-form {
+  margin-bottom: 20px;
+}
+
+.user-form input {
+  padding: 8px;
+  margin: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.user-form button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user-list {
+  margin-top: 20px;
+}`,
+      json: `{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com"
+    }
+  ],
+  "operations": {
+    "create": "Add a new user",
+    "read": "Get all users or a specific user",
+    "update": "Modify an existing user",
+    "delete": "Remove a user"
+  }
+}`,
+    }
+    return templates[lang] || templates.javascript
+  }
+
+  const [files, setFiles] = React.useState(() => {
+    const indexContent = languageTemplates[initialLanguage] || languageTemplates.javascript
+    const userContent = getUserCrudTemplate(initialLanguage)
+    return {
+      [indexFile]: {
+        content: indexContent,
+        language: initialLanguage,
       isDirty: false,
     },
+      [userFile]: {
+        content: userContent,
+        language: initialLanguage,
+        isDirty: false,
+      },
+    }
   })
-  const [activeFile, setActiveFile] = React.useState('index.js')
+  const [activeFile, setActiveFile] = React.useState(indexFile)
   const [output, setOutput] = React.useState("")
   const [terminalOutput, setTerminalOutput] = React.useState([])
   const [copied, setCopied] = React.useState(false)
@@ -257,35 +909,21 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
   const [showTerminal, setShowTerminal] = React.useState(false)
   const [showPreview, setShowPreview] = React.useState(false)
   const [previewMode, setPreviewMode] = React.useState('terminal') // 'preview' or 'terminal'
-  const [fileTree, setFileTree] = React.useState({
+  const [fileTree, setFileTree] = React.useState(() => ({
     name: 'root',
     type: 'folder',
     children: {
-      'index.js': { name: 'index.js', type: 'file' },
-      'src': {
-        name: 'src',
-        type: 'folder',
-        children: {
-          'App.jsx': { name: 'App.jsx', type: 'file' },
-          'components': {
-            name: 'components',
-            type: 'folder',
-            children: {
-              'Button.jsx': { name: 'Button.jsx', type: 'file' },
-            }
-          }
-        }
-      },
-      'package.json': { name: 'package.json', type: 'file' },
-      'styles.css': { name: 'styles.css', type: 'file' },
+      [indexFile]: { name: indexFile, type: 'file' },
+      [userFile]: { name: userFile, type: 'file' },
     }
-  })
-  const [expandedFolders, setExpandedFolders] = React.useState(new Set(['src']))
+  }))
+  const [expandedFolders, setExpandedFolders] = React.useState(new Set(['root']))
   const [newFileName, setNewFileName] = React.useState("")
   const [showNewFileDialog, setShowNewFileDialog] = React.useState(false)
   const [newFileType, setNewFileType] = React.useState('file')
   const [newFileParent, setNewFileParent] = React.useState(null)
   const iframeRef = React.useRef(null)
+  const editorRef = React.useRef(null)
 
   const currentFile = files[activeFile]
   const currentLanguage = currentFile?.language || initialLanguage
@@ -321,24 +959,233 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [showTerminal])
 
+  // Helper function to generate React preview HTML
+  const generateReactPreview = (code) => {
+    // Clean up the code and ensure it's renderable
+    let reactCode = code
+    // Remove import statements (we'll use global React)
+    reactCode = reactCode.replace(/import\s+.*?from\s+['"]react['"];?\s*/g, '')
+    reactCode = reactCode.replace(/import\s+.*?from\s+['"]react-dom['"];?\s*/g, '')
+    reactCode = reactCode.replace(/import\s+.*?;?\s*/g, '')
+    
+    // Remove export default and make it assignable
+    reactCode = reactCode.replace(/export\s+default\s+function\s+(\w+)/g, 'function $1')
+    reactCode = reactCode.replace(/export\s+default\s+/g, '')
+    
+    // If it's a function component, wrap it properly
+    if (reactCode.includes('function App') || reactCode.includes('function UserCRUD')) {
+      reactCode = reactCode + '\nconst AppComponent = App || UserCRUD;'
+    } else if (reactCode.includes('const App') || reactCode.includes('const UserCRUD')) {
+      reactCode = reactCode + '\nconst AppComponent = App || UserCRUD;'
+    } else {
+      // Try to find the component name
+      const componentMatch = reactCode.match(/(?:function|const)\s+(\w+)\s*[=\(]/)
+      if (componentMatch) {
+        reactCode = reactCode + `\nconst AppComponent = ${componentMatch[1]};`
+      } else {
+        reactCode = reactCode + '\nconst AppComponent = App;'
+      }
+    }
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Preview</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
+        #root {
+            width: 100%;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback, useMemo } = React;
+        ${reactCode}
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        if (typeof AppComponent !== 'undefined') {
+            root.render(React.createElement(AppComponent));
+        } else {
+            root.render(React.createElement('div', null, 'Component not found. Make sure your component is exported correctly.'));
+        }
+    </script>
+</body>
+</html>`
+  }
+
+  // Helper function to generate Vue preview HTML
+  const generateVuePreview = (code) => {
+    // Extract template, script, and style from Vue SFC format
+    let template = ''
+    let scriptContent = code
+    let styleContent = ''
+    
+    // Check if it's a Single File Component format
+    if (code.includes('<template>')) {
+      const templateMatch = code.match(/<template>([\s\S]*?)<\/template>/)
+      if (templateMatch) {
+        template = templateMatch[1].trim()
+      }
+    }
+    
+    if (code.includes('<script>')) {
+      const scriptMatch = code.match(/<script>([\s\S]*?)<\/script>/)
+      if (scriptMatch) {
+        scriptContent = scriptMatch[1].trim()
+      }
+    }
+    
+    if (code.includes('<style')) {
+      const styleMatch = code.match(/<style[^>]*>([\s\S]*?)<\/style>/)
+      if (styleMatch) {
+        styleContent = styleMatch[1].trim()
+      }
+    }
+    
+    // If no template found, try to extract from the script
+    if (!template && scriptContent.includes('template:')) {
+      const templateMatch = scriptContent.match(/template:\s*['"`]([\s\S]*?)['"`]/)
+      if (templateMatch) {
+        template = templateMatch[1].trim()
+      }
+    }
+    
+    // Clean up the script content
+    scriptContent = scriptContent.replace(/export\s+default\s+/, '')
+    scriptContent = scriptContent.replace(/<script>[\s\S]*?<\/script>/g, '')
+    scriptContent = scriptContent.replace(/<template>[\s\S]*?<\/template>/g, '')
+    scriptContent = scriptContent.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
+    
+    // If no template, use a default one
+    if (!template) {
+      template = '<div class="user-crud"><h1>User CRUD Operations</h1><div><input v-model="name" placeholder="Name" /><input v-model="email" placeholder="Email" /><button @click="createUser">Create User</button></div><ul><li v-for="user in users" :key="user.id">{{ user.name }} - {{ user.email }}<button @click="deleteUser(user.id)">Delete</button></li></ul></div>'
+    }
+    
+    // Escape template for use in template literal
+    const escapedTemplate = template.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\${/g, '\\${')
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Preview</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
+        ${styleContent}
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        const { createApp } = Vue;
+        const componentConfig = {
+            ${scriptContent}
+        };
+        componentConfig.template = \`${escapedTemplate}\`;
+        const app = createApp(componentConfig);
+        app.mount('#app');
+    </script>
+</body>
+</html>`
+  }
+
+  // Helper function to generate Angular preview HTML
+  const generateAngularPreview = (code) => {
+    // Extract Angular component code
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angular Preview</title>
+    <script src="https://unpkg.com/@angular/core@17/bundles/core.umd.js"></script>
+    <script src="https://unpkg.com/@angular/common@17/bundles/common.umd.js"></script>
+    <script src="https://unpkg.com/@angular/platform-browser@17/bundles/platform-browser.umd.js"></script>
+    <script src="https://unpkg.com/@angular/platform-browser-dynamic@17/bundles/platform-browser-dynamic.umd.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <app-root></app-root>
+    <script>
+        // Note: Angular requires a more complex setup. This is a simplified preview.
+        // For full Angular functionality, use Angular CLI.
+        document.body.innerHTML = '<div style="padding: 20px;"><h2>Angular Component Preview</h2><p>Angular requires a build process. The component code is displayed below:</p><pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow: auto;">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre></div>';
+    </script>
+</body>
+</html>`
+  }
+
   // Update HTML preview automatically
   React.useEffect(() => {
     if (currentLanguage === "html" && currentFile?.content) {
       const timer = setTimeout(() => {
         setHtmlPreview(currentFile.content)
-        if (!showTerminal) {
-          setShowPreview(true)
+        setShowPreview(true)
+        setShowTerminal(true)
+        // Only switch to preview mode if terminal is not already showing output
+        if (!output) {
           setPreviewMode('preview')
         }
       }, 300)
       return () => clearTimeout(timer)
-    } else if (currentLanguage === "react" || currentLanguage === "vue" || currentLanguage === "angular") {
-      if (!showTerminal) {
-        setShowPreview(true)
+    } else if (currentLanguage === "react" && currentFile?.content) {
+      const timer = setTimeout(() => {
+        const previewHtml = generateReactPreview(currentFile.content)
+        setHtmlPreview(previewHtml)
+      setShowPreview(true)
+      setShowTerminal(true)
+      if (!output) {
         setPreviewMode('preview')
       }
+      }, 300)
+      return () => clearTimeout(timer)
+    } else if (currentLanguage === "vue" && currentFile?.content) {
+      const timer = setTimeout(() => {
+        const previewHtml = generateVuePreview(currentFile.content)
+        setHtmlPreview(previewHtml)
+        setShowPreview(true)
+        setShowTerminal(true)
+        if (!output) {
+          setPreviewMode('preview')
+        }
+      }, 300)
+      return () => clearTimeout(timer)
+    } else if (currentLanguage === "angular" && currentFile?.content) {
+      const timer = setTimeout(() => {
+        const previewHtml = generateAngularPreview(currentFile.content)
+        setHtmlPreview(previewHtml)
+        setShowPreview(true)
+        setShowTerminal(true)
+        if (!output) {
+          setPreviewMode('preview')
+        }
+      }, 300)
+      return () => clearTimeout(timer)
     }
-  }, [currentFile?.content, currentLanguage, showTerminal])
+  }, [currentFile?.content, currentLanguage, output])
 
   const handleCodeChange = (newCode) => {
     setFiles(prev => ({
@@ -371,13 +1218,18 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
   }
 
   const deleteFile = (fileName) => {
+    // Prevent deletion of essential files
+    if (fileName === indexFile || fileName === userFile) {
+      return
+    }
+    
     const newFiles = { ...files }
     delete newFiles[fileName]
     setFiles(newFiles)
     
     if (activeFile === fileName) {
       const remainingFiles = Object.keys(newFiles)
-      setActiveFile(remainingFiles[0] || '')
+      setActiveFile(remainingFiles[0] || indexFile)
     }
   }
 
@@ -458,6 +1310,11 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
   const runCode = () => {
     setIsRunning(true)
     setOutput("")
+    // Automatically show terminal when code runs
+    setShowTerminal(true)
+    if (!showPreview && !showTerminal) {
+      setPreviewMode('terminal')
+    }
     
     setTimeout(() => {
       const code = currentFile?.content || ""
@@ -503,12 +1360,16 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
                 setOutput("✓ Code executed successfully (no output)")
               }
               setIsRunning(false)
+              setShowTerminal(true)
+              setPreviewMode('terminal')
             }).catch((error) => {
               console.log = originalLog
               console.error = originalError
               console.warn = originalWarn
               setOutput(`❌ Error: ${error.message}\n\nStack trace:\n${error.stack}`)
               setIsRunning(false)
+              setShowTerminal(true)
+              setPreviewMode('terminal')
             })
             return
           } else {
@@ -527,23 +1388,30 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
           } else {
             setOutput("✓ Code executed successfully (no output)")
           }
+          setShowTerminal(true)
+          setPreviewMode('terminal')
         } catch (error) {
           if (error instanceof Error) {
             setOutput(`❌ Error: ${error.message}\n\nStack trace:\n${error.stack}`)
           } else {
             setOutput(`❌ An unknown error occurred: ${String(error)}`)
           }
+          setShowTerminal(true)
+          setPreviewMode('terminal')
         }
         setIsRunning(false)
       } else if (language === "html") {
         setHtmlPreview(code)
-            setOutput(`✓ HTML validated successfully\n✓ Rendering preview...\n\nDocument loaded in 0.03s`)
+        setOutput(`✓ HTML validated successfully\n✓ Rendering preview...\n\nDocument loaded in 0.03s`)
         setShowPreview(true)
+        setShowTerminal(true)
         setPreviewMode('preview')
         setIsRunning(false)
       } else {
         setOutput(`✓ ${language} code executed successfully`)
-      setIsRunning(false)
+        setShowTerminal(true)
+        setPreviewMode('terminal')
+        setIsRunning(false)
       }
     }, 800)
   }
@@ -648,6 +1516,8 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
           <div className="h-full flex flex-col">
             <div className="px-3 py-2 border-b border-[#333] flex items-center justify-between">
               <span className="text-xs font-semibold text-gray-400 uppercase">Explorer</span>
+              {/* Create File Dialog - Hidden as we only show index and user files */}
+              {false && (
               <Dialog open={showNewFileDialog} onOpenChange={setShowNewFileDialog}>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-5 w-5 text-gray-400 hover:text-white">
@@ -697,9 +1567,13 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+              )}
             </div>
             <div className="flex-1 overflow-auto py-2">
-              {renderFileTree(fileTree)}
+              {/* Render files directly without root folder wrapper */}
+              {Object.values(fileTree.children || {}).map(child => 
+                renderFileTree(child, '')
+              )}
             </div>
           </div>
         </Panel>
@@ -731,6 +1605,8 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
                     {file.isDirty && (
                       <span className="ml-1 h-2 w-2 rounded-full bg-blue-500" />
                     )}
+                    {/* Hide delete button for essential files */}
+                    {fileName !== indexFile && fileName !== userFile && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
@@ -740,6 +1616,7 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
                     >
                       <X className="h-3 w-3" />
                     </button>
+                    )}
                   </div>
                 )
               })}
@@ -747,17 +1624,63 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
 
             {/* Editor */}
         <div className="flex-1 relative overflow-hidden">
-              <div className="absolute left-0 top-0 bottom-0 w-10 bg-[#1e1e1e] border-r border-[#333] flex flex-col items-end pt-4 pr-2 text-xs text-[#858585] font-mono select-none overflow-auto">
-                {(currentFile?.content || "").split('\n').map((_, i) => (
-                  <div key={i} className="leading-6 min-h-[1.5rem]">{i + 1}</div>
-            ))}
-          </div>
-          <textarea
-                value={currentFile?.content || ""}
-                onChange={(e) => handleCodeChange(e.target.value)}
-                className="absolute inset-0 left-10 w-[calc(100%-2.5rem)] h-full p-4 font-mono text-sm bg-transparent text-[#d4d4d4] resize-none focus:outline-none leading-6"
-            spellCheck={false}
-            placeholder="Start typing your code..."
+          <Editor
+            key={activeFile}
+            height="100%"
+            language={getMonacoLanguage(currentLanguage)}
+            value={currentFile?.content || ""}
+            onChange={(value) => handleCodeChange(value || "")}
+            onMount={(editor, monaco) => {
+              editorRef.current = editor
+              // Configure editor shortcuts
+              editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+                // Save functionality can be added here
+              })
+              // Format document shortcut
+              editor.addCommand(monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF, () => {
+                editor.getAction('editor.action.formatDocument')?.run()
+              })
+            }}
+            theme="vs-dark"
+            options={{
+              minimap: { enabled: true },
+              fontSize: 14,
+              lineNumbers: 'on',
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              tabSize: 2,
+              wordWrap: 'on',
+              formatOnPaste: true,
+              formatOnType: true,
+              suggestOnTriggerCharacters: true,
+              quickSuggestions: true,
+              acceptSuggestionOnCommitCharacter: true,
+              acceptSuggestionOnEnter: 'on',
+              snippetSuggestions: 'top',
+              tabCompletion: 'on',
+              wordBasedSuggestions: 'allDocuments',
+              fontFamily: "'Fira Code', 'Courier New', monospace",
+              fontLigatures: true,
+              cursorBlinking: 'smooth',
+              cursorSmoothCaretAnimation: 'on',
+              smoothScrolling: true,
+              renderWhitespace: 'selection',
+              renderLineHighlight: 'all',
+              bracketPairColorization: { enabled: true },
+              guides: {
+                bracketPairs: true,
+                indentation: true,
+              },
+              padding: { top: 10, bottom: 10 },
+            }}
+            loading={
+              <div className="flex items-center justify-center h-full bg-[#1e1e1e] text-[#cccccc]">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                  <p className="text-sm">Loading Monaco Editor...</p>
+                </div>
+              </div>
+            }
           />
         </div>
 
@@ -790,7 +1713,7 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
               <Tabs value={previewMode} onValueChange={setPreviewMode} className="h-full flex flex-col bg-[#1e1e1e]">
                 <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
                   <TabsList className="bg-transparent h-auto p-0">
-                    {currentLanguage === 'html' || currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular' ? (
+                    {(currentLanguage === 'html' || currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular') && showPreview ? (
                       <TabsTrigger
                         value="preview"
                         className="data-[state=active]:bg-[#1e1e1e] data-[state=active]:text-white rounded-none border-b-2 data-[state=active]:border-blue-500"
@@ -829,27 +1752,23 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
                 </div>
 
                 <TabsContent value="preview" className="flex-1 m-0 p-0">
-                  {currentLanguage === 'html' && htmlPreview ? (
+                  {(currentLanguage === 'html' || currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular') && htmlPreview ? (
                     <div className="h-full bg-white">
             <iframe
               ref={iframeRef}
               srcDoc={htmlPreview}
               className="w-full h-full border-0"
-              title="HTML Preview"
-              sandbox="allow-scripts allow-same-origin"
+              title={`${currentLanguage} Preview`}
+              sandbox="allow-scripts allow-same-origin allow-forms"
             />
           </div>
-                  ) : currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular' ? (
+                  ) : (
                     <div className="h-full p-4 flex items-center justify-center text-gray-400">
                       <div className="text-center">
                         <Code2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>Component Preview</p>
-                        <p className="text-xs mt-2">For full preview, use a development server</p>
+                        <p>No preview available</p>
+                        <p className="text-xs mt-2">Preview will appear here when you edit code</p>
                       </div>
-          </div>
-        ) : (
-                    <div className="h-full p-4 flex items-center justify-center text-gray-400">
-                      <p>No preview available for this file type</p>
                     </div>
                   )}
                 </TabsContent>
