@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Pagination } from "@/components/ui/pagination"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -29,6 +30,8 @@ export default function DSAPage() {
   const [loading, setLoading] = useState(true)
   const [difficultyFilter, setDifficultyFilter] = useState("all")
   const [selectedTags, setSelectedTags] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 20
 
   useEffect(() => {
     loadProblems()
@@ -123,6 +126,17 @@ export default function DSAPage() {
 
     return filtered
   }, [searchQuery, problems, difficultyFilter, selectedTags])
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProblems.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedProblems = filteredProblems.slice(startIndex, endIndex)
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, difficultyFilter, selectedTags])
 
   const toggleTag = (tag) => {
     setSelectedTags((prev) => {
@@ -302,10 +316,15 @@ export default function DSAPage() {
                 {searchQuery || difficultyFilter !== "all" || selectedTags.length > 0 ? (
                   <>
                     Found <span className="font-semibold text-foreground">{filteredProblems.length}</span> problem{filteredProblems.length !== 1 ? 's' : ''}
+                    {filteredProblems.length > 0 && (
+                      <span className="ml-2">
+                        (Showing {startIndex + 1}-{Math.min(endIndex, filteredProblems.length)} of {filteredProblems.length})
+                      </span>
+                    )}
                   </>
                 ) : (
                   <>
-                    Showing <span className="font-semibold text-foreground">{problems.length}</span> problem{problems.length !== 1 ? 's' : ''}
+                    Showing <span className="font-semibold text-foreground">{startIndex + 1}-{Math.min(endIndex, filteredProblems.length)}</span> of <span className="font-semibold text-foreground">{filteredProblems.length}</span> problem{filteredProblems.length !== 1 ? 's' : ''}
                   </>
                 )}
               </div>
@@ -313,53 +332,66 @@ export default function DSAPage() {
 
             {/* Problems Grid */}
             {filteredProblems.length > 0 ? (
-              <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {filteredProblems.map((problem) => (
-                  <Card
-                    key={problem.id}
-                    className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
-                  >
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <Badge 
-                          variant={getDifficultyBadgeVariant(problem.difficulty)}
-                          className="flex items-center gap-1"
-                        >
-                          {getDifficultyIcon(problem.difficulty)}
-                          {problem.difficulty || 'Unknown'}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-lg md:text-xl group-hover:text-primary transition-colors">
-                        {problem.title || 'Untitled Problem'}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CardDescription className="mb-4 line-clamp-3">
-                        {problem.description || 'No description available'}
-                      </CardDescription>
-                      {problem.tags && problem.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-4">
-                          {problem.tags.slice(0, 3).map((tag, idx) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                          {problem.tags.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{problem.tags.length - 3}
-                            </Badge>
-                          )}
+              <>
+                <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-6">
+                  {paginatedProblems.map((problem) => (
+                    <Card
+                      key={problem.id}
+                      className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
+                    >
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <Badge 
+                            variant={getDifficultyBadgeVariant(problem.difficulty)}
+                            className="flex items-center gap-1"
+                          >
+                            {getDifficultyIcon(problem.difficulty)}
+                            {problem.difficulty || 'Unknown'}
+                          </Badge>
                         </div>
-                      )}
-                      <Button asChild className="w-full">
-                        <Link to={`/dsa/${problem.slug || generateSlug(problem.title)}`}>
-                          Solve Problem
-                        </Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                        <CardTitle className="text-lg md:text-xl group-hover:text-primary transition-colors">
+                          {problem.title || 'Untitled Problem'}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <CardDescription className="mb-4 line-clamp-3">
+                          {problem.description || 'No description available'}
+                        </CardDescription>
+                        {problem.tags && problem.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-4">
+                            {problem.tags.slice(0, 3).map((tag, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                            {problem.tags.length > 3 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{problem.tags.length - 3}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+                        <Button asChild className="w-full">
+                          <Link to={`/dsa/${problem.slug || generateSlug(problem.title)}`}>
+                            Solve Problem
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center mt-8">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-12 md:py-16">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
