@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeOff, Code2, Loader2, Github, Mail, Check } from 'lucide-react'
+import { useAuth } from "@/contexts/AuthContext"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,9 +10,11 @@ import { Label } from "@/components/ui/label"
 
 export default function SignupPage() {
   const navigate = useNavigate()
+  const { signup, loginWithGoogle } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,19 +36,49 @@ export default function SignupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError("")
     
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!")
+      setError("Passwords do not match!")
+      toast.error("Passwords do not match!")
+      return
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long")
+      toast.error("Password must be at least 6 characters long")
       return
     }
 
     setIsLoading(true)
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await signup(formData.email, formData.password, formData.name)
+      toast.success("Account created successfully!")
+      navigate("/")
+    } catch (error) {
+      console.error("Signup error:", error)
+      setError(error.message || "Failed to create account. Please try again.")
+      toast.error(error.message || "Failed to create account")
+    } finally {
       setIsLoading(false)
-      navigate("/login")
-    }, 1500)
+    }
+  }
+
+  const handleGoogleSignup = async () => {
+    setError("")
+    setIsLoading(true)
+    try {
+      await loginWithGoogle()
+      toast.success("Successfully signed up with Google!")
+      navigate("/")
+    } catch (error) {
+      console.error("Google signup error:", error)
+      setError(error.message || "Failed to sign up with Google")
+      toast.error(error.message || "Failed to sign up with Google")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -173,6 +207,13 @@ export default function SignupPage() {
               )}
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-md">
+                {error}
+              </div>
+            )}
+
             {/* Submit Button */}
             <Button
               type="submit"
@@ -215,7 +256,8 @@ export default function SignupPage() {
               type="button"
               variant="outline"
               className="h-11"
-              onClick={() => alert("Google signup - Coming soon!")}
+              onClick={handleGoogleSignup}
+              disabled={isLoading}
             >
               <Mail className="mr-2 h-4 w-4" />
               Google

@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { articles } from "@/lib/articles"
+import { getAllArticles } from "@/lib/articlesService"
 import { ArticleCard } from "@/components/article-card"
-import { BookOpen, Search, X } from 'lucide-react'
+import { BookOpen, Search, X, Loader2 } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,6 +16,26 @@ import {
 
 export default function ArticlesPage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [articles, setArticles] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadArticles()
+  }, [])
+
+  const loadArticles = async () => {
+    try {
+      setLoading(true)
+      const data = await getAllArticles()
+      setArticles(data)
+    } catch (error) {
+      console.error("Error loading articles:", error)
+      // Fallback to empty array if Firestore fails
+      setArticles([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredArticles = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -25,15 +45,15 @@ export default function ArticlesPage() {
     const query = searchQuery.toLowerCase().trim()
     return articles.filter((article) => {
       return (
-        article.title.toLowerCase().includes(query) ||
-        article.description.toLowerCase().includes(query) ||
-        article.excerpt.toLowerCase().includes(query) ||
-        article.category.toLowerCase().includes(query) ||
+        article.title?.toLowerCase().includes(query) ||
+        article.description?.toLowerCase().includes(query) ||
+        article.excerpt?.toLowerCase().includes(query) ||
+        article.category?.toLowerCase().includes(query) ||
         article.tags?.some(tag => tag.toLowerCase().includes(query)) ||
-        article.author.toLowerCase().includes(query)
+        article.author?.toLowerCase().includes(query)
       )
     })
-  }, [searchQuery])
+  }, [searchQuery, articles])
 
   const clearSearch = () => {
     setSearchQuery("")
@@ -101,23 +121,30 @@ export default function ArticlesPage() {
           </div>
         </div>
 
-        {/* Results Count */}
-        <div className="flex items-center justify-between mb-4 md:mb-6">
-          <div className="text-xs md:text-sm text-muted-foreground">
-            {searchQuery ? (
-              <>
-                Found <span className="font-semibold text-foreground">{filteredArticles.length}</span> article{filteredArticles.length !== 1 ? 's' : ''} for &quot;<span className="font-semibold text-foreground">{searchQuery}</span>&quot;
-              </>
-            ) : (
-              <>
-                Showing <span className="font-semibold text-foreground">{articles.length}</span> article{articles.length !== 1 ? 's' : ''}
-              </>
-            )}
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Results Count */}
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+              <div className="text-xs md:text-sm text-muted-foreground">
+                {searchQuery ? (
+                  <>
+                    Found <span className="font-semibold text-foreground">{filteredArticles.length}</span> article{filteredArticles.length !== 1 ? 's' : ''} for &quot;<span className="font-semibold text-foreground">{searchQuery}</span>&quot;
+                  </>
+                ) : (
+                  <>
+                    Showing <span className="font-semibold text-foreground">{articles.length}</span> article{articles.length !== 1 ? 's' : ''}
+                  </>
+                )}
+              </div>
+            </div>
 
-        {/* Articles Grid */}
-        {filteredArticles.length > 0 ? (
+            {/* Articles Grid */}
+            {filteredArticles.length > 0 ? (
           <div className="grid gap-3 md:gap-4 lg:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredArticles.map((article) => (
             <ArticleCard key={article.slug} article={article} />
@@ -139,6 +166,8 @@ export default function ArticlesPage() {
               </button>
             </p>
           </div>
+        )}
+          </>
         )}
       </div>
     </div>

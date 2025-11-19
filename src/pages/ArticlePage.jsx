@@ -1,7 +1,8 @@
 import { Link, useParams, Navigate } from "react-router-dom"
-import { ChevronLeft, Calendar, Clock, Share2 } from 'lucide-react'
+import { useState, useEffect } from "react"
+import { ChevronLeft, Calendar, Clock, Share2, Loader2 } from 'lucide-react'
 
-import { articles } from "@/lib/articles"
+import { getArticleBySlug, getAllArticles } from "@/lib/articlesService"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,7 +16,42 @@ import {
 
 export default function ArticlePage() {
   const { slug } = useParams()
-  const article = articles.find((a) => a.slug === slug)
+  const [article, setArticle] = useState(null)
+  const [relatedArticles, setRelatedArticles] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadArticle()
+  }, [slug])
+
+  const loadArticle = async () => {
+    try {
+      setLoading(true)
+      const articleData = await getArticleBySlug(slug)
+      if (articleData) {
+        setArticle(articleData)
+        // Load related articles
+        const allArticles = await getAllArticles()
+        setRelatedArticles(
+          allArticles
+            .filter(a => a.slug !== slug && a.category === articleData.category)
+            .slice(0, 2)
+        )
+      }
+    } catch (error) {
+      console.error("Error loading article:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
 
   if (!article) {
     return <Navigate to="/articles" replace />
@@ -132,13 +168,11 @@ export default function ArticlePage() {
           </div>
         )}
 
+        {relatedArticles.length > 0 && (
         <div className="max-w-4xl mx-auto mt-12 md:mt-16 lg:mt-20 pt-8 md:pt-12 lg:pt-16 border-t border-border/40">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4 md:mb-6 lg:mb-8">Continue Learning</h2>
           <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2">
-            {articles
-              .filter(a => a.slug !== slug && a.category === article.category)
-              .slice(0, 2)
-              .map((relatedArticle) => (
+            {relatedArticles.map((relatedArticle) => (
                 <Link
                   key={relatedArticle.slug}
                   to={`/articles/${relatedArticle.slug}`}
@@ -157,6 +191,7 @@ export default function ArticlePage() {
               ))}
           </div>
         </div>
+        )}
       </div>
     </div>
   )

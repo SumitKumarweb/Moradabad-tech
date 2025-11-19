@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import { Toaster } from 'sonner'
 import Home from '@/pages/Home'
 import ArticlesPage from '@/pages/ArticlesPage'
 import ArticlePage from '@/pages/ArticlePage'
@@ -11,6 +13,7 @@ import LoginPage from '@/pages/LoginPage'
 import SignupPage from '@/pages/SignupPage'
 import QuizzesPage from '@/pages/QuizzesPage'
 import QuizPage from '@/pages/QuizPage'
+import AdminPanel from '@/pages/AdminPanel'
 
 function App() {
   return (
@@ -34,10 +37,19 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/quizzes" element={<QuizzesPage />} />
               <Route path="/quiz/:quizId" element={<QuizPage />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </main>
           <Footer />
         </div>
+        <Toaster position="top-right" />
       </ThemeProvider>
     </BrowserRouter>
   )

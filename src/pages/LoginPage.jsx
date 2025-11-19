@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeOff, Code2, Loader2, Github, Mail } from 'lucide-react'
+import { useAuth } from "@/contexts/AuthContext"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,22 +10,47 @@ import { Label } from "@/components/ui/label"
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const { login, loginWithGoogle } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError("")
     setIsLoading(true)
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      await login(formData.email, formData.password)
+      toast.success("Successfully signed in!")
       navigate("/")
-    }, 1500)
+    } catch (error) {
+      console.error("Login error:", error)
+      setError(error.message || "Failed to sign in. Please check your credentials.")
+      toast.error(error.message || "Failed to sign in")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    setError("")
+    setIsLoading(true)
+    try {
+      await loginWithGoogle()
+      toast.success("Successfully signed in with Google!")
+      navigate("/")
+    } catch (error) {
+      console.error("Google login error:", error)
+      setError(error.message || "Failed to sign in with Google")
+      toast.error(error.message || "Failed to sign in with Google")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -93,6 +120,13 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-md">
+                {error}
+              </div>
+            )}
+
             {/* Submit Button */}
             <Button
               type="submit"
@@ -135,7 +169,8 @@ export default function LoginPage() {
               type="button"
               variant="outline"
               className="h-11"
-              onClick={() => alert("Google login - Coming soon!")}
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
             >
               <Mail className="mr-2 h-4 w-4" />
               Google
