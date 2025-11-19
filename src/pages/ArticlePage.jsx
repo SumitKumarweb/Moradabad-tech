@@ -146,8 +146,29 @@ export default function ArticlePage() {
       </div>
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16 max-w-7xl">
-        <article className="prose prose-sm md:prose-base lg:prose-lg xl:prose-xl prose-gray dark:prose-invert max-w-4xl mx-auto prose-headings:font-bold prose-headings:tracking-tight prose-headings:scroll-mt-20 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-pre:bg-muted/50 prose-pre:border prose-pre:border-border/50 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-img:rounded-lg prose-img:shadow-xl prose-img:mx-auto prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-p:leading-relaxed prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic">
-          <div
+        <article className="max-w-4xl mx-auto">
+          <div 
+            className="article-content prose prose-sm md:prose-base lg:prose-lg prose-gray dark:prose-invert max-w-none
+              prose-headings:font-bold prose-headings:tracking-tight prose-headings:scroll-mt-20 prose-headings:mb-4 prose-headings:mt-8
+              prose-h1:text-3xl prose-h1:md:text-4xl prose-h1:lg:text-5xl prose-h1:font-extrabold prose-h1:mb-6 prose-h1:mt-12 prose-h1:border-b prose-h1:border-border prose-h1:pb-4
+              prose-h2:text-2xl prose-h2:md:text-3xl prose-h2:lg:text-4xl prose-h2:font-bold prose-h2:mb-4 prose-h2:mt-10 prose-h2:text-foreground
+              prose-h3:text-xl prose-h3:md:text-2xl prose-h3:lg:text-3xl prose-h3:font-semibold prose-h3:mb-3 prose-h3:mt-8 prose-h3:text-foreground
+              prose-h4:text-lg prose-h4:md:text-xl prose-h4:font-semibold prose-h4:mb-2 prose-h4:mt-6
+              prose-p:leading-relaxed prose-p:mb-4 prose-p:text-foreground/90 prose-p:text-base md:prose-p:text-lg
+              prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:font-medium prose-a:transition-colors
+              prose-strong:font-bold prose-strong:text-foreground
+              prose-code:text-primary prose-code:bg-muted/80 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-code:before:content-[''] prose-code:after:content-['']
+              prose-pre:bg-muted/80 prose-pre:border prose-pre:border-border/50 prose-pre:rounded-xl prose-pre:overflow-x-auto prose-pre:p-4 prose-pre:my-6 prose-pre:shadow-lg prose-pre:text-foreground
+              prose-pre:code:bg-transparent prose-pre:code:p-0 prose-pre:code:text-sm md:prose-pre:code:text-base prose-pre:code:text-foreground prose-pre:code:font-mono
+              prose-img:rounded-xl prose-img:shadow-2xl prose-img:mx-auto prose-img:my-8 prose-img:border prose-img:border-border/50
+              prose-ul:list-disc prose-ul:pl-6 prose-ul:my-4 prose-ul:space-y-2
+              prose-ol:list-decimal prose-ol:pl-6 prose-ol:my-4 prose-ol:space-y-2
+              prose-li:my-2 prose-li:leading-relaxed prose-li:text-foreground/90
+              prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-6 prose-blockquote:pr-4 prose-blockquote:py-2 prose-blockquote:my-6 prose-blockquote:italic prose-blockquote:bg-muted/50 prose-blockquote:rounded-r-lg prose-blockquote:text-foreground/80
+              prose-hr:border-border prose-hr:my-8
+              prose-table:w-full prose-table:my-6 prose-table:border-collapse
+              prose-th:border prose-th:border-border prose-th:bg-muted prose-th:px-4 prose-th:py-2 prose-th:text-left prose-th:font-semibold
+              prose-td:border prose-td:border-border prose-td:px-4 prose-td:py-2"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
         </article>
