@@ -16,6 +16,8 @@ import QuizPage from '@/pages/QuizPage'
 import ProfilePage from '@/pages/ProfilePage'
 import DSAPage from '@/pages/DSAPage'
 import DSASolvePage from '@/pages/DSASolvePage'
+import TopDSAPage from '@/pages/TopDSAPage'
+import TopDSASolvePage from '@/pages/TopDSASolvePage'
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
               <Route path="/quiz/:quizId" element={<QuizPage />} />
               <Route path="/dsa" element={<DSAPage />} />
               <Route path="/dsa/:slug" element={<DSASolvePage />} />
+              <Route path="/top-dsa" element={<TopDSAPage />} />
+              <Route path="/top-dsa/:slug" element={<TopDSASolvePage />} />
               <Route
                 path="/profile"
                 element={

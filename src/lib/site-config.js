@@ -23,6 +23,10 @@ export const siteConfig = {
       href: "/dsa",
     },
     {
+      title: "TOP DSA",
+      href: "/top-dsa",
+    },
+    {
       title: "Code Editor",
       href: "/editor",
     },
