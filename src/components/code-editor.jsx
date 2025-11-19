@@ -899,6 +899,7 @@ console.log('All users:', userService.getAllUsers())`,
   const [activeFile, setActiveFile] = React.useState(indexFile)
   const [output, setOutput] = React.useState("")
   const [terminalOutput, setTerminalOutput] = React.useState([])
+  const [consoleMessages, setConsoleMessages] = React.useState([])
   const [copied, setCopied] = React.useState(false)
   const [isRunning, setIsRunning] = React.useState(false)
   const [htmlPreview, setHtmlPreview] = React.useState("")
@@ -924,9 +925,50 @@ console.log('All users:', userService.getAllUsers())`,
   const [newFileParent, setNewFileParent] = React.useState(null)
   const iframeRef = React.useRef(null)
   const editorRef = React.useRef(null)
+  const userSelectedTabRef = React.useRef(false) // Track if user manually selected a tab
 
   const currentFile = files[activeFile]
   const currentLanguage = currentFile?.language || initialLanguage
+
+  // Listen for console messages from iframe
+  React.useEffect(() => {
+    const handleMessage = (event) => {
+      // Security: Only accept messages from our own origin or iframe
+      if (event.data && event.data.type === 'console') {
+        const { level, message, args } = event.data
+        
+        // Filter out Babel transformer warning
+        const formattedMessage = args && args.length > 0 
+          ? args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ')
+          : String(message)
+        
+        if (formattedMessage.includes('You are using the in-browser Babel transformer') || 
+            formattedMessage.includes('babeljs.io/docs/setup/')) {
+          return; // Skip this message
+        }
+        
+        setConsoleMessages(prev => [...prev, { level, message, args, timestamp: Date.now() }])
+        // Also update output to show in terminal
+        
+        if (level === 'error') {
+          setOutput(prev => prev ? `${prev}\n❌ Error: ${formattedMessage}` : `❌ Error: ${formattedMessage}`)
+          setShowTerminal(true)
+          setPreviewMode('terminal') // Auto-switch to terminal for errors
+        } else if (level === 'warn') {
+          setOutput(prev => prev ? `${prev}\n⚠ Warning: ${formattedMessage}` : `⚠ Warning: ${formattedMessage}`)
+          setShowTerminal(true)
+          // Don't force switch for warnings, let user stay on current tab
+        } else {
+          setOutput(prev => prev ? `${prev}\n${formattedMessage}` : formattedMessage)
+          setShowTerminal(true)
+          // Don't force switch for logs, let user stay on current tab
+        }
+      }
+    }
+    
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [])
 
   // Keyboard shortcuts
   React.useEffect(() => {
@@ -958,6 +1000,89 @@ console.log('All users:', userService.getAllUsers())`,
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [showTerminal])
+
+  // Helper function to inject console interception code
+  const getConsoleInterceptorScript = () => {
+    return `
+    <script>
+      (function() {
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const originalInfo = console.info;
+        
+        function sendToParent(level, args) {
+          try {
+            const message = args.map(arg => {
+              if (typeof arg === 'object') {
+                try {
+                  return JSON.stringify(arg, null, 2);
+                } catch (e) {
+                  return String(arg);
+                }
+              }
+              return String(arg);
+            }).join(' ');
+            
+            // Filter out Babel transformer warning
+            if (message.includes('You are using the in-browser Babel transformer') || 
+                message.includes('babeljs.io/docs/setup/')) {
+              return;
+            }
+            
+            window.parent.postMessage({
+              type: 'console',
+              level: level,
+              message: message,
+              args: args.map(arg => {
+                if (typeof arg === 'object') {
+                  try {
+                    return JSON.stringify(arg);
+                  } catch (e) {
+                    return String(arg);
+                  }
+                }
+                return String(arg);
+              })
+            }, '*');
+          } catch (e) {
+            // Ignore postMessage errors
+          }
+        }
+        
+        console.log = function(...args) {
+          originalLog.apply(console, args);
+          sendToParent('log', args);
+        };
+        
+        console.error = function(...args) {
+          originalError.apply(console, args);
+          sendToParent('error', args);
+        };
+        
+        console.warn = function(...args) {
+          originalWarn.apply(console, args);
+          sendToParent('warn', args);
+        };
+        
+        console.info = function(...args) {
+          originalInfo.apply(console, args);
+          sendToParent('info', args);
+        };
+        
+        // Capture unhandled errors
+        window.addEventListener('error', function(event) {
+          sendToParent('error', [event.message + ' at ' + event.filename + ':' + event.lineno]);
+        });
+        
+        // Capture unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+          sendToParent('error', ['Unhandled Promise Rejection: ' + (event.reason ? String(event.reason) : 'Unknown error')]);
+        });
+      })();
+    </script>
+    `
+  }
 
   // Helper function to generate React preview HTML
   const generateReactPreview = (code) => {
@@ -993,6 +1118,7 @@ console.log('All users:', userService.getAllUsers())`,
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>React Preview</title>
+    ${getConsoleInterceptorScript()}
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1081,6 +1207,7 @@ console.log('All users:', userService.getAllUsers())`,
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vue Preview</title>
+    ${getConsoleInterceptorScript()}
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         body {
@@ -1115,6 +1242,7 @@ console.log('All users:', userService.getAllUsers())`,
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Angular Preview</title>
+    ${getConsoleInterceptorScript()}
     <script src="https://unpkg.com/@angular/core@17/bundles/core.umd.js"></script>
     <script src="https://unpkg.com/@angular/common@17/bundles/common.umd.js"></script>
     <script src="https://unpkg.com/@angular/platform-browser@17/bundles/platform-browser.umd.js"></script>
@@ -1138,15 +1266,34 @@ console.log('All users:', userService.getAllUsers())`,
 </html>`
   }
 
+  // Reset user selection flag when code content actually changes (not when output changes)
+  React.useEffect(() => {
+    userSelectedTabRef.current = false
+  }, [currentFile?.content])
+
   // Update HTML preview automatically
   React.useEffect(() => {
+    // Clear console messages when code changes
+    setConsoleMessages([])
+    
     if (currentLanguage === "html" && currentFile?.content) {
       const timer = setTimeout(() => {
-        setHtmlPreview(currentFile.content)
+        let htmlContent = currentFile.content
+        // Inject console interceptor if HTML has a head tag
+        if (htmlContent.includes('<head>')) {
+          htmlContent = htmlContent.replace('<head>', `<head>${getConsoleInterceptorScript()}`)
+        } else if (htmlContent.includes('<html')) {
+          // Insert head tag with console interceptor after <html>
+          htmlContent = htmlContent.replace(/<html[^>]*>/, `$&<head>${getConsoleInterceptorScript()}</head>`)
+        } else {
+          // Prepend console interceptor and wrap in basic HTML structure if needed
+          htmlContent = `${getConsoleInterceptorScript()}${htmlContent}`
+        }
+        setHtmlPreview(htmlContent)
         setShowPreview(true)
         setShowTerminal(true)
-        // Only switch to preview mode if terminal is not already showing output
-        if (!output) {
+        // Only switch to preview mode if user hasn't manually selected a tab
+        if (!userSelectedTabRef.current) {
           setPreviewMode('preview')
         }
       }, 300)
@@ -1157,7 +1304,7 @@ console.log('All users:', userService.getAllUsers())`,
         setHtmlPreview(previewHtml)
       setShowPreview(true)
       setShowTerminal(true)
-      if (!output) {
+      if (!userSelectedTabRef.current) {
         setPreviewMode('preview')
       }
       }, 300)
@@ -1168,7 +1315,7 @@ console.log('All users:', userService.getAllUsers())`,
         setHtmlPreview(previewHtml)
         setShowPreview(true)
         setShowTerminal(true)
-        if (!output) {
+        if (!userSelectedTabRef.current) {
           setPreviewMode('preview')
         }
       }, 300)
@@ -1179,13 +1326,13 @@ console.log('All users:', userService.getAllUsers())`,
         setHtmlPreview(previewHtml)
         setShowPreview(true)
         setShowTerminal(true)
-        if (!output) {
+        if (!userSelectedTabRef.current) {
           setPreviewMode('preview')
         }
       }, 300)
       return () => clearTimeout(timer)
     }
-  }, [currentFile?.content, currentLanguage, output])
+  }, [currentFile?.content, currentLanguage])
 
   const handleCodeChange = (newCode) => {
     setFiles(prev => ({
@@ -1310,6 +1457,7 @@ console.log('All users:', userService.getAllUsers())`,
   const runCode = () => {
     setIsRunning(true)
     setOutput("")
+    setConsoleMessages([]) // Clear console messages when running code
     // Automatically show terminal when code runs
     setShowTerminal(true)
     if (!showPreview && !showTerminal) {
@@ -1710,17 +1858,27 @@ console.log('All users:', userService.getAllUsers())`,
           <>
             <PanelResizeHandle className="w-1 bg-[#333] hover:bg-[#444] transition-colors" />
             <Panel defaultSize={35} minSize={20} maxSize={50}>
-              <Tabs value={previewMode} onValueChange={setPreviewMode} className="h-full flex flex-col bg-[#1e1e1e]">
+              <Tabs 
+                value={previewMode} 
+                onValueChange={(value) => {
+                  userSelectedTabRef.current = true // Mark that user manually selected a tab
+                  setPreviewMode(value)
+                  if (value === 'preview') {
+                    setShowPreview(true)
+                    setShowTerminal(true)
+                  } else if (value === 'terminal') {
+                    setShowTerminal(true)
+                    setShowPreview(true)
+                  }
+                }} 
+                className="h-full flex flex-col bg-[#1e1e1e]"
+              >
                 <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
                   <TabsList className="bg-transparent h-auto p-0">
-                    {(currentLanguage === 'html' || currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular') && showPreview ? (
+                    {(currentLanguage === 'html' || currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular') ? (
                       <TabsTrigger
                         value="preview"
                         className="data-[state=active]:bg-[#1e1e1e] data-[state=active]:text-white rounded-none border-b-2 data-[state=active]:border-blue-500"
-                        onClick={() => {
-                          setShowPreview(true)
-                          setPreviewMode('preview')
-                        }}
                       >
                         <Monitor className="h-3.5 w-3.5 mr-1" />
                         Preview
@@ -1729,10 +1887,6 @@ console.log('All users:', userService.getAllUsers())`,
                     <TabsTrigger
                       value="terminal"
                       className="data-[state=active]:bg-[#1e1e1e] data-[state=active]:text-white rounded-none border-b-2 data-[state=active]:border-blue-500"
-                      onClick={() => {
-                        setShowTerminal(true)
-                        setPreviewMode('terminal')
-                      }}
                     >
                       <TerminalIcon className="h-3.5 w-3.5 mr-1" />
                       Terminal
