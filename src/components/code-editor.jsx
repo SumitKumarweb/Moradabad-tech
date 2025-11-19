@@ -1,7 +1,15 @@
 import * as React from "react"
-import { Play, Trash2, Copy, Check, TerminalIcon, Download, Maximize2 } from 'lucide-react'
+import { 
+  Play, Trash2, Copy, Check, TerminalIcon, Download, Maximize2, 
+  File, Folder, FolderOpen, Search, X, Plus, ChevronRight, ChevronDown,
+  FileCode, Monitor, Code2, Settings, FileText, Image, FileJson
+} from 'lucide-react'
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card } from "@/components/ui/card"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import {
   Select,
   SelectContent,
@@ -11,7 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Card } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 const languageTemplates = {
   javascript: `// Write your JavaScript code here
@@ -40,15 +56,21 @@ int main() {
     cout << "Hello, Moradabad Tech!" << endl;
     return 0;
 }`,
-  html: `<!-- Write your HTML code here -->
-<!DOCTYPE html>
-<html>
+  html: `<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        h1 {
+            text-align: center;
         }
     </style>
 </head>
@@ -152,60 +174,295 @@ const PORT = 3000;
 server.listen(PORT, () => {
   console.log(\`Server running at http://localhost:\${PORT}/\`);
 });`,
+  css: `/* CSS Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5em;
+}`,
+  json: `{
+  "name": "my-project",
+  "version": "1.0.0",
+  "description": "My awesome project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  }
+}`,
+}
+
+const getFileIcon = (fileName) => {
+  const ext = fileName.split('.').pop()?.toLowerCase()
+  const iconMap = {
+    js: FileCode,
+    jsx: FileCode,
+    ts: FileCode,
+    tsx: FileCode,
+    html: FileCode,
+    css: FileCode,
+    json: FileJson,
+    md: FileText,
+    txt: FileText,
+    png: Image,
+    jpg: Image,
+    jpeg: Image,
+    svg: Image,
+  }
+  return iconMap[ext] || File
+}
+
+const getLanguageFromFileName = (fileName) => {
+  const ext = fileName.split('.').pop()?.toLowerCase()
+  const langMap = {
+    js: 'javascript',
+    jsx: 'react',
+    ts: 'javascript',
+    tsx: 'react',
+    py: 'python',
+    c: 'c',
+    cpp: 'cpp',
+    java: 'java',
+    html: 'html',
+    css: 'css',
+    json: 'json',
+  }
+  return langMap[ext] || 'javascript'
 }
 
 export function CodeEditor({ initialLanguage = "javascript" }) {
-  const [code, setCode] = React.useState(languageTemplates[initialLanguage] || languageTemplates.javascript)
+  const [files, setFiles] = React.useState({
+    'index.js': {
+      content: languageTemplates.javascript,
+      language: 'javascript',
+      isDirty: false,
+    },
+  })
+  const [activeFile, setActiveFile] = React.useState('index.js')
   const [output, setOutput] = React.useState("")
-  const [language, setLanguage] = React.useState(initialLanguage)
+  const [terminalOutput, setTerminalOutput] = React.useState([])
   const [copied, setCopied] = React.useState(false)
   const [isRunning, setIsRunning] = React.useState(false)
-  const [isFullscreen, setIsFullscreen] = React.useState(false)
   const [htmlPreview, setHtmlPreview] = React.useState("")
+  const [showSearch, setShowSearch] = React.useState(false)
+  const [searchQuery, setSearchQuery] = React.useState("")
+  const [showFileSearch, setShowFileSearch] = React.useState(false)
+  const [fileSearchQuery, setFileSearchQuery] = React.useState("")
+  const [showTerminal, setShowTerminal] = React.useState(false)
+  const [showPreview, setShowPreview] = React.useState(false)
+  const [previewMode, setPreviewMode] = React.useState('terminal') // 'preview' or 'terminal'
+  const [fileTree, setFileTree] = React.useState({
+    name: 'root',
+    type: 'folder',
+    children: {
+      'index.js': { name: 'index.js', type: 'file' },
+      'src': {
+        name: 'src',
+        type: 'folder',
+        children: {
+          'App.jsx': { name: 'App.jsx', type: 'file' },
+          'components': {
+            name: 'components',
+            type: 'folder',
+            children: {
+              'Button.jsx': { name: 'Button.jsx', type: 'file' },
+            }
+          }
+        }
+      },
+      'package.json': { name: 'package.json', type: 'file' },
+      'styles.css': { name: 'styles.css', type: 'file' },
+    }
+  })
+  const [expandedFolders, setExpandedFolders] = React.useState(new Set(['src']))
+  const [newFileName, setNewFileName] = React.useState("")
+  const [showNewFileDialog, setShowNewFileDialog] = React.useState(false)
+  const [newFileType, setNewFileType] = React.useState('file')
+  const [newFileParent, setNewFileParent] = React.useState(null)
   const iframeRef = React.useRef(null)
 
-  // Update code when initialLanguage prop changes
+  const currentFile = files[activeFile]
+  const currentLanguage = currentFile?.language || initialLanguage
+
+  // Keyboard shortcuts
   React.useEffect(() => {
-    if (initialLanguage && languageTemplates[initialLanguage]) {
-      setLanguage(initialLanguage)
-      setCode(languageTemplates[initialLanguage])
-      setOutput("")
-      if (initialLanguage === "html") {
-        setHtmlPreview(languageTemplates[initialLanguage])
-      } else {
-        setHtmlPreview("")
+    const handleKeyDown = (e) => {
+      // Cmd/Ctrl + P for file search
+      if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
+        e.preventDefault()
+        setShowFileSearch(true)
+      }
+      // Cmd/Ctrl + F for search
+      if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
+        e.preventDefault()
+        setShowSearch(true)
+      }
+      // Cmd/Ctrl + ` for terminal
+      if ((e.metaKey || e.ctrlKey) && e.key === '`') {
+        e.preventDefault()
+        setShowTerminal(!showTerminal)
+        if (!showTerminal) {
+          setPreviewMode('terminal')
+        }
+      }
+      // Escape to close modals
+      if (e.key === 'Escape') {
+        setShowSearch(false)
+        setShowFileSearch(false)
       }
     }
-  }, [initialLanguage])
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showTerminal])
 
-  const handleLanguageChange = (newLanguage) => {
-    setLanguage(newLanguage)
-    const newCode = languageTemplates[newLanguage] || ""
-    setCode(newCode)
-    setOutput("")
-    // Set HTML preview immediately if switching to HTML
-    if (newLanguage === "html") {
-      setHtmlPreview(newCode)
-    } else {
-      setHtmlPreview("")
+  // Update HTML preview automatically
+  React.useEffect(() => {
+    if (currentLanguage === "html" && currentFile?.content) {
+      const timer = setTimeout(() => {
+        setHtmlPreview(currentFile.content)
+        if (!showTerminal) {
+          setShowPreview(true)
+          setPreviewMode('preview')
+        }
+      }, 300)
+      return () => clearTimeout(timer)
+    } else if (currentLanguage === "react" || currentLanguage === "vue" || currentLanguage === "angular") {
+      if (!showTerminal) {
+        setShowPreview(true)
+        setPreviewMode('preview')
+      }
+    }
+  }, [currentFile?.content, currentLanguage, showTerminal])
+
+  const handleCodeChange = (newCode) => {
+    setFiles(prev => ({
+      ...prev,
+      [activeFile]: {
+        ...prev[activeFile],
+        content: newCode,
+        isDirty: true,
+      }
+    }))
+  }
+
+  const createFile = (fileName, parentPath = null) => {
+    const fullPath = parentPath ? `${parentPath}/${fileName}` : fileName
+    const language = getLanguageFromFileName(fileName)
+    const template = languageTemplates[language] || ''
+    
+    setFiles(prev => ({
+      ...prev,
+      [fullPath]: {
+        content: template,
+        language,
+        isDirty: false,
+      }
+    }))
+    
+    setActiveFile(fullPath)
+    setShowNewFileDialog(false)
+    setNewFileName("")
+  }
+
+  const deleteFile = (fileName) => {
+    const newFiles = { ...files }
+    delete newFiles[fileName]
+    setFiles(newFiles)
+    
+    if (activeFile === fileName) {
+      const remainingFiles = Object.keys(newFiles)
+      setActiveFile(remainingFiles[0] || '')
     }
   }
 
-  // Update HTML preview automatically when HTML code changes (debounced)
-  React.useEffect(() => {
-    if (language === "html" && code) {
-      const timer = setTimeout(() => {
-        setHtmlPreview(code)
-      }, 300) // Debounce for 300ms for smoother typing
-      return () => clearTimeout(timer)
+  const toggleFolder = (folderPath) => {
+    setExpandedFolders(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(folderPath)) {
+        newSet.delete(folderPath)
+      } else {
+        newSet.add(folderPath)
+      }
+      return newSet
+    })
+  }
+
+  const renderFileTree = (node, path = '') => {
+    const currentPath = path ? `${path}/${node.name}` : node.name
+    
+    if (node.type === 'file') {
+      const FileIcon = getFileIcon(node.name)
+      const isActive = activeFile === currentPath
+      
+      return (
+        <div
+          key={currentPath}
+          onClick={() => {
+            if (!files[currentPath]) {
+              createFile(node.name, path)
+            } else {
+              setActiveFile(currentPath)
+            }
+          }}
+          className={`flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-[#2a2d2e] text-sm ${
+            isActive ? 'bg-[#37373d] text-white' : 'text-[#cccccc]'
+          }`}
+        >
+          <FileIcon className="h-4 w-4 flex-shrink-0" />
+          <span className="truncate">{node.name}</span>
+          {files[currentPath]?.isDirty && (
+            <span className="ml-auto h-2 w-2 rounded-full bg-blue-500" />
+          )}
+        </div>
+      )
     }
-  }, [code, language])
+    
+    if (node.type === 'folder') {
+      const isExpanded = expandedFolders.has(currentPath)
+      const FolderIcon = isExpanded ? FolderOpen : Folder
+      
+      return (
+        <div key={currentPath} className="select-none">
+          <div
+            onClick={() => toggleFolder(currentPath)}
+            className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-[#2a2d2e] text-sm text-[#cccccc]"
+          >
+            {isExpanded ? (
+              <ChevronDown className="h-3 w-3" />
+            ) : (
+              <ChevronRight className="h-3 w-3" />
+            )}
+            <FolderIcon className="h-4 w-4 flex-shrink-0" />
+            <span>{node.name}</span>
+          </div>
+          {isExpanded && node.children && (
+            <div className="ml-4">
+              {Object.values(node.children).map(child => 
+                renderFileTree(child, currentPath)
+              )}
+            </div>
+          )}
+        </div>
+      )
+    }
+    
+    return null
+  }
 
   const runCode = () => {
     setIsRunning(true)
     setOutput("")
     
     setTimeout(() => {
+      const code = currentFile?.content || ""
+      const language = currentLanguage
+
       if (language === "javascript") {
         try {
           const logs = []
@@ -228,12 +485,10 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
             logs.push(`⚠ Warning: ${args.map(arg => String(arg)).join(" ")}`)
           }
 
-          // Create a safe execution context
           const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
           const isAsync = code.includes('async') || code.includes('await')
           
           if (isAsync) {
-            // Handle async code
             const asyncFunc = new AsyncFunction(code)
             asyncFunc().then(() => {
               console.log = originalLog
@@ -280,162 +535,11 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
           }
         }
         setIsRunning(false)
-      } else if (language === "python") {
-        // Enhanced Python simulation
-        try {
-          // Basic syntax checking
-          const hasSyntaxError = code.includes('SyntaxError') || code.match(/def\s+\w+\s*\([^)]*\)\s*:/) === null && code.includes('def')
-          
-          if (hasSyntaxError && code.trim() !== languageTemplates.python) {
-            setOutput(`❌ SyntaxError: invalid syntax\n  File "<stdin>", line 1\n    ${code.split('\n')[0]}\n    ^`)
-      } else {
-            // Simulate Python execution
-            const printMatches = code.match(/print\s*\([^)]*\)/g) || []
-            const outputs = printMatches.map(match => {
-              const content = match.replace(/print\s*\(|\)/g, '').trim()
-              // Remove quotes if present
-              return content.replace(/^['"]|['"]$/g, '')
-            })
-            
-            const outputText = outputs.length > 0 
-              ? outputs.join('\n')
-              : 'Code executed successfully (no print statements)'
-            
-            setOutput(`Python 3.11.0\n✓ Code executed successfully\n\n${outputText}\n\nExecuted in 0.02s`)
-          }
-        } catch (error) {
-          setOutput(`❌ Error: ${error.message}`)
-        }
-        setIsRunning(false)
       } else if (language === "html") {
-        // HTML validation and preview
-        try {
-          const hasDoctype = code.includes('<!DOCTYPE') || code.includes('<!doctype')
-          const hasHtmlTag = code.includes('<html') || code.includes('<HTML')
-          
-          if (!hasHtmlTag && code.trim() !== languageTemplates.html) {
-            setOutput(`⚠ Warning: Missing <html> tag\n✓ HTML rendered (preview updated)\n\nDocument loaded in 0.03s`)
-          } else {
+        setHtmlPreview(code)
             setOutput(`✓ HTML validated successfully\n✓ Rendering preview...\n\nDocument loaded in 0.03s`)
-          }
-          setHtmlPreview(code)
-        } catch (error) {
-          setOutput(`❌ Error: ${error.message}`)
-        }
-        setIsRunning(false)
-      } else if (language === "c") {
-        // Enhanced C execution simulation
-        try {
-          const hasMain = code.includes('int main') || code.includes('void main')
-          const hasInclude = code.includes('#include')
-          
-          if (!hasMain && code.trim() !== languageTemplates.c) {
-            setOutput(`❌ Error: undefined reference to 'main'\n  collect2: error: ld returned 1 exit status`)
-          } else if (!hasInclude && code.includes('printf')) {
-            setOutput(`❌ Error: 'printf' undeclared (first use in this function)\n  ${code.split('\n').findIndex(line => line.includes('printf')) + 1}: error: 'printf' undeclared`)
-          } else {
-            // Extract printf content
-            const printfMatches = code.match(/printf\s*\([^)]*\)/g) || []
-            const outputs = printfMatches.map(match => {
-              const content = match.replace(/printf\s*\(|\)/g, '').trim()
-              return content.replace(/^["']|["']$/g, '').replace(/\\n/g, '\n').replace(/\\t/g, '\t')
-            })
-            
-            setOutput(`gcc version 11.4.0\n✓ Compilation successful\n✓ Execution complete\n\n${outputs.join('')}\n\nExecuted in 0.01s`)
-          }
-        } catch (error) {
-          setOutput(`❌ Compilation Error: ${error.message}`)
-        }
-        setIsRunning(false)
-      } else if (language === "cpp") {
-        // Enhanced C++ execution simulation
-        try {
-          const hasMain = code.includes('int main') || code.includes('void main')
-          const hasInclude = code.includes('#include')
-          
-          if (!hasMain && code.trim() !== languageTemplates.cpp) {
-            setOutput(`❌ Error: undefined reference to 'main'\n  collect2: error: ld returned 1 exit status`)
-          } else if (!hasInclude && (code.includes('cout') || code.includes('cin'))) {
-            setOutput(`❌ Error: 'cout' was not declared in this scope\n  ${code.split('\n').findIndex(line => line.includes('cout')) + 1}: error: 'cout' was not declared`)
-          } else {
-            // Extract cout content
-            const coutMatches = code.match(/cout\s*<<[^;]*/g) || []
-            const outputs = coutMatches.map(match => {
-              return match.replace(/cout\s*<<\s*/g, '').replace(/["']/g, '').replace(/endl/g, '\n').replace(/\s+/g, ' ').trim()
-            })
-            
-            setOutput(`g++ version 11.4.0\n✓ Compilation successful\n✓ Execution complete\n\n${outputs.join('')}\n\nExecuted in 0.01s`)
-          }
-        } catch (error) {
-          setOutput(`❌ Compilation Error: ${error.message}`)
-        }
-        setIsRunning(false)
-      } else if (language === "java") {
-        // Enhanced Java execution simulation
-        try {
-          const hasClass = code.includes('class')
-          const hasMain = code.includes('public static void main')
-          
-          if (!hasClass && code.trim() !== languageTemplates.java) {
-            setOutput(`❌ Error: class, interface, or enum expected`)
-          } else if (!hasMain && code.trim() !== languageTemplates.java) {
-            setOutput(`❌ Error: Main method not found in class Main`)
-          } else {
-            // Extract System.out.println content
-            const printlnMatches = code.match(/System\.out\.println\s*\([^)]*\)/g) || []
-            const outputs = printlnMatches.map(match => {
-              const content = match.replace(/System\.out\.println\s*\(|\)/g, '').trim()
-              return content.replace(/^["']|["']$/g, '')
-            })
-            
-            setOutput(`javac version 17.0.7\n✓ Compilation successful\n✓ Execution complete\n\n${outputs.join('\n')}\n\nExecuted in 0.15s`)
-        }
-        } catch (error) {
-          setOutput(`❌ Compilation Error: ${error.message}`)
-        }
-        setIsRunning(false)
-      } else if (language === "react") {
-        // React execution simulation
-        try {
-          setOutput(`React 18.2.0\n✓ Component compiled successfully\n✓ Rendering component...\n\nComponent rendered successfully!\n\nNote: This is a browser-based editor. For full React development,\nuse Create React App or Vite with proper build tools.`)
-        } catch (error) {
-          setOutput(`❌ Compilation Error: ${error.message}`)
-        }
-        setIsRunning(false)
-      } else if (language === "angular") {
-        // Angular execution simulation
-        try {
-          setOutput(`Angular CLI 16.0.0\n✓ Component compiled successfully\n✓ Rendering component...\n\nComponent rendered successfully!\n\nNote: This is a browser-based editor. For full Angular development,\nuse Angular CLI with proper build tools.`)
-        } catch (error) {
-          setOutput(`❌ Compilation Error: ${error.message}`)
-        }
-        setIsRunning(false)
-      } else if (language === "vue") {
-        // Vue execution simulation
-        try {
-          setOutput(`Vue 3.3.0\n✓ Component compiled successfully\n✓ Rendering component...\n\nComponent rendered successfully!\n\nNote: This is a browser-based editor. For full Vue development,\nuse Vue CLI or Vite with proper build tools.`)
-        } catch (error) {
-          setOutput(`❌ Compilation Error: ${error.message}`)
-        }
-        setIsRunning(false)
-      } else if (language === "node") {
-        // Node.js execution simulation
-        try {
-          const consoleLogMatches = code.match(/console\.log\s*\([^)]*\)/g) || []
-          const outputs = consoleLogMatches.map(match => {
-            const content = match.replace(/console\.log\s*\(|\)/g, '').trim()
-            return content.replace(/^["']|["']$/g, '').replace(/\`/g, '')
-          })
-          
-          const hasServer = code.includes('createServer') || code.includes('listen')
-          if (hasServer) {
-            setOutput(`Node.js v18.17.0\n✓ Server started successfully\n${outputs.length > 0 ? outputs.join('\n') + '\n' : ''}Server running at http://localhost:3000/\n\nNote: This is a simulation. For actual server execution,\nuse Node.js runtime environment.`)
-          } else {
-            setOutput(`Node.js v18.17.0\n✓ Code executed successfully\n\n${outputs.length > 0 ? outputs.join('\n') : 'Code executed (no output)'}\n\nExecuted in 0.02s`)
-          }
-        } catch (error) {
-          setOutput(`❌ Error: ${error.message}`)
-        }
+        setShowPreview(true)
+        setPreviewMode('preview')
         setIsRunning(false)
       } else {
         setOutput(`✓ ${language} code executed successfully`)
@@ -444,141 +548,289 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
     }, 800)
   }
 
-  const clearOutput = () => {
-    setOutput("")
-    if (language === "html") {
-      setHtmlPreview("")
-    }
-  }
-
   const copyCode = () => {
-    navigator.clipboard.writeText(code)
+    navigator.clipboard.writeText(currentFile?.content || "")
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
   const downloadCode = () => {
-    const extensions = {
-      javascript: 'js',
-      python: 'py',
-      c: 'c',
-      cpp: 'cpp',
-      html: 'html',
-      java: 'java',
-      react: 'jsx',
-      angular: 'ts',
-      vue: 'vue',
-      node: 'js',
-    }
-    
-    const blob = new Blob([code], { type: 'text/plain' })
+    const blob = new Blob([currentFile?.content || ""], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `code.${extensions[language] || 'txt'}`
+    a.download = activeFile
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
   }
 
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen)
+  const filteredFiles = Object.keys(files).filter(fileName =>
+    fileName.toLowerCase().includes(fileSearchQuery.toLowerCase())
+  )
+
+  const searchInCode = (query) => {
+    if (!query) return []
+    const results = []
+    Object.entries(files).forEach(([fileName, file]) => {
+      const lines = file.content.split('\n')
+      lines.forEach((line, index) => {
+        if (line.toLowerCase().includes(query.toLowerCase())) {
+          results.push({ fileName, line: index + 1, content: line })
+        }
+      })
+    })
+    return results
   }
 
+  const searchResults = searchInCode(searchQuery)
+
   return (
-    <div className={`grid gap-4 md:gap-6 lg:grid-cols-2 transition-all duration-300 ${isFullscreen ? 'fixed inset-4 z-50 bg-background/95 backdrop-blur-sm p-4 rounded-xl' : 'min-h-[500px] md:h-[600px]'}`}>
-      <Card className="flex flex-col h-full overflow-hidden border border-border/50 bg-[#1e1e1e] text-[#d4d4d4] shadow-2xl dark:border-primary/20 dark:shadow-[0_0_30px_rgba(100,200,255,0.1)]">
-        <div className="flex items-center justify-between px-3 md:px-4 py-2 bg-[#252526] border-b border-[#333]">
+    <div className="h-[calc(100vh-200px)] flex flex-col bg-[#1e1e1e] text-[#cccccc] rounded-lg overflow-hidden border border-[#333]">
+      {/* Top Bar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
               <div className="h-3 w-3 rounded-full bg-[#ff5f56]" />
               <div className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
               <div className="h-3 w-3 rounded-full bg-[#27c93f]" />
             </div>
-            <div className="h-4 w-px bg-[#333] mx-1" />
-            <TerminalIcon className="h-4 w-4 text-blue-400" />
-            <span className="text-xs font-medium hidden sm:inline">editor.{language === 'javascript' ? 'js' : language === 'python' ? 'py' : language === 'cpp' ? 'cpp' : language === 'java' ? 'java' : language === 'c' ? 'c' : language === 'react' ? 'jsx' : language === 'angular' ? 'ts' : language === 'vue' ? 'vue' : language === 'node' ? 'js' : 'html'}</span>
+          <div className="h-4 w-px bg-[#333] mx-2" />
+          <Code2 className="h-4 w-4 text-blue-400" />
+          <span className="text-xs font-medium">VS Code Editor</span>
           </div>
           <div className="flex items-center gap-2">
-            <Select value={language} onValueChange={handleLanguageChange}>
-              <SelectTrigger className="w-[100px] sm:w-[130px] h-7 text-xs bg-[#3c3c3c] border-none text-white focus:ring-1 focus:ring-primary/50 focus:ring-offset-0">
-                <SelectValue placeholder="Language" />
-              </SelectTrigger>
-              <SelectContent className="bg-[#252526] border-[#333] text-white">
-                <SelectGroup>
-                  <SelectLabel>Languages</SelectLabel>
-                  <SelectItem value="javascript">JavaScript</SelectItem>
-                  <SelectItem value="python">Python</SelectItem>
-                  <SelectItem value="c">C</SelectItem>
-                  <SelectItem value="cpp">C++</SelectItem>
-                  <SelectItem value="java">Java</SelectItem>
-                  <SelectItem value="html">HTML/CSS/JS</SelectItem>
-                  <SelectItem value="react">React JS</SelectItem>
-                  <SelectItem value="angular">Angular</SelectItem>
-                  <SelectItem value="vue">Vue JS</SelectItem>
-                  <SelectItem value="node">Node JS</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-white hover:bg-[#3c3c3c] transition-colors" onClick={downloadCode} title="Download code">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowFileSearch(true)}
+            className="h-7 px-2 text-xs text-gray-400 hover:text-white hover:bg-[#3c3c3c]"
+            title="Quick Open (Cmd+P)"
+          >
+            <Search className="h-3.5 w-3.5 mr-1" />
+            <span className="hidden sm:inline">Quick Open</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowSearch(true)}
+            className="h-7 px-2 text-xs text-gray-400 hover:text-white hover:bg-[#3c3c3c]"
+            title="Search (Cmd+F)"
+          >
+            <Search className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-gray-400 hover:text-white hover:bg-[#3c3c3c]"
+            onClick={downloadCode}
+            title="Download"
+          >
               <Download className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-white hover:bg-[#3c3c3c] transition-colors" onClick={copyCode} title="Copy code">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-gray-400 hover:text-white hover:bg-[#3c3c3c]"
+            onClick={copyCode}
+            title="Copy"
+          >
               {copied ? <Check className="h-3.5 w-3.5 text-green-400" /> : <Copy className="h-3.5 w-3.5" />}
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-white hover:bg-[#3c3c3c] transition-colors" onClick={toggleFullscreen} title="Toggle fullscreen">
-              <Maximize2 className="h-3.5 w-3.5" />
-            </Button>
-          </div>
         </div>
+      </div>
+
+      {/* Main Content */}
+      <PanelGroup direction="horizontal" className="flex-1">
+        {/* File Explorer Sidebar */}
+        <Panel defaultSize={15} minSize={10} maxSize={30} className="bg-[#252526] border-r border-[#333]">
+          <div className="h-full flex flex-col">
+            <div className="px-3 py-2 border-b border-[#333] flex items-center justify-between">
+              <span className="text-xs font-semibold text-gray-400 uppercase">Explorer</span>
+              <Dialog open={showNewFileDialog} onOpenChange={setShowNewFileDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-5 w-5 text-gray-400 hover:text-white">
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-[#252526] border-[#333] text-white">
+                  <DialogHeader>
+                    <DialogTitle>Create New {newFileType === 'file' ? 'File' : 'Folder'}</DialogTitle>
+                    <DialogDescription>
+                      Enter the name for your new {newFileType}.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col gap-4">
+                    <Input
+                      value={newFileName}
+                      onChange={(e) => setNewFileName(e.target.value)}
+                      placeholder={newFileType === 'file' ? 'example.js' : 'folder-name'}
+                      className="bg-[#1e1e1e] border-[#333] text-white"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && newFileName) {
+                          createFile(newFileName, newFileParent)
+                        }
+                      }}
+                    />
+                    <Select value={newFileType} onValueChange={setNewFileType}>
+                      <SelectTrigger className="bg-[#1e1e1e] border-[#333] text-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#252526] border-[#333]">
+                        <SelectItem value="file">File</SelectItem>
+                        <SelectItem value="folder">Folder</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      onClick={() => {
+                        if (newFileName) {
+                          createFile(newFileName, newFileParent)
+                        }
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      Create
+            </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div className="flex-1 overflow-auto py-2">
+              {renderFileTree(fileTree)}
+            </div>
+          </div>
+        </Panel>
+
+        <PanelResizeHandle className="w-1 bg-[#333] hover:bg-[#444] transition-colors" />
+
+        {/* Editor Area */}
+        <Panel defaultSize={showPreview || showTerminal ? 50 : 85} minSize={30}>
+          <div className="h-full flex flex-col bg-[#1e1e1e]">
+            {/* File Tabs */}
+            <div className="flex items-center gap-1 px-2 bg-[#252526] border-b border-[#333] overflow-x-auto">
+              {Object.keys(files).map((fileName) => {
+                const file = files[fileName]
+                const isActive = activeFile === fileName
+                const FileIcon = getFileIcon(fileName)
+                
+                return (
+                  <div
+                    key={fileName}
+                    onClick={() => setActiveFile(fileName)}
+                    className={`group flex items-center gap-2 px-3 py-2 cursor-pointer border-b-2 transition-colors ${
+                      isActive
+                        ? 'bg-[#1e1e1e] border-blue-500 text-white'
+                        : 'border-transparent text-gray-400 hover:text-white hover:bg-[#2a2d2e]'
+                    }`}
+                  >
+                    <FileIcon className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="text-xs whitespace-nowrap">{fileName.split('/').pop()}</span>
+                    {file.isDirty && (
+                      <span className="ml-1 h-2 w-2 rounded-full bg-blue-500" />
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteFile(fileName)
+                      }}
+                      className="ml-1 opacity-0 group-hover:opacity-100 hover:bg-[#3c3c3c] rounded p-0.5 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                )
+              })}
+        </div>
+
+            {/* Editor */}
         <div className="flex-1 relative overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-10 sm:w-12 bg-[#1e1e1e] border-r border-[#333] flex flex-col items-end pt-3 md:pt-4 pr-2 text-[10px] sm:text-xs text-[#858585] font-mono select-none overflow-auto">
-            {code.split('\n').map((_, i) => (
-              <div key={i} className="leading-[1.4rem] md:leading-6 min-h-[1.4rem] md:min-h-[1.5rem]">{i + 1}</div>
+              <div className="absolute left-0 top-0 bottom-0 w-10 bg-[#1e1e1e] border-r border-[#333] flex flex-col items-end pt-4 pr-2 text-xs text-[#858585] font-mono select-none overflow-auto">
+                {(currentFile?.content || "").split('\n').map((_, i) => (
+                  <div key={i} className="leading-6 min-h-[1.5rem]">{i + 1}</div>
             ))}
           </div>
           <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="absolute inset-0 left-10 sm:left-12 w-[calc(100%-2.5rem)] sm:w-[calc(100%-3rem)] h-full p-3 md:p-4 font-mono text-xs md:text-sm bg-transparent text-[#d4d4d4] resize-none focus:outline-none leading-[1.4rem] md:leading-6"
+                value={currentFile?.content || ""}
+                onChange={(e) => handleCodeChange(e.target.value)}
+                className="absolute inset-0 left-10 w-[calc(100%-2.5rem)] h-full p-4 font-mono text-sm bg-transparent text-[#d4d4d4] resize-none focus:outline-none leading-6"
             spellCheck={false}
             placeholder="Start typing your code..."
           />
         </div>
-        <div className="px-3 md:px-4 py-1.5 bg-[#252526] border-t border-[#333] flex justify-between items-center text-[10px] text-gray-500">
-          <span>Ln {code.split('\n').length}, Col {code.length}</span>
-          <span>{code.length} characters</span>
-        </div>
-      </Card>
 
-      <Card className="flex flex-col h-full overflow-hidden border border-border/50 bg-[#0c0c0c] text-white shadow-2xl dark:border-primary/20 dark:shadow-[0_0_30px_rgba(100,200,255,0.1)]">
-        <div className="flex items-center justify-between px-3 md:px-4 py-2 bg-[#181818] border-b border-[#333]">
-          <div className="flex items-center gap-2">
-            <div className={`h-2 w-2 rounded-full ${isRunning ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'} shadow-lg ${isRunning ? 'shadow-yellow-500/50' : 'shadow-green-500/50'}`} />
-            <span className="text-xs font-medium uppercase tracking-wider text-gray-400 hidden sm:inline">
-              {language === 'html' ? 'HTML Preview' : 'Output Terminal'}
-            </span>
-            <span className="text-[10px] text-gray-600 hidden md:inline">({language})</span>
+            {/* Status Bar */}
+            <div className="px-4 py-1 bg-[#007acc] text-white text-xs flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span>Ln {currentFile?.content?.split('\n').length || 0}, Col {currentFile?.content?.length || 0}</span>
+                <span>{currentLanguage}</span>
           </div>
           <div className="flex items-center gap-2">
-            {language === 'html' && (
-              <Button variant="ghost" size="sm" onClick={() => setHtmlPreview(code)} className="h-7 px-2 text-xs text-gray-400 hover:text-white hover:bg-[#333] transition-colors">
-                <span className="hidden sm:inline">Refresh</span>
-              </Button>
-            )}
-            <Button variant="ghost" size="sm" onClick={clearOutput} disabled={isRunning} className="h-7 px-2 text-xs text-gray-400 hover:text-white hover:bg-[#333] transition-colors disabled:opacity-50">
-              <Trash2 className="h-3 w-3 sm:mr-1" />
-              <span className="hidden sm:inline">Clear</span>
-            </Button>
-            <Button size="sm" onClick={runCode} disabled={isRunning} className="h-7 px-2 sm:px-3 text-xs bg-green-600 hover:bg-green-700 text-white border-none transition-all hover:shadow-lg hover:shadow-green-600/30 disabled:opacity-50 disabled:cursor-not-allowed">
-              <Play className={`h-3 w-3 sm:mr-1 ${isRunning ? 'animate-pulse' : ''}`} />
-              <span className="hidden sm:inline">{isRunning ? 'Running...' : language === 'html' ? 'Preview' : 'Run'}</span>
+                <Button
+                  size="sm"
+                  onClick={runCode}
+                  disabled={isRunning}
+                  className="h-6 px-2 text-xs bg-green-600 hover:bg-green-700"
+                >
+                  <Play className="h-3 w-3 mr-1" />
+                  Run
             </Button>
           </div>
         </div>
-        {language === 'html' && htmlPreview ? (
-          <div className="flex-1 relative overflow-hidden bg-white">
+          </div>
+        </Panel>
+
+        {/* Preview/Terminal Panel */}
+        {(showPreview || showTerminal) && (
+          <>
+            <PanelResizeHandle className="w-1 bg-[#333] hover:bg-[#444] transition-colors" />
+            <Panel defaultSize={35} minSize={20} maxSize={50}>
+              <Tabs value={previewMode} onValueChange={setPreviewMode} className="h-full flex flex-col bg-[#1e1e1e]">
+                <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
+                  <TabsList className="bg-transparent h-auto p-0">
+                    {currentLanguage === 'html' || currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular' ? (
+                      <TabsTrigger
+                        value="preview"
+                        className="data-[state=active]:bg-[#1e1e1e] data-[state=active]:text-white rounded-none border-b-2 data-[state=active]:border-blue-500"
+                        onClick={() => {
+                          setShowPreview(true)
+                          setPreviewMode('preview')
+                        }}
+                      >
+                        <Monitor className="h-3.5 w-3.5 mr-1" />
+                        Preview
+                      </TabsTrigger>
+                    ) : null}
+                    <TabsTrigger
+                      value="terminal"
+                      className="data-[state=active]:bg-[#1e1e1e] data-[state=active]:text-white rounded-none border-b-2 data-[state=active]:border-blue-500"
+                      onClick={() => {
+                        setShowTerminal(true)
+                        setPreviewMode('terminal')
+                      }}
+                    >
+                      <TerminalIcon className="h-3.5 w-3.5 mr-1" />
+                      Terminal
+                    </TabsTrigger>
+                  </TabsList>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-gray-400 hover:text-white"
+                    onClick={() => {
+                      setShowPreview(false)
+                      setShowTerminal(false)
+                    }}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+
+                <TabsContent value="preview" className="flex-1 m-0 p-0">
+                  {currentLanguage === 'html' && htmlPreview ? (
+                    <div className="h-full bg-white">
             <iframe
               ref={iframeRef}
               srcDoc={htmlPreview}
@@ -587,16 +839,31 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
               sandbox="allow-scripts allow-same-origin"
             />
           </div>
+                  ) : currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular' ? (
+                    <div className="h-full p-4 flex items-center justify-center text-gray-400">
+                      <div className="text-center">
+                        <Code2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>Component Preview</p>
+                        <p className="text-xs mt-2">For full preview, use a development server</p>
+                      </div>
+          </div>
         ) : (
-        <div className="flex-1 p-3 md:p-4 font-mono text-xs md:text-sm overflow-auto">
+                    <div className="h-full p-4 flex items-center justify-center text-gray-400">
+                      <p>No preview available for this file type</p>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="terminal" className="flex-1 m-0 p-0">
+                  <div className="h-full p-4 font-mono text-xs bg-[#0c0c0c] text-green-400 overflow-auto">
           {!output && !isRunning && (
-            <div className="text-gray-600 text-[10px] sm:text-xs">
+                      <div className="text-gray-600">
               <p>$ Ready to execute code</p>
-                <p className="mt-2">Click &apos;{language === 'html' ? 'Preview' : 'Run'}&apos; to see output here...</p>
+                        <p className="mt-2">Click &apos;Run&apos; to see output here...</p>
             </div>
           )}
           {isRunning && (
-            <div className="text-yellow-400 text-[10px] sm:text-xs">
+                      <div className="text-yellow-400">
               <p>$ Executing code...</p>
               <div className="flex items-center gap-2 mt-2">
                 <div className="h-1 w-1 bg-yellow-400 rounded-full animate-pulse" />
@@ -607,19 +874,142 @@ export function CodeEditor({ initialLanguage = "javascript" }) {
           )}
           {output && !isRunning && (
             <>
-                <div className="text-gray-500 mb-2 text-[10px] sm:text-xs">
-                  $ {language === 'javascript' ? 'node index.js' : language === 'python' ? 'python main.py' : language === 'c' ? './a.out' : language === 'cpp' ? './a.out' : language === 'java' ? 'java Main' : language === 'react' ? 'npm start' : language === 'angular' ? 'ng serve' : language === 'vue' ? 'npm run dev' : language === 'node' ? 'node index.js' : 'html preview'}
+                        <div className="text-gray-500 mb-2">
+                          $ {currentLanguage === 'javascript' ? 'node index.js' : currentLanguage === 'python' ? 'python main.py' : 'run'}
                 </div>
-                <pre className={`whitespace-pre-wrap text-[10px] sm:text-xs md:text-sm ${output.includes('❌') || output.includes('Error') ? 'text-red-400' : output.includes('Warning') || output.includes('⚠') ? 'text-yellow-400' : 'text-green-400'}`}>{output}</pre>
-              <div className="text-gray-500 mt-4 text-[10px] sm:text-xs border-t border-[#333] pt-2">
+                        <pre className={`whitespace-pre-wrap ${
+                          output.includes('❌') || output.includes('Error') ? 'text-red-400' : 
+                          output.includes('Warning') || output.includes('⚠') ? 'text-yellow-400' : 
+                          'text-green-400'
+                        }`}>{output}</pre>
+                        <div className="text-gray-500 mt-4 border-t border-[#333] pt-2">
                 $ <span className="animate-pulse">_</span>
               </div>
             </>
           )}
         </div>
+                </TabsContent>
+              </Tabs>
+            </Panel>
+          </>
         )}
-      </Card>
+      </PanelGroup>
+
+      {/* File Search Dialog */}
+      {showFileSearch && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
+          <div className="bg-[#252526] border border-[#333] rounded-lg shadow-2xl w-full max-w-2xl mx-4">
+            <div className="p-4 border-b border-[#333]">
+              <div className="flex items-center gap-2 mb-2">
+                <Search className="h-4 w-4 text-gray-400" />
+                <Input
+                  autoFocus
+                  value={fileSearchQuery}
+                  onChange={(e) => setFileSearchQuery(e.target.value)}
+                  placeholder="Type to search files (Cmd+P)"
+                  className="bg-[#1e1e1e] border-[#333] text-white"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setShowFileSearch(false)
+                    setFileSearchQuery("")
+                  }}
+                  className="h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="max-h-64 overflow-auto">
+              {filteredFiles.length > 0 ? (
+                filteredFiles.map((fileName) => {
+                  const FileIcon = getFileIcon(fileName)
+                  return (
+                    <div
+                      key={fileName}
+                      onClick={() => {
+                        setActiveFile(fileName)
+                        setShowFileSearch(false)
+                        setFileSearchQuery("")
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-[#37373d] cursor-pointer"
+                    >
+                      <FileIcon className="h-4 w-4" />
+                      <span className="text-sm">{fileName}</span>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="px-4 py-8 text-center text-gray-400 text-sm">
+                  No files found
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Search Dialog */}
+      {showSearch && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
+          <div className="bg-[#252526] border border-[#333] rounded-lg shadow-2xl w-full max-w-2xl mx-4">
+            <div className="p-4 border-b border-[#333]">
+              <div className="flex items-center gap-2 mb-2">
+                <Search className="h-4 w-4 text-gray-400" />
+                <Input
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search in files (Cmd+F)"
+                  className="bg-[#1e1e1e] border-[#333] text-white"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setShowSearch(false)
+                    setSearchQuery("")
+                  }}
+                  className="h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="max-h-64 overflow-auto">
+              {searchResults.length > 0 ? (
+                searchResults.map((result, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setActiveFile(result.fileName)
+                      setShowSearch(false)
+                    }}
+                    className="px-4 py-2 hover:bg-[#37373d] cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <File className="h-3.5 w-3.5 text-gray-400" />
+                      <span className="text-sm font-medium">{result.fileName}</span>
+                      <span className="text-xs text-gray-500">Line {result.line}</span>
+                    </div>
+                    <div className="text-xs text-gray-400 ml-6">{result.content.trim()}</div>
+                  </div>
+                ))
+              ) : searchQuery ? (
+                <div className="px-4 py-8 text-center text-gray-400 text-sm">
+                  No results found
+                </div>
+              ) : (
+                <div className="px-4 py-8 text-center text-gray-400 text-sm">
+                  Type to search in code
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-
