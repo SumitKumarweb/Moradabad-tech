@@ -43,7 +43,66 @@ export default function ProfilePage() {
       return
     }
 
-    loadProfile()
+    let isMounted = true
+
+    const loadProfileData = async () => {
+      try {
+        setLoading(true)
+        const profile = await getUserProfile(currentUser.uid)
+        
+        if (!isMounted) return
+        
+        if (profile) {
+          setFormData({
+            name: profile.name || currentUser.displayName || '',
+            email: profile.email || currentUser.email || '',
+            phone: profile.phone || '',
+            gender: profile.gender || '',
+            linkedinId: profile.linkedinId || '',
+            leetcodeId: profile.leetcodeId || '',
+            photoUrl: profile.photoUrl || '',
+            resumeUrl: profile.resumeUrl || ''
+          })
+          
+          if (profile.photoUrl) {
+            setPhotoPreview(profile.photoUrl)
+          }
+          
+          if (profile.resumeUrl) {
+            const urlParts = profile.resumeUrl.split('/')
+            const fileName = urlParts[urlParts.length - 1].split('?')[0]
+            setResumeFileName(fileName.replace(/^resume_\d+_/, ''))
+          }
+        } else {
+          setFormData({
+            name: currentUser.displayName || '',
+            email: currentUser.email || '',
+            phone: '',
+            gender: '',
+            linkedinId: '',
+            leetcodeId: '',
+            photoUrl: '',
+            resumeUrl: ''
+          })
+        }
+      } catch (error) {
+        // Ignore AbortError - component may have unmounted
+        if (error.name !== 'AbortError' && error.code !== 'cancelled' && isMounted) {
+          console.error('Error loading profile:', error)
+          toast.error('Failed to load profile')
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadProfileData()
+
+    return () => {
+      isMounted = false
+    }
   }, [currentUser, navigate])
 
   const loadProfile = async () => {
@@ -87,8 +146,11 @@ export default function ProfilePage() {
         })
       }
     } catch (error) {
-      console.error('Error loading profile:', error)
-      toast.error('Failed to load profile')
+      // Ignore AbortError - it's harmless
+      if (error.name !== 'AbortError' && error.code !== 'cancelled') {
+        console.error('Error loading profile:', error)
+        toast.error('Failed to load profile')
+      }
     } finally {
       setLoading(false)
     }
@@ -168,10 +230,12 @@ export default function ProfilePage() {
           phone: formData.phone,
           gender: formData.gender,
           linkedinId: formData.linkedinId,
-          leetcodeId: formData.leetcodeId
+          leetcodeId: formData.leetcodeId,
+          photoUrl: formData.photoUrl // Preserve existing photoUrl if no new photo
         },
         files.photo,
-        files.resume
+        files.resume,
+        formData.photoUrl // Pass existing photoUrl for cleanup if new photo uploaded
       )
       
       toast.success('Profile saved successfully!')
@@ -183,7 +247,20 @@ export default function ProfilePage() {
       setFiles({ photo: null, resume: null })
     } catch (error) {
       console.error('Error saving profile:', error)
-      toast.error('Failed to save profile. Please try again.')
+      
+      // Provide specific error messages
+      if (error.code === 'storage/cors-error' || error.message?.includes('CORS')) {
+        toast.error(
+          'File upload failed due to CORS configuration. Please configure CORS in Firebase Console.',
+          { duration: 6000 }
+        )
+      } else if (error.code === 'storage/unauthorized') {
+        toast.error('Permission denied. Please check Firebase Storage rules.')
+      } else if (error.message?.includes('network') || error.message?.includes('failed')) {
+        toast.error('Network error. Please check your internet connection and try again.')
+      } else {
+        toast.error(error.message || 'Failed to save profile. Please try again.')
+      }
     } finally {
       setSaving(false)
     }
