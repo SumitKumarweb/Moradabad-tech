@@ -1603,7 +1603,7 @@ console.log('All users:', userService.getAllUsers())`,
   const searchResults = searchInCode(searchQuery)
 
   return (
-    <div className="h-[calc(100vh-200px)] flex flex-col bg-[#1e1e1e] text-[#cccccc] rounded-lg overflow-hidden border border-[#333]">
+    <div className="flex-1 flex flex-col bg-[#1e1e1e] text-[#cccccc] rounded-lg overflow-hidden border border-[#333] min-h-0">
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
           <div className="flex items-center gap-2">

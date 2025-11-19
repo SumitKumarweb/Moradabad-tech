@@ -40,7 +40,7 @@ export default function EditorPage() {
   const displayName = languageNames[normalizedLanguage] || languageNames[languageKey] || 'Code Editor'
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <div className="container px-4 md:px-6 lg:px-8 pt-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -96,7 +96,7 @@ export default function EditorPage() {
         </div>
       </div>
 
-      <div className="container px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
+      <div className="flex-1 container px-4 md:px-6 lg:px-8 py-6 md:py-8 flex flex-col min-h-0">
         <CodeEditor initialLanguage={languageKey} />
       </div>
     </div>
