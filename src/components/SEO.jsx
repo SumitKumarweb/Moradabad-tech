@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { useEffect } from 'react'
 
 export default function SEO({
   title,
@@ -23,37 +23,65 @@ export default function SEO({
   const fullOgUrl = ogUrl || (typeof window !== 'undefined' ? window.location.href : '')
   const fullCanonicalUrl = canonicalUrl || fullOgUrl
 
-  return (
-    <Helmet>
-      {/* Primary Meta Tags */}
-      <title>{fullTitle}</title>
-      <meta name="title" content={fullTitle} />
-      <meta name="description" content={description} />
-      {keywords && <meta name="keywords" content={keywords} />}
-      <meta name="author" content={author} />
-      <meta name="robots" content={robots} />
-      <link rel="canonical" href={fullCanonicalUrl} />
+  useEffect(() => {
+    if (typeof document === 'undefined') return
 
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content={type} />
-      <meta property="og:url" content={fullOgUrl} />
-      <meta property="og:title" content={fullOgTitle} />
-      <meta property="og:description" content={fullOgDescription} />
-      <meta property="og:image" content={fullOgImage} />
-      <meta property="og:site_name" content={siteName} />
+    // Update title
+    document.title = fullTitle
 
-      {/* Twitter */}
-      <meta name="twitter:card" content={twitterCard} />
-      <meta name="twitter:title" content={fullOgTitle} />
-      <meta name="twitter:description" content={fullOgDescription} />
-      <meta name="twitter:image" content={fullOgImage} />
+    // Helper function to update or create meta tag
+    const setMetaTag = (attr, name, content) => {
+      if (!content) return
+      let element = document.querySelector(`meta[${attr}="${name}"]`)
+      if (!element) {
+        element = document.createElement('meta')
+        element.setAttribute(attr, name)
+        document.head.appendChild(element)
+      }
+      element.setAttribute('content', content)
+    }
 
-      {/* Additional Meta Tags */}
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="language" content="English" />
-      <meta name="revisit-after" content="7 days" />
-    </Helmet>
-  )
+    // Helper function to update or create link tag
+    const setLinkTag = (rel, href) => {
+      if (!href) return
+      let element = document.querySelector(`link[rel="${rel}"]`)
+      if (!element) {
+        element = document.createElement('link')
+        element.setAttribute('rel', rel)
+        document.head.appendChild(element)
+      }
+      element.setAttribute('href', href)
+    }
+
+    // Primary Meta Tags
+    setMetaTag('name', 'title', fullTitle)
+    setMetaTag('name', 'description', description)
+    if (keywords) setMetaTag('name', 'keywords', keywords)
+    setMetaTag('name', 'author', author)
+    setMetaTag('name', 'robots', robots)
+
+    // Canonical URL
+    setLinkTag('canonical', fullCanonicalUrl)
+
+    // Open Graph / Facebook
+    setMetaTag('property', 'og:type', type)
+    setMetaTag('property', 'og:url', fullOgUrl)
+    setMetaTag('property', 'og:title', fullOgTitle)
+    setMetaTag('property', 'og:description', fullOgDescription)
+    setMetaTag('property', 'og:image', fullOgImage)
+    setMetaTag('property', 'og:site_name', siteName)
+
+    // Twitter
+    setMetaTag('name', 'twitter:card', twitterCard)
+    setMetaTag('name', 'twitter:title', fullOgTitle)
+    setMetaTag('name', 'twitter:description', fullOgDescription)
+    setMetaTag('name', 'twitter:image', fullOgImage)
+
+    // Additional Meta Tags
+    setMetaTag('name', 'language', 'English')
+    setMetaTag('name', 'revisit-after', '7 days')
+  }, [fullTitle, description, keywords, author, robots, fullCanonicalUrl, type, fullOgUrl, fullOgTitle, fullOgDescription, fullOgImage, siteName, twitterCard])
+
+  return null
 }
 

@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { useEffect } from 'react'
 
 // Helper functions to generate schema data
 export const generateOrganizationSchema = () => ({
@@ -244,22 +244,48 @@ export const validateSchema = (schema) => {
 
 // Enhanced StructuredData component with validation (optional)
 export default function StructuredData({ data, validate = false }) {
-  if (!data) return null
+  useEffect(() => {
+    if (!data || typeof document === 'undefined') return
 
-  if (validate) {
-    const validation = validateSchema(data)
-    if (!validation.valid) {
-      console.warn("Schema validation errors:", validation.errors)
-      console.warn("Schema data:", data)
+    if (validate) {
+      const validation = validateSchema(data)
+      if (!validation.valid) {
+        console.warn("Schema validation errors:", validation.errors)
+        console.warn("Schema data:", data)
+      }
     }
-  }
 
-  return (
-    <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(data, null, 2)}
-      </script>
-    </Helmet>
-  )
+    // Generate a unique ID based on the data content
+    const dataString = JSON.stringify(data)
+    const dataHash = dataString.split('').reduce((acc, char) => {
+      const hash = ((acc << 5) - acc) + char.charCodeAt(0)
+      return hash & hash
+    }, 0)
+    const scriptId = `structured-data-${Math.abs(dataHash)}-${data['@type'] || 'schema'}`
+
+    // Remove existing script with same ID if it exists
+    const existingScript = document.getElementById(scriptId)
+    if (existingScript) {
+      document.head.removeChild(existingScript)
+    }
+
+    // Create script tag for structured data
+    const script = document.createElement('script')
+    script.type = 'application/ld+json'
+    script.text = dataString
+    script.id = scriptId
+    
+    document.head.appendChild(script)
+
+    // Cleanup function to remove script when component unmounts or data changes
+    return () => {
+      const scriptElement = document.getElementById(scriptId)
+      if (scriptElement) {
+        document.head.removeChild(scriptElement)
+      }
+    }
+  }, [data, validate])
+
+  return null
 }
 

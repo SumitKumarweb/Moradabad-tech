@@ -37,6 +37,12 @@ BreadcrumbItem.displayName = "BreadcrumbItem"
 const BreadcrumbLink = React.forwardRef(
   ({ className, asChild = false, ...props }, ref) => {
     const Comp = asChild ? React.Fragment : Link
+    
+    if (asChild) {
+      // When using Fragment, don't pass ref or className
+      return <Comp {...props} />
+    }
+    
     return (
       <Comp
         ref={ref}

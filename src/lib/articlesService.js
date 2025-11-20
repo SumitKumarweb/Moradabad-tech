@@ -60,7 +60,10 @@ export const getAllArticles = async () => {
       return getStaticArticles()
     }
   } catch (error) {
-    console.error('Error fetching articles from Firebase, using static articles:', error)
+    // Only log if it's not a permissions error (permissions errors are expected in some setups)
+    if (error.code !== 'permission-denied' && error.code !== 'PERMISSION_DENIED') {
+      console.warn('Error fetching articles from Firebase, using static articles:', error.message)
+    }
     // Fallback to static articles if Firebase fails
     return getStaticArticles()
   }
@@ -102,7 +105,10 @@ export const getArticleBySlug = async (slug) => {
     // Fallback to static articles
     return getStaticArticle(slug)
   } catch (error) {
-    console.error('Error fetching article from Firebase, checking static articles:', error)
+    // Only log if it's not a permissions error (permissions errors are expected in some setups)
+    if (error.code !== 'permission-denied' && error.code !== 'PERMISSION_DENIED') {
+      console.warn('Error fetching article from Firebase, checking static articles:', error.message)
+    }
     // Fallback to static articles if Firebase fails
     return getStaticArticle(slug)
   }
