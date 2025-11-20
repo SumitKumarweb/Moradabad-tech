@@ -115,8 +115,15 @@ export default function SignupPage() {
               className="h-6 w-auto object-contain max-h-20 max-w-48 transition-transform group-hover:scale-110"
             />
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Create an account</h1>
-          <p className="text-muted-foreground">Start your coding journey with Moradabads</p>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Sign Up for Moradabads - Create Your Account</h1>
+          <p className="text-muted-foreground">Start your coding journey with Moradabads. Access personalized learning, track progress, and unlock premium features.</p>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-3 text-sm">
+            <Link to="/articles" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Browse Articles</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/editor" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Try Editor</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/about" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">About Us</Link>
+          </div>
         </div>
 
         {/* Main Form Card */}

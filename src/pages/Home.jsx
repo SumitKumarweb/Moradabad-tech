@@ -94,6 +94,19 @@ export default function Home() {
                   </Link>
                 </Button>
               </div>
+              <div className="flex items-center justify-center lg:justify-start gap-4 pt-2">
+                <Link to="/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Login
+                </Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/signup" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Sign Up
+                </Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  About Us
+                </Link>
+              </div>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 md:gap-8 text-muted-foreground pt-2">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse shadow-lg shadow-green-500/50" />

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import SEO from "@/components/SEO"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -46,11 +47,20 @@ export default function ContactPage() {
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12 space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Contact <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600">Us</span>
+                Contact Moradabads - Get in Touch With Us
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Have a question or feedback? We'd love to hear from you.
+                Have a question or feedback? We'd love to hear from you. Whether you need support, want to share ideas, or are interested in joining our team, we're here to help.
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+                <Link to="/about" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">About Us</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/careers" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Careers</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/articles" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Articles</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/editor" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Code Editor</Link>
+              </div>
             </div>
           </div>
         </section>
@@ -63,8 +73,24 @@ export default function ContactPage() {
                   <h2 className="text-2xl md:text-3xl font-bold mb-6">Get in Touch</h2>
                   <p className="text-muted-foreground leading-relaxed mb-8">
                     Whether you have a question about our platform, need technical support, 
-                    or want to share feedback, we're here to help.
+                    or want to share feedback, we're here to help. Before reaching out, you might find 
+                    answers in our <Link to="/articles" className="text-primary hover:underline mx-1">helpful articles</Link> or 
+                    explore our <Link to="/quizzes" className="text-primary hover:underline mx-1">interactive quizzes</Link> to 
+                    learn more about what we offer.
                   </p>
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    <Link to="/about" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">About Us</Link>
+                    <span className="text-muted-foreground">•</span>
+                    <Link to="/articles" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Articles</Link>
+                    <span className="text-muted-foreground">•</span>
+                    <Link to="/editor" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Code Editor</Link>
+                    <span className="text-muted-foreground">•</span>
+                    <Link to="/careers" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Careers</Link>
+                    <span className="text-muted-foreground">•</span>
+                    <Link to="/dsa" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">DSA Problems</Link>
+                    <span className="text-muted-foreground">•</span>
+                    <Link to="/interview" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Interview Prep</Link>
+                  </div>
                 </div>
 
                 <div className="space-y-6">

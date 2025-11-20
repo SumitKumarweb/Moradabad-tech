@@ -13,11 +13,21 @@ export default function TermsPage() {
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12 space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Terms and <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600">Conditions</span>
+                Terms and Conditions - Moradabads User Agreement
               </h1>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Read our terms and conditions to understand the rules and regulations for using the Moradabads platform and services.
+              </p>
               <p className="text-sm text-muted-foreground">
                 Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+                <Link to="/privacy" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Privacy Policy</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/about" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">About Us</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/contact" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Contact Us</Link>
+              </div>
             </div>
           </div>
         </section>
@@ -156,8 +166,10 @@ export default function TermsPage() {
                   <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
                   <p className="text-muted-foreground leading-relaxed">
                     If you have any questions about these Terms and Conditions, please contact us at 
-                    <a href="/contact" className="text-primary hover:underline ml-1">support@moradabads.com</a> 
-                    or visit our <a href="/contact" className="text-primary hover:underline">contact page</a>.
+                    <Link to="/contact" className="text-primary hover:underline ml-1 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">support@moradabads.com</Link> 
+                    or visit our <Link to="/contact" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">contact page</Link>. 
+                    For more information about our platform, check out our <Link to="/about" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">About page</Link> or 
+                    browse our <Link to="/articles" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">learning resources</Link>.
                   </p>
                 </div>
               </div>

@@ -87,8 +87,15 @@ export default function LoginPage() {
               className="h-6 w-auto object-contain max-h-20 max-w-48 transition-transform group-hover:scale-110"
             />
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back</h1>
-          <p className="text-muted-foreground">Sign in to your Moradabads account</p>
+          <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground">Login to Moradabads - Welcome Back</h1>
+          <p className="text-muted-foreground text-base">Sign in to your Moradabads account to access personalized learning, track your progress, and continue your coding journey.</p>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-3 text-sm">
+            <Link to="/articles" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Browse Articles</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/editor" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Try Editor</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/about" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">About Us</Link>
+          </div>
         </div>
 
         {/* Main Form Card */}

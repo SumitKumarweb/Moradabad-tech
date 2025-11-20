@@ -27,8 +27,11 @@ export function Footer() {
             <h3 className="font-semibold text-sm">Learning</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/articles" className="hover:text-primary transition-colors inline-block">Articles</Link></li>
+              <li><Link to="/quizzes" className="hover:text-primary transition-colors inline-block">Quizzes</Link></li>
               <li><Link to="/editor" className="hover:text-primary transition-colors inline-block">Code Editor</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors inline-block">Tutorials</Link></li>
+              <li><Link to="/javascript-questions" className="hover:text-primary transition-colors inline-block">JS Questions</Link></li>
+              <li><Link to="/dsa" className="hover:text-primary transition-colors inline-block">DSA Problems</Link></li>
+              <li><Link to="/interview" className="hover:text-primary transition-colors inline-block">Interview Prep</Link></li>
             </ul>
           </div>
           
@@ -39,6 +42,8 @@ export function Footer() {
               <li><Link to="/about" className="hover:text-primary transition-colors inline-block">About Us</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors inline-block">Contact Us</Link></li>
               <li><Link to="/careers" className="hover:text-primary transition-colors inline-block">Careers</Link></li>
+              <li><Link to="/login" className="hover:text-primary transition-colors inline-block">Login</Link></li>
+              <li><Link to="/signup" className="hover:text-primary transition-colors inline-block">Sign Up</Link></li>
             </ul>
           </div>
           

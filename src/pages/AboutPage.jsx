@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import SEO from "@/components/SEO"
 import { Code2, Users, Target, Zap, Heart } from 'lucide-react'
 
@@ -14,11 +15,20 @@ export default function AboutPage() {
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12 space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                About <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600">Moradabads</span>
+                About Moradabads - Empowering Developers Worldwide
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Empowering developers with comprehensive tutorials and powerful browser-based tools.
+                Empowering developers with comprehensive tutorials and powerful browser-based tools. Learn about our mission, vision, and commitment to making coding education accessible to everyone.
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+                <Link to="/articles" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Browse Articles</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/editor" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Try Code Editor</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/contact" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Contact Us</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/careers" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Join Our Team</Link>
+              </div>
             </div>
           </div>
         </section>
@@ -31,7 +41,10 @@ export default function AboutPage() {
                 <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
                   At Moradabads, we believe that learning to code should be accessible, engaging, and practical. 
                   Our mission is to provide developers of all skill levels with the tools, knowledge, and resources 
-                  they need to succeed in the ever-evolving world of web development.
+                  they need to succeed in the ever-evolving world of web development. Whether you're exploring our 
+                  <Link to="/articles" className="text-primary hover:underline mx-1">comprehensive articles</Link> or 
+                  practicing with our <Link to="/dsa" className="text-primary hover:underline mx-1">DSA problems</Link>, 
+                  we're here to support your learning journey.
                 </p>
               </div>
 
@@ -94,7 +107,10 @@ export default function AboutPage() {
                   We envision a world where anyone, regardless of their background, can learn to code and 
                   build amazing things. By providing free, high-quality educational resources and tools, 
                   we're helping to democratize access to programming knowledge and create opportunities 
-                  for the next generation of developers.
+                  for the next generation of developers. Our <Link to="/quizzes" className="text-primary hover:underline mx-1">interactive quizzes</Link>, 
+                  <Link to="/interview" className="text-primary hover:underline mx-1"> interview preparation materials</Link>, and 
+                  <Link to="/javascript-questions" className="text-primary hover:underline mx-1"> JavaScript question bank</Link> 
+                  are all designed to make learning engaging and effective.
                 </p>
               </div>
 
@@ -108,6 +124,14 @@ export default function AboutPage() {
                   we're here to support you every step of the way. Join thousands of developers who are 
                   learning, practicing, and growing with Moradabads.
                 </p>
+                <div className="flex flex-wrap gap-4 mt-6">
+                  <Link to="/articles" className="text-primary hover:underline font-medium focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Explore Articles</Link>
+                  <Link to="/quizzes" className="text-primary hover:underline font-medium focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Take Quizzes</Link>
+                  <Link to="/editor" className="text-primary hover:underline font-medium focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Try Code Editor</Link>
+                  <Link to="/dsa" className="text-primary hover:underline font-medium focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Practice DSA</Link>
+                  <Link to="/interview" className="text-primary hover:underline font-medium focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Interview Prep</Link>
+                  <Link to="/contact" className="text-primary hover:underline font-medium focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Contact Us</Link>
+                </div>
               </div>
             </div>
           </div>

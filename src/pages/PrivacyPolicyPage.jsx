@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import SEO from "@/components/SEO"
 
 export default function PrivacyPolicyPage() {
@@ -13,11 +14,21 @@ export default function PrivacyPolicyPage() {
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12 space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Privacy <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600">Policy</span>
+                Privacy Policy - Moradabads Data Protection
               </h1>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Learn how Moradabads collects, uses, and protects your personal information. Your privacy is important to us.
+              </p>
               <p className="text-sm text-muted-foreground">
                 Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+                <Link to="/about" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">About Us</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/terms" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Terms & Conditions</Link>
+                <span className="text-muted-foreground">•</span>
+                <Link to="/contact" className="text-sm text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Contact Us</Link>
+              </div>
             </div>
           </div>
         </section>
@@ -135,8 +146,10 @@ export default function PrivacyPolicyPage() {
                   <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
                   <p className="text-muted-foreground leading-relaxed">
                     If you have any questions about this Privacy Policy, please contact us at 
-                    <a href="/contact" className="text-primary hover:underline ml-1">support@moradabads.com</a> 
-                    or visit our <a href="/contact" className="text-primary hover:underline">contact page</a>.
+                    <Link to="/contact" className="text-primary hover:underline ml-1 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">support@moradabads.com</Link> 
+                    or visit our <Link to="/contact" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">contact page</Link>. 
+                    You can also learn more about us on our <Link to="/about" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">About page</Link> or 
+                    explore our <Link to="/articles" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">educational content</Link>.
                   </p>
                 </div>
               </div>
