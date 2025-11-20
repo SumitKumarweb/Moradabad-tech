@@ -26,6 +26,7 @@ const JavaScriptQuestionPage = lazy(() => import('@/pages/JavaScriptQuestionPage
 const InterviewPage = lazy(() => import('@/pages/InterviewPage'))
 const InterviewSectionPage = lazy(() => import('@/pages/InterviewSectionPage'))
 const InterviewTopicPage = lazy(() => import('@/pages/InterviewTopicPage'))
+const ProgressPage = lazy(() => import('@/pages/ProgressPage'))
 
 // Loading fallback component
 const PageLoader = () => (
@@ -75,6 +76,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/progress"
+                  element={
+                    <ProtectedRoute>
+                      <ProgressPage />
                     </ProtectedRoute>
                   }
                 />

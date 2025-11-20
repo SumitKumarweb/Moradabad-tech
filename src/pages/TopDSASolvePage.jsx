@@ -2,13 +2,15 @@ import { useState, useEffect } from "react"
 import { Link, useParams } from "react-router-dom"
 import { topDSAProblems } from "@/lib/topDSAProblems"
 import { generateSlug } from "@/lib/utils"
-import { ChevronLeft, Play, CheckCircle2, XCircle, Loader2, Lightbulb, Code2 } from 'lucide-react'
+import { ChevronLeft, Play, CheckCircle2, XCircle, Loader2, Lightbulb, Code2, Lock } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import SEO from "@/components/SEO"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import Editor from '@monaco-editor/react'
+import { useAuth } from "@/contexts/AuthContext"
+import { markDSAProblemSolved } from "@/lib/progressService"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -27,6 +29,7 @@ import { toast } from "sonner"
 
 export default function TopDSASolvePage() {
   const { slug } = useParams()
+  const { currentUser } = useAuth()
   const [problem, setProblem] = useState(null)
   const [loading, setLoading] = useState(true)
   const [code, setCode] = useState("")
@@ -204,6 +207,10 @@ int main() {
   }
 
   const runCode = async () => {
+    if (!currentUser) {
+      toast.error("Please login to solve problems")
+      return
+    }
     if (!problem || !code.trim()) {
       toast.error("Please write some code first")
       return
@@ -325,6 +332,16 @@ int main() {
       
       if (passedCount === totalCount && totalCount > 0) {
         toast.success(`All test cases passed! (${passedCount}/${totalCount})`)
+        // Mark problem as solved
+        if (currentUser && problem) {
+          try {
+            const problemId = problem.id || problem.slug || slug
+            await markDSAProblemSolved(currentUser.uid, problemId)
+          } catch (error) {
+            console.error('Error marking problem as solved:', error)
+            // Don't show error to user - progress tracking is not critical
+          }
+        }
       } else if (passedCount > 0) {
         toast.warning(`Some test cases passed. (${passedCount}/${totalCount} passed)`)
       } else {
@@ -589,7 +606,32 @@ int main() {
           </div>
 
           {/* Code Editor */}
-          <div className="space-y-4">
+          <div className="space-y-4 relative">
+            {!currentUser && (
+              <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-sm flex items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30">
+                <Card className="p-6 max-w-md mx-4">
+                  <CardContent className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-3 rounded-full bg-primary/10">
+                      <Lock className="h-8 w-8 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Login Required</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Please login to write code and solve this problem. You can view the problem description without logging in.
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button asChild>
+                        <Link to="/login">Login</Link>
+                      </Button>
+                      <Button asChild variant="outline">
+                        <Link to="/signup">Sign Up</Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -601,7 +643,8 @@ int main() {
                     <select
                       value={language}
                       onChange={(e) => handleLanguageChange(e.target.value)}
-                      className="px-3 py-1.5 text-sm border rounded-md bg-background"
+                      disabled={!currentUser}
+                      className="px-3 py-1.5 text-sm border rounded-md bg-background disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="python">Python</option>
                       <option value="javascript">JavaScript</option>
@@ -610,7 +653,7 @@ int main() {
                     </select>
                     <Button
                       onClick={runCode}
-                      disabled={isRunning || !code.trim()}
+                      disabled={isRunning || !code.trim() || !currentUser}
                       className="gap-2"
                     >
                       {isRunning ? (
@@ -635,12 +678,16 @@ int main() {
                     <TabsTrigger value="output">Output</TabsTrigger>
                   </TabsList>
                   <TabsContent value="code" className="m-0 p-0">
-                    <div className="h-[600px] border-t">
+                    <div className="h-[600px] border-t relative">
                       <Editor
                         height="100%"
                         language={language}
                         value={code}
-                        onChange={(value) => setCode(value || "")}
+                        onChange={(value) => {
+                          if (currentUser) {
+                            setCode(value || "")
+                          }
+                        }}
                         theme="vs-dark"
                         options={{
                           minimap: { enabled: false },
@@ -649,6 +696,7 @@ int main() {
                           scrollBeyondLastLine: false,
                           automaticLayout: true,
                           tabSize: 2,
+                          readOnly: !currentUser,
                         }}
                       />
                     </div>

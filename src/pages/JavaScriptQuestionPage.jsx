@@ -1,11 +1,13 @@
 import { useState } from "react"
 import { Link, useParams, Navigate } from "react-router-dom"
-import { CheckCircle2, XCircle, ChevronLeft, ChevronRight, Code, RotateCcw } from 'lucide-react'
+import { CheckCircle2, XCircle, ChevronLeft, ChevronRight, Code, RotateCcw, Lock } from 'lucide-react'
 
 import { getQuestionById, getAllQuestions, getTotalQuestions } from "@/lib/javascriptQuestions"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useAuth } from "@/contexts/AuthContext"
+import { markJSQuestionSolved } from "@/lib/progressService"
 import SEO from "@/components/SEO"
 import {
   Breadcrumb,
@@ -18,6 +20,7 @@ import {
 
 export default function JavaScriptQuestionPage() {
   const { questionId } = useParams()
+  const { currentUser } = useAuth()
   const question = getQuestionById(questionId)
   const allQuestions = getAllQuestions()
   const totalQuestions = getTotalQuestions()
@@ -43,14 +46,29 @@ export default function JavaScriptQuestionPage() {
   }
 
   const handleAnswerSelect = (index) => {
+    if (!currentUser) {
+      return
+    }
     if (!showAnswer) {
       setSelectedAnswer(index)
     }
   }
 
-  const handleShowAnswer = () => {
+  const handleShowAnswer = async () => {
+    if (!currentUser) {
+      return
+    }
     if (selectedAnswer !== null) {
       setShowAnswer(true)
+      // Mark question as solved if answered correctly
+      if (selectedAnswer === question.correctAnswer) {
+        try {
+          await markJSQuestionSolved(currentUser.uid, question.id)
+        } catch (error) {
+          console.error('Error marking question as solved:', error)
+          // Don't show error to user - progress tracking is not critical
+        }
+      }
     }
   }
 
@@ -114,7 +132,32 @@ export default function JavaScriptQuestionPage() {
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-12 max-w-7xl">
         <div className="max-w-4xl mx-auto">
-          <Card className="p-4 md:p-6 lg:p-8 border-2 border-border/50 shadow-xl mb-6">
+          <Card className="p-4 md:p-6 lg:p-8 border-2 border-border/50 shadow-xl mb-6 relative">
+            {!currentUser && (
+              <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-sm flex items-center justify-center rounded-lg">
+                <Card className="p-6 max-w-md mx-4">
+                  <CardContent className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-3 rounded-full bg-primary/10">
+                      <Lock className="h-8 w-8 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Login Required</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Please login to select answers and solve this question. You can view the question without logging in.
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button asChild>
+                        <Link to="/login">Login</Link>
+                      </Button>
+                      <Button asChild variant="outline">
+                        <Link to="/signup">Sign Up</Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
             {question.code && (
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-2">
@@ -140,7 +183,7 @@ export default function JavaScriptQuestionPage() {
                   return (
                     <label
                       key={index}
-                      onClick={() => !showAnswer && handleAnswerSelect(index)}
+                      onClick={() => !showAnswer && currentUser && handleAnswerSelect(index)}
                       className={`flex items-start gap-3 p-3.5 md:p-4 rounded-lg border-2 transition-all duration-200 ${
                         showCorrect
                           ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
@@ -149,7 +192,7 @@ export default function JavaScriptQuestionPage() {
                           : isSelected
                           ? 'border-primary bg-primary/5'
                           : 'border-border hover:border-primary/30 hover:bg-muted/30'
-                      } ${showAnswer ? 'cursor-default' : 'cursor-pointer'}`}
+                      } ${showAnswer || !currentUser ? 'cursor-default' : 'cursor-pointer'} ${!currentUser ? 'opacity-60' : ''}`}
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <div className="flex-shrink-0 mt-0.5">
@@ -200,7 +243,7 @@ export default function JavaScriptQuestionPage() {
                         value={index}
                         checked={isSelected}
                         onChange={() => handleAnswerSelect(index)}
-                        disabled={showAnswer}
+                        disabled={showAnswer || !currentUser}
                         className="sr-only"
                       />
                     </label>
@@ -236,13 +279,13 @@ export default function JavaScriptQuestionPage() {
 
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="flex gap-2">
-                {selectedAnswer !== null && !showAnswer && (
+                {selectedAnswer !== null && !showAnswer && currentUser && (
                   <Button onClick={handleShowAnswer} size="lg" className="gap-2">
                     Show Answer
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 )}
-                {showAnswer && (
+                {showAnswer && currentUser && (
                   <Button onClick={handleReset} variant="outline" size="lg" className="gap-2">
                     <RotateCcw className="h-4 w-4" />
                     Reset

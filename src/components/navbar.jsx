@@ -1,7 +1,7 @@
 import * as React from "react"
 import { memo, useCallback, useMemo } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Menu, Code2, User, LogOut } from 'lucide-react'
+import { Menu, Code2, User, LogOut, TrendingUp } from 'lucide-react'
 
 import { siteConfig } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
@@ -129,6 +129,16 @@ export const Navbar = memo(function Navbar() {
                   >
                     Profile
                   </Link>
+                  <Link
+                    to="/progress"
+                    className={cn(
+                      "text-base font-medium transition-colors hover:text-primary py-2 px-3 rounded-md",
+                      pathname === "/progress" ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-muted"
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Progress
+                  </Link>
                   <button
                     onClick={() => {
                       handleLogout()
@@ -175,6 +185,12 @@ export const Navbar = memo(function Navbar() {
                   <Link to="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/progress" className="cursor-pointer">
+                    <TrendingUp className="mr-2 h-4 w-4" />
+                    Progress
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
