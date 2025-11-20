@@ -1,24 +1,64 @@
-import { memo } from "react"
+import { memo, useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, ArrowUpRight } from 'lucide-react'
 
 export const ArticleCard = memo(function ArticleCard({ article }) {
+  const [imageError, setImageError] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
+
+  // Reset image state when article changes
+  useEffect(() => {
+    setImageError(false)
+    setImageLoading(true)
+  }, [article.slug])
+
+  // Get category-based default image
+  const getCategoryImage = () => {
+    const category = article.category?.toLowerCase()
+    if (category === "html") return "/html-code-snippet.png"
+    if (category === "css") return "/css-styling.jpg"
+    if (category === "javascript") return "/javascript-code.png"
+    if (category === "react") return "/react-js-logo.png"
+    return "/placeholder.jpg"
+  }
+
+  const handleImageError = () => {
+    setImageError(true)
+    setImageLoading(false)
+  }
+
+  const handleImageLoad = () => {
+    setImageLoading(false)
+  }
+
+  const imageSrc = imageError ? "/placeholder.jpg" : (article.image || getCategoryImage())
+
   return (
     <Link to={`/articles/${article.slug}`} className="group block h-full">
       <Card className="h-full overflow-hidden border border-border/50 bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 dark:hover:border-primary/60 dark:hover:shadow-xl dark:hover:shadow-primary/20 dark:hover:glow-primary">
         <div className="relative aspect-video overflow-hidden bg-muted">
-          {article.image ? (
-            <img
-              src={article.image || "/placeholder.svg"}
-              alt={article.title}
-              loading="lazy"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-muted">
-              <span className="text-3xl md:text-4xl font-bold text-muted-foreground/30">MT</span>
+          {imageLoading && !imageError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-muted">
+              <div className="animate-pulse text-muted-foreground/30">
+                <span className="text-2xl font-bold">MT</span>
+              </div>
+            </div>
+          )}
+          <img
+            src={imageSrc}
+            alt={article.title}
+            loading="lazy"
+            onError={handleImageError}
+            onLoad={handleImageLoad}
+            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+          />
+          {imageError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-muted">
+              <span className="text-3xl md:text-4xl font-bold text-muted-foreground/30">
+                {article.category?.charAt(0) || "MT"}
+              </span>
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

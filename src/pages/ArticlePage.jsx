@@ -22,6 +22,25 @@ export default function ArticlePage() {
   const [article, setArticle] = useState(null)
   const [relatedArticles, setRelatedArticles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [imageError, setImageError] = useState(false)
+
+  // Get category-based default image
+  const getCategoryImage = (category) => {
+    if (!category) return "/placeholder.jpg"
+    const cat = category.toLowerCase()
+    if (cat === "html") return "/html-code-snippet.png"
+    if (cat === "css") return "/css-styling.jpg"
+    if (cat === "javascript") return "/javascript-code.png"
+    if (cat === "react") return "/react-js-logo.png"
+    return "/placeholder.jpg"
+  }
+
+  const getImageSrc = () => {
+    if (imageError || !article?.image) {
+      return getCategoryImage(article?.category)
+    }
+    return article.image
+  }
 
   useEffect(() => {
     loadArticle()
@@ -30,6 +49,7 @@ export default function ArticlePage() {
   const loadArticle = async () => {
     try {
       setLoading(true)
+      setImageError(false) // Reset image error when loading new article
       const articleData = await getArticleBySlug(slug)
       if (articleData) {
         setArticle(articleData)
@@ -224,17 +244,23 @@ export default function ArticlePage() {
               </div>
             </div>
 
-            {article.image && (
-              <div className="relative mt-6 md:mt-8 lg:mt-12 aspect-video rounded-xl overflow-hidden border border-border/50 shadow-2xl shadow-primary/5">
-                <img
-                  src={article.image || "/placeholder.svg"}
-                  alt={article.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
-              </div>
-            )}
+            <div className="relative mt-6 md:mt-8 lg:mt-12 aspect-video rounded-xl overflow-hidden border border-border/50 shadow-2xl shadow-primary/5 bg-muted">
+              <img
+                src={getImageSrc()}
+                alt={article.title}
+                loading="lazy"
+                onError={() => setImageError(true)}
+                className="w-full h-full object-cover"
+              />
+              {imageError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-muted">
+                  <span className="text-4xl md:text-5xl font-bold text-muted-foreground/30">
+                    {article.category?.charAt(0) || "MT"}
+                  </span>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
+            </div>
           </div>
         </div>
       </div>
