@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/30">
       <div className="container px-4 md:px-6 lg:px-8">
-        <div className="grid gap-8 py-12 md:py-16 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 py-12 md:py-16 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <img 
@@ -31,11 +31,19 @@ export function Footer() {
           </div>
           
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm">Resources</h3>
+            <h3 className="font-semibold text-sm">Company</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="#" className="hover:text-primary transition-colors">Documentation</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">Community</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">Support</Link></li>
+              <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
+              <li><Link to="/careers" className="hover:text-primary transition-colors">Careers</Link></li>
+            </ul>
+          </div>
+          
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm">Legal</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-primary transition-colors">Terms & Conditions</Link></li>
             </ul>
           </div>
           
@@ -61,8 +69,8 @@ export function Footer() {
               © {new Date().getFullYear()} Moradabads. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
-              <Link to="#" className="hover:text-primary transition-colors">Privacy</Link>
-              <Link to="#" className="hover:text-primary transition-colors">Terms</Link>
+              <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
+              <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
             </div>
           </div>
         </div>

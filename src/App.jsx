@@ -29,6 +29,11 @@ const InterviewPage = lazy(() => import('@/pages/InterviewPage'))
 const InterviewSectionPage = lazy(() => import('@/pages/InterviewSectionPage'))
 const InterviewTopicPage = lazy(() => import('@/pages/InterviewTopicPage'))
 const ProgressPage = lazy(() => import('@/pages/ProgressPage'))
+const AboutPage = lazy(() => import('@/pages/AboutPage'))
+const ContactPage = lazy(() => import('@/pages/ContactPage'))
+const CareerPage = lazy(() => import('@/pages/CareerPage'))
+const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'))
+const TermsPage = lazy(() => import('@/pages/TermsPage'))
 
 // Loading fallback component
 const PageLoader = () => (
@@ -91,6 +96,11 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/careers" element={<CareerPage />} />
+                <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
               </Routes>
             </Suspense>
           </main>
