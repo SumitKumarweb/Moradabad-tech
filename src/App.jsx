@@ -29,6 +29,7 @@ const InterviewPage = lazy(() => import('@/pages/InterviewPage'))
 const InterviewSectionPage = lazy(() => import('@/pages/InterviewSectionPage'))
 const InterviewTopicPage = lazy(() => import('@/pages/InterviewTopicPage'))
 const ProgressPage = lazy(() => import('@/pages/ProgressPage'))
+const LeaderboardPage = lazy(() => import('@/pages/LeaderboardPage'))
 const AboutPage = lazy(() => import('@/pages/AboutPage'))
 const ContactPage = lazy(() => import('@/pages/ContactPage'))
 const CareerPage = lazy(() => import('@/pages/CareerPage'))
@@ -97,6 +98,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/leaderboard" element={<LeaderboardPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/careers" element={<CareerPage />} />

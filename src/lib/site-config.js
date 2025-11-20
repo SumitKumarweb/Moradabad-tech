@@ -42,6 +42,10 @@ export const siteConfig = {
       title: "Code Editor",
       href: "/editor",
     },
+    // {
+    //   title: "Leaderboard",
+    //   href: "/leaderboard",
+    // },
   ],
 }
 
