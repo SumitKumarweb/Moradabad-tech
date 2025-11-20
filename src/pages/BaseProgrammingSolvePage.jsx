@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import Editor from '@monaco-editor/react'
 import { useAuth } from "@/contexts/AuthContext"
+import { markBaseProgrammingSolved, isBaseProgrammingSolved } from "@/lib/progressService"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -38,6 +39,7 @@ export default function BaseProgrammingSolvePage() {
   const [language, setLanguage] = useState("python")
   const [codeOutput, setCodeOutput] = useState("")
   const [hasRunCode, setHasRunCode] = useState(false)
+  const [isSolved, setIsSolved] = useState(false)
 
   const allQuestions = getAllQuestions()
   const currentIndex = allQuestions.findIndex(q => q.id === questionId)
@@ -46,9 +48,9 @@ export default function BaseProgrammingSolvePage() {
 
   useEffect(() => {
     loadQuestion()
-  }, [questionId])
+  }, [questionId, currentUser])
 
-  const loadQuestion = () => {
+  const loadQuestion = async () => {
     try {
       setLoading(true)
       const data = getQuestionById(questionId)
@@ -56,6 +58,16 @@ export default function BaseProgrammingSolvePage() {
       if (data) {
         setQuestion(data)
         setCode(getCodeTemplate(data, language))
+        
+        // Check if question is already solved
+        if (currentUser) {
+          try {
+            const solved = await isBaseProgrammingSolved(currentUser.uid, questionId)
+            setIsSolved(solved)
+          } catch (error) {
+            console.error('Error checking solved status:', error)
+          }
+        }
       }
     } catch (error) {
       console.error("Error loading question:", error)
@@ -310,7 +322,20 @@ int main() {
       const totalCount = results.length
       
       if (passedCount === totalCount && totalCount > 0) {
-        toast.success(`All test cases passed! (${passedCount}/${totalCount})`)
+        // Mark question as solved and update progress in Firebase
+        if (currentUser && question) {
+          try {
+            await markBaseProgrammingSolved(currentUser.uid, questionId)
+            setIsSolved(true) // Update local state
+            toast.success(`🎉 All test cases passed! Question marked as solved and saved to Firebase. Progress updated! (${passedCount}/${totalCount})`)
+          } catch (error) {
+            console.error('Error marking question as solved:', error)
+            toast.success(`All test cases passed! (${passedCount}/${totalCount})`)
+            toast.error('Failed to save progress to Firebase. Please try again.')
+          }
+        } else {
+          toast.success(`All test cases passed! (${passedCount}/${totalCount})`)
+        }
       } else if (passedCount > 0) {
         toast.warning(`Some test cases passed. (${passedCount}/${totalCount} passed)`)
       } else {
@@ -438,6 +463,12 @@ int main() {
             <Badge variant="outline" className="font-mono">
               Q{question.number}
             </Badge>
+            {isSolved && currentUser && (
+              <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                <CheckCircle2 className="h-3 w-3 mr-1" />
+                Solved
+              </Badge>
+            )}
           </div>
         </div>
       </div>

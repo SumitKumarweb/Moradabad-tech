@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { ChevronRight, Code, BookOpen, Target, Filter } from 'lucide-react'
+import { ChevronRight, Code, BookOpen, Target, Filter, CheckCircle2 } from 'lucide-react'
 
 import { getAllQuestions, getTotalQuestions, getQuestionsByCategory } from "@/lib/baseProgrammingQuestions"
 import { Button } from "@/components/ui/button"
@@ -8,15 +8,25 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Pagination } from "@/components/ui/pagination"
 import SEO from "@/components/SEO"
+import { useAuth } from "@/contexts/AuthContext"
+import { isBaseProgrammingSolved } from "@/lib/progressService"
 
 const CATEGORIES = ["All", "Prime Numbers", "Digit Questions", "Series", "Print Patterns", "Conditionals"]
 
 export default function BaseProgrammingPage() {
+  const { currentUser } = useAuth()
   const totalQuestions = getTotalQuestions()
   const allQuestions = getAllQuestions()
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedCategory, setSelectedCategory] = useState("All")
+  const [solvedQuestions, setSolvedQuestions] = useState(new Set())
   const itemsPerPage = 12
+
+  useEffect(() => {
+    if (currentUser && allQuestions.length > 0) {
+      checkSolvedStatus()
+    }
+  }, [currentUser])
 
   // Filter questions by category
   const filteredQuestions = useMemo(() => {
@@ -38,6 +48,24 @@ export default function BaseProgrammingPage() {
   useEffect(() => {
     setCurrentPage(1)
   }, [selectedCategory])
+
+  const checkSolvedStatus = async () => {
+    if (!currentUser) return
+    try {
+      const solvedSet = new Set()
+      await Promise.all(
+        allQuestions.map(async (question) => {
+          const solved = await isBaseProgrammingSolved(currentUser.uid, question.id)
+          if (solved) {
+            solvedSet.add(question.id)
+          }
+        })
+      )
+      setSolvedQuestions(solvedSet)
+    } catch (error) {
+      console.error('Error checking solved status:', error)
+    }
+  }
 
   const getDifficultyBadgeVariant = (difficulty) => {
     switch (difficulty?.toLowerCase()) {
@@ -155,6 +183,12 @@ export default function BaseProgrammingPage() {
                       <Badge variant={getDifficultyBadgeVariant(question.difficulty)} className="text-xs">
                         {question.difficulty}
                       </Badge>
+                      {solvedQuestions.has(question.id) && currentUser && (
+                        <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-xs">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          Solved
+                        </Badge>
+                      )}
                     </div>
                     <div className="p-1.5 md:p-2 rounded-lg bg-primary/10 text-primary ring-1 ring-inset ring-primary/20 group-hover:scale-110 transition-transform shrink-0">
                       <Code className="h-4 w-4 md:h-5 md:w-5" />

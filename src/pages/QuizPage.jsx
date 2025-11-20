@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, useParams, Navigate } from "react-router-dom"
 import { CheckCircle2, XCircle, ChevronLeft, Trophy, RotateCcw, ArrowRight } from 'lucide-react'
 
@@ -9,6 +9,9 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import SEO from "@/components/SEO"
 import StructuredData, { generateQuizSchema, generateBreadcrumbSchema, generateFAQPageSchema } from "@/components/StructuredData"
+import { useAuth } from "@/contexts/AuthContext"
+import { markQuizSolved, isQuizSolved } from "@/lib/progressService"
+import { toast } from "sonner"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -20,6 +23,7 @@ import {
 
 export default function QuizPage() {
   const { quizId } = useParams()
+  const { currentUser } = useAuth()
   const quiz = quizzes.find((q) => q.id === quizId)
   const article = quiz ? articles.find((a) => a.slug === quiz.articleSlug) : null
 
@@ -28,6 +32,22 @@ export default function QuizPage() {
   const [showResults, setShowResults] = useState(false)
   const [selectedOption, setSelectedOption] = useState(null)
   const [isAnswered, setIsAnswered] = useState(false)
+  const [isSolved, setIsSolved] = useState(false)
+
+  useEffect(() => {
+    checkSolvedStatus()
+  }, [quizId, currentUser])
+
+  const checkSolvedStatus = async () => {
+    if (currentUser && quizId) {
+      try {
+        const solved = await isQuizSolved(currentUser.uid, quizId)
+        setIsSolved(solved)
+      } catch (error) {
+        console.error('Error checking solved status:', error)
+      }
+    }
+  }
 
   if (!quiz || !article) {
     return (
@@ -100,6 +120,19 @@ export default function QuizPage() {
     const percentage = (score / quiz.questions.length) * 100
     const passed = percentage >= 70
 
+    // Mark quiz as solved if passed and not already solved
+    if (passed && currentUser && !isSolved) {
+      markQuizSolved(currentUser.uid, quizId)
+        .then(() => {
+          setIsSolved(true)
+          toast.success('🎉 Quiz passed! Marked as solved and saved to Firebase.')
+        })
+        .catch((error) => {
+          console.error('Error marking quiz as solved:', error)
+          toast.error('Failed to save progress to Firebase.')
+        })
+    }
+
     // Generate breadcrumb items for results page
     const breadcrumbItemsResults = [
       { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
@@ -165,6 +198,13 @@ export default function QuizPage() {
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4">
                   {passed ? "Congratulations!" : "Keep Learning!"}
                 </h1>
+                
+                {isSolved && currentUser && (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-700 mb-4">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Quiz Solved
+                  </Badge>
+                )}
                 
                 <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8">
                   You scored <span className="font-bold text-primary">{score}</span> out of{" "}
@@ -342,7 +382,15 @@ export default function QuizPage() {
           
           <div className="max-w-3xl mx-auto">
             <div className="mb-4 md:mb-6">
-                <Badge className="mb-2 font-mono text-xs">{article.category}</Badge>
+              <div className="flex items-center gap-2 mb-2">
+                <Badge className="font-mono text-xs">{article.category}</Badge>
+                {isSolved && currentUser && (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Solved
+                  </Badge>
+                )}
+              </div>
               <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">{quiz.title}</h1>
               <p className="text-sm md:text-base text-muted-foreground">{quiz.description}</p>
             </div>

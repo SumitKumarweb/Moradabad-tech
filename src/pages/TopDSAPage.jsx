@@ -2,7 +2,9 @@ import { useState, useMemo, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { topDSAProblems } from "@/lib/topDSAProblems"
 import { generateSlug } from "@/lib/utils"
-import { Code2, Search, X, Loader2, TrendingUp, TrendingDown, Minus, Star } from 'lucide-react'
+import { Code2, Search, X, Loader2, TrendingUp, TrendingDown, Minus, Star, CheckCircle2 } from 'lucide-react'
+import { useAuth } from "@/contexts/AuthContext"
+import { isDSAProblemSolved } from "@/lib/progressService"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import SEO from "@/components/SEO"
@@ -27,17 +29,25 @@ import {
 } from "@/components/ui/select"
 
 export default function TopDSAPage() {
+  const { currentUser } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
   const [problems, setProblems] = useState([])
   const [loading, setLoading] = useState(true)
   const [difficultyFilter, setDifficultyFilter] = useState("all")
   const [selectedTags, setSelectedTags] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
+  const [solvedProblems, setSolvedProblems] = useState(new Set())
   const itemsPerPage = 20
 
   useEffect(() => {
     loadProblems()
   }, [])
+
+  useEffect(() => {
+    if (currentUser && problems.length > 0) {
+      checkSolvedStatus()
+    }
+  }, [currentUser, problems.length])
 
   const loadProblems = async () => {
     try {
@@ -54,6 +64,25 @@ export default function TopDSAPage() {
       setProblems([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  const checkSolvedStatus = async () => {
+    if (!currentUser) return
+    try {
+      const solvedSet = new Set()
+      await Promise.all(
+        problems.map(async (problem) => {
+          const problemId = problem.id || problem.slug
+          const solved = await isDSAProblemSolved(currentUser.uid, problemId)
+          if (solved) {
+            solvedSet.add(problemId)
+          }
+        })
+      )
+      setSolvedProblems(solvedSet)
+    } catch (error) {
+      console.error('Error checking solved status:', error)
     }
   }
 
@@ -353,11 +382,19 @@ export default function TopDSAPage() {
                             {getDifficultyIcon(problem.difficulty)}
                             {problem.difficulty || 'Unknown'}
                           </Badge>
-                          {problem.playlist && (
-                            <Badge variant="outline" className="text-xs">
-                              {problem.playlist}
-                            </Badge>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {solvedProblems.has(problem.id || problem.slug) && currentUser && (
+                              <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-xs">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Solved
+                              </Badge>
+                            )}
+                            {problem.playlist && (
+                              <Badge variant="outline" className="text-xs">
+                                {problem.playlist}
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                         <CardTitle className="text-lg md:text-xl group-hover:text-primary transition-colors">
                           {problem.title || 'Untitled Problem'}

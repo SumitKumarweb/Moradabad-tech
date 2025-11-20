@@ -1,13 +1,43 @@
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { ChevronRight, Brain, Clock, Target } from 'lucide-react'
+import { ChevronRight, Brain, Clock, Target, CheckCircle2 } from 'lucide-react'
 
 import { quizzes, articles } from "@/lib/articles"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import SEO from "@/components/SEO"
+import { useAuth } from "@/contexts/AuthContext"
+import { isQuizSolved } from "@/lib/progressService"
 
 export default function QuizzesPage() {
+  const { currentUser } = useAuth()
+  const [solvedQuizzes, setSolvedQuizzes] = useState(new Set())
+
+  useEffect(() => {
+    if (currentUser) {
+      checkSolvedStatus()
+    }
+  }, [currentUser])
+
+  const checkSolvedStatus = async () => {
+    if (!currentUser) return
+    try {
+      const solvedSet = new Set()
+      await Promise.all(
+        quizzes.map(async (quiz) => {
+          const solved = await isQuizSolved(currentUser.uid, quiz.id)
+          if (solved) {
+            solvedSet.add(quiz.id)
+          }
+        })
+      )
+      setSolvedQuizzes(solvedSet)
+    } catch (error) {
+      console.error('Error checking solved status:', error)
+    }
+  }
+
   return (
     <>
       <SEO
@@ -67,6 +97,12 @@ export default function QuizzesPage() {
                           <Badge variant="outline" className="font-mono text-[10px] md:text-xs">
                             {article.difficulty}
                           </Badge>
+                          {solvedQuizzes.has(quiz.id) && currentUser && (
+                            <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-[10px] md:text-xs">
+                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                              Solved
+                            </Badge>
+                          )}
                         </div>
                       </div>
                       <div className="p-1.5 md:p-2 rounded-lg bg-primary/10 text-primary ring-1 ring-inset ring-primary/20 group-hover:scale-110 transition-transform shrink-0">
