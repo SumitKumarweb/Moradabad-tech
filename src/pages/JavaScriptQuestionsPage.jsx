@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { ChevronRight, Code, BookOpen, Target } from 'lucide-react'
 
@@ -5,11 +6,22 @@ import { getAllQuestions, getTotalQuestions } from "@/lib/javascriptQuestions"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Pagination } from "@/components/ui/pagination"
 import SEO from "@/components/SEO"
 
 export default function JavaScriptQuestionsPage() {
   const totalQuestions = getTotalQuestions()
-  const questions = getAllQuestions()
+  const allQuestions = getAllQuestions()
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
+
+  // Pagination logic
+  const totalPages = Math.ceil(allQuestions.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const questions = useMemo(() => {
+    return allQuestions.slice(startIndex, endIndex)
+  }, [allQuestions.length, startIndex, endIndex])
 
   return (
     <>
@@ -59,6 +71,17 @@ export default function JavaScriptQuestionsPage() {
             </p>
           </div>
 
+          {/* Results Count */}
+          <div className="mb-4 md:mb-6">
+            <div className="text-xs md:text-sm text-muted-foreground">
+              Showing <span className="font-semibold text-foreground">{startIndex + 1}-{Math.min(endIndex, allQuestions.length)}</span> of{" "}
+              <span className="font-semibold text-foreground">{allQuestions.length}</span> questions
+              {allQuestions.length > itemsPerPage && (
+                <> (Page {currentPage} of {totalPages})</>
+              )}
+            </div>
+          </div>
+
           <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {questions.map((question) => (
               <Card
@@ -102,6 +125,17 @@ export default function JavaScriptQuestionsPage() {
               </Card>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-8 md:mt-12">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
 
           <div className="mt-8 md:mt-12 lg:mt-16 text-center">
             <Card className="p-6 md:p-8 lg:p-12 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
