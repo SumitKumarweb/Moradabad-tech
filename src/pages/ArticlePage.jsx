@@ -1,6 +1,7 @@
 import { Link, useParams, Navigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { ChevronLeft, Calendar, Clock, Share2, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { getArticleBySlug, getAllArticles } from "@/lib/articlesService"
 import { Badge } from "@/components/ui/badge"
@@ -44,6 +45,59 @@ export default function ArticlePage() {
       console.error("Error loading article:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleShare = async (e) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    
+    const articleUrl = window.location.href
+    
+    // Try modern Clipboard API first
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(articleUrl)
+        toast.success("Article URL copied to clipboard!", {
+          description: "Share this link with others to let them read this article.",
+        })
+        return
+      } catch (error) {
+        console.log("Clipboard API failed, trying fallback:", error)
+      }
+    }
+    
+    // Fallback for browsers that don't support clipboard API
+    try {
+      const textArea = document.createElement("textarea")
+      textArea.value = articleUrl
+      textArea.style.position = "fixed"
+      textArea.style.left = "-999999px"
+      textArea.style.top = "-999999px"
+      textArea.setAttribute('readonly', '')
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+      textArea.setSelectionRange(0, 99999) // For mobile devices
+      
+      const successful = document.execCommand('copy')
+      document.body.removeChild(textArea)
+      
+      if (successful) {
+        toast.success("Article URL copied to clipboard!", {
+          description: "Share this link with others to let them read this article.",
+        })
+      } else {
+        throw new Error("execCommand failed")
+      }
+    } catch (err) {
+      console.error("Failed to copy URL:", err)
+      toast.error("Failed to copy URL", {
+        description: `Please copy this URL manually: ${articleUrl}`,
+        duration: 5000,
+      })
     }
   }
 
@@ -157,7 +211,13 @@ export default function ArticlePage() {
                   <Clock className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0" />
                   <span>{article.readTime}</span>
                 </div>
-                <Button variant="ghost" size="sm" className="ml-auto -mr-2 hover:bg-muted shrink-0">
+                <Button 
+                  type="button"
+                  variant="ghost" 
+                  size="sm" 
+                  className="ml-auto -mr-2 hover:bg-muted shrink-0 cursor-pointer"
+                  onClick={handleShare}
+                >
                   <Share2 className="h-3.5 w-3.5 md:h-4 md:w-4 md:mr-2" />
                   <span className="hidden md:inline">Share</span>
                 </Button>
