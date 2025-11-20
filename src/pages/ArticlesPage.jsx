@@ -5,6 +5,7 @@ import { ArticleCard } from "@/components/article-card"
 import { BookOpen, Search, X, Loader2 } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Pagination } from "@/components/ui/pagination"
 import SEO from "@/components/SEO"
 import StructuredData, { generateItemListSchema, generateBreadcrumbSchema } from "@/components/StructuredData"
 import {
@@ -21,6 +22,8 @@ export default function ArticlesPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
 
   useEffect(() => {
     loadArticles()
@@ -67,6 +70,17 @@ export default function ArticlesPage() {
 
     return filtered
   }, [searchQuery, articles, category])
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredArticles.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedArticles = filteredArticles.slice(startIndex, endIndex)
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, category])
 
   const clearSearch = () => {
     setSearchQuery("")
@@ -211,10 +225,16 @@ export default function ArticlesPage() {
                     {searchQuery && (
                       <> for &quot;<span className="font-semibold text-foreground">{searchQuery}</span>&quot;</>
                     )}
+                    {filteredArticles.length > itemsPerPage && (
+                      <> (Showing {startIndex + 1}-{Math.min(endIndex, filteredArticles.length)} of {filteredArticles.length})</>
+                    )}
                   </>
                 ) : (
                   <>
                     Showing <span className="font-semibold text-foreground">{articles.length}</span> article{articles.length !== 1 ? 's' : ''}
+                    {articles.length > itemsPerPage && (
+                      <> (Page {currentPage} of {totalPages})</>
+                    )}
                   </>
                 )}
               </div>
@@ -234,12 +254,25 @@ export default function ArticlesPage() {
 
             {/* Articles Grid */}
             {filteredArticles.length > 0 ? (
-          <div className="grid gap-3 md:gap-4 lg:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredArticles.map((article) => (
-            <ArticleCard key={article.slug} article={article} />
-          ))}
-        </div>
-        ) : (
+              <>
+                <div className="grid gap-3 md:gap-4 lg:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {paginatedArticles.map((article) => (
+                    <ArticleCard key={article.slug} article={article} />
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center mt-8">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
           <div className="text-center py-12 md:py-16">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
               <Search className="h-8 w-8 text-muted-foreground" />
