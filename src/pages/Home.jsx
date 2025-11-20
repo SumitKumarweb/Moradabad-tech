@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { lazy, Suspense, useMemo } from "react"
+import { lazy, Suspense, useMemo, useState, useEffect } from "react"
 import { ArrowRight, Code, Terminal, BookOpen, Cpu, Globe, Zap, Brain, Target } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { articles } from "@/lib/articles"
@@ -10,6 +10,234 @@ import StructuredData, { generateOrganizationSchema, generateWebSiteSchema } fro
 // Lazy load heavy 3D component
 const Hero3D = lazy(() => import('@/components/hero-3d').then(module => ({ default: module.Hero3D })))
 
+function CodeFeatureCard({ feature, index }) {
+  const [displayedCode, setDisplayedCode] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    // Stagger animation start based on index
+    const delay = index * 150
+    const timer = setTimeout(() => {
+      setIsVisible(true)
+      setIsTyping(true)
+    }, delay)
+
+    return () => clearTimeout(timer)
+  }, [index])
+
+  useEffect(() => {
+    if (!isTyping || !feature.code) return
+
+    const totalLength = feature.code.length
+    const preWrittenLength = Math.floor(totalLength * 0.3)
+    const preWrittenCode = feature.code.slice(0, preWrittenLength)
+    setDisplayedCode(preWrittenCode)
+
+    let currentIndex = preWrittenLength
+    let timeoutId
+
+    const typeCode = () => {
+      if (currentIndex < feature.code.length) {
+        setDisplayedCode(feature.code.slice(0, currentIndex + 1))
+        currentIndex++
+        timeoutId = setTimeout(typeCode, 20 + Math.random() * 15)
+      } else {
+        setIsTyping(false)
+      }
+    }
+
+    const startDelay = setTimeout(() => {
+      if (isTyping && currentIndex < feature.code.length) {
+        typeCode()
+      }
+    }, 300)
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+      clearTimeout(startDelay)
+    }
+  }, [isTyping, feature.code])
+
+  const highlightCode = (code) => {
+    const lines = code.split('\n')
+    const codeColors = {
+      normal: 'oklch(0.9 0.02 0)',
+      string: 'oklch(0.7 0.15 150)',
+      keyword: 'oklch(0.7 0.2 250)',
+      number: 'oklch(0.75 0.18 280)',
+      operator: 'oklch(0.75 0.2 50)',
+      comment: 'oklch(0.5 0.05 270)',
+      lineNumber: 'oklch(0.4 0.05 270)',
+    }
+
+    return lines.map((line, lineIndex) => {
+      const parts = []
+      let currentPart = ''
+      let inString = false
+      let stringChar = ''
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i]
+        
+        if ((char === '"' || char === "'" || char === '`') && (i === 0 || line[i - 1] !== '\\')) {
+          if (!inString) {
+            if (currentPart) {
+              parts.push({ text: currentPart, type: 'normal' })
+              currentPart = ''
+            }
+            inString = true
+            stringChar = char
+            currentPart = char
+          } else if (char === stringChar) {
+            currentPart += char
+            parts.push({ text: currentPart, type: 'string' })
+            currentPart = ''
+            inString = false
+            stringChar = ''
+          } else {
+            currentPart += char
+          }
+        } else {
+          currentPart += char
+        }
+      }
+
+      if (currentPart) {
+        parts.push({ text: currentPart, type: inString ? 'string' : 'normal' })
+      }
+
+      const isComment = line.trim().startsWith('//') || line.trim().startsWith('<!--')
+
+      return (
+        <div key={lineIndex} className="flex items-start">
+          <span className="mr-3 select-none font-mono text-xs" style={{ color: codeColors.lineNumber }}>
+            {String(lineIndex + 1).padStart(2, '0')}
+          </span>
+          <span className="flex-1 font-mono text-xs leading-relaxed" style={{ color: codeColors.normal }}>
+            {parts.map((part, partIndex) => {
+              const isKeyword = /^(function|const|let|var|return|if|else|for|while|class|interface|def|import|from|export|default|async|await|try|catch|finally|html|head|body|title|meta|link|h1|p|div|button|onClick|useState|className)$/i.test(part.text.trim())
+              const isNumber = /^\d+$/.test(part.text.trim())
+              const isOperator = /^[+\-*/=<>!&|{}();:]+$/.test(part.text.trim())
+              
+              let color = codeColors.normal
+              let fontWeight = 'normal'
+              
+              if (isComment) {
+                color = codeColors.comment
+              } else if (part.type === 'string') {
+                color = codeColors.string
+              } else if (isKeyword) {
+                color = codeColors.keyword
+                fontWeight = '600'
+              } else if (isNumber) {
+                color = codeColors.number
+              } else if (isOperator) {
+                color = codeColors.operator
+              }
+              
+              return (
+                <span key={partIndex} style={{ color, fontWeight }}>
+                  {part.text}
+                </span>
+              )
+            })}
+            {lineIndex === lines.length - 1 && isTyping && code.length > 0 && (
+              <span className="inline-block w-1.5 h-3.5 ml-0.5" style={{ backgroundColor: 'oklch(0.7 0.2 250)' }} />
+            )}
+          </span>
+        </div>
+      )
+    })
+  }
+
+  const darkStyles = {
+    container: {
+      backgroundColor: 'oklch(0.11 0.02 260)',
+      borderColor: 'oklch(0.22 0.04 270)',
+    },
+    header: {
+      backgroundColor: 'oklch(0.15 0.025 270)',
+      borderColor: 'oklch(0.22 0.04 270)',
+    },
+    content: {
+      backgroundColor: 'oklch(0.08 0.015 260)',
+    },
+  }
+
+  return (
+    <div
+      className={`group relative rounded-lg border overflow-hidden shadow-lg transition-all duration-500 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+      style={{
+        backgroundColor: darkStyles.container.backgroundColor,
+        borderColor: darkStyles.container.borderColor,
+        borderWidth: '1px',
+      }}
+    >
+      {/* Code Editor Header */}
+      <div
+        className="flex items-center justify-between px-3 py-2 border-b"
+        style={{
+          backgroundColor: darkStyles.header.backgroundColor,
+          borderColor: darkStyles.header.borderColor,
+        }}
+      >
+        <div className="flex items-center gap-1.5">
+          <div className="h-1.5 w-1.5 rounded-full bg-red-500/80" />
+          <div className="h-1.5 w-1.5 rounded-full bg-yellow-500/80" />
+          <div className="h-1.5 w-1.5 rounded-full bg-green-500/80" />
+        </div>
+        <div className="flex items-center gap-2">
+          <feature.icon className="h-3.5 w-3.5" style={{ color: 'oklch(0.7 0.2 250)' }} />
+          <span className="text-xs font-mono" style={{ color: 'oklch(0.65 0.05 270)' }}>
+            {feature.language}
+          </span>
+        </div>
+      </div>
+
+      {/* Code Content */}
+      <div
+        className="p-3 min-h-[200px] max-h-[250px] overflow-auto"
+        style={{ backgroundColor: darkStyles.content.backgroundColor }}
+      >
+        <div className="space-y-0.5">
+          {displayedCode ? highlightCode(displayedCode) : (
+            <div className="flex items-start">
+              <span className="mr-3 select-none font-mono text-xs" style={{ color: 'oklch(0.4 0.05 270)' }}>
+                01
+              </span>
+              <span className="flex-1 font-mono text-xs">
+                <span className="inline-block w-1.5 h-3.5 ml-0.5" style={{ backgroundColor: 'oklch(0.7 0.2 250)' }} />
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Feature Info Footer */}
+      <div
+        className="px-4 py-3 border-t"
+        style={{
+          backgroundColor: darkStyles.header.backgroundColor,
+          borderColor: darkStyles.header.borderColor,
+        }}
+      >
+        <h3 className="text-sm font-semibold mb-1 group-hover:text-[oklch(0.7_0.2_250)] transition-colors" style={{ color: 'oklch(0.9 0.02 0)' }}>
+          {feature.title}
+        </h3>
+        <p className="text-xs leading-relaxed" style={{ color: 'oklch(0.65 0.05 270)' }}>
+          {feature.desc}
+        </p>
+      </div>
+
+      {/* Hover Glow Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[oklch(0.7_0.2_250)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-lg" />
+    </div>
+  )
+}
+
 export default function Home() {
   const featuredArticles = useMemo(() => articles.slice(0, 3), [])
   
@@ -18,37 +246,102 @@ export default function Home() {
       icon: BookOpen,
       title: "Comprehensive Guides",
       desc: "Deep dive into web technologies with our structured learning paths.",
-      image: "/html-code-snippet.png"
+      language: "html",
+      code: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learn HTML</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Welcome to Coding</h1>
+  <p>Start your journey today!</p>
+</body>
+</html>`
     },
     {
       icon: Terminal,
       title: "Browser IDE",
       desc: "Write and execute JavaScript, C++, and Python directly in your browser.",
-      image: "/javascript-code.png"
+      language: "javascript",
+      code: `function greet(name) {
+  console.log(\`Hello, \${name}!\`);
+  return \`Welcome, \${name}!\`;
+}
+
+const user = "Developer";
+greet(user);`
     },
     {
       icon: Zap,
       title: "Instant Feedback",
       desc: "Real-time code execution and syntax highlighting for rapid prototyping.",
-      image: "/css-styling.jpg"
+      language: "css",
+      code: `.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  border-radius: 1rem;
+}`
     },
     {
       icon: Globe,
       title: "Modern Stack",
       desc: "Learn the latest frameworks including React, and Tailwind CSS.",
-      image: "/react-js-logo.png"
+      language: "jsx",
+      code: `function App() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    <div className="container">
+      <h1>Count: {count}</h1>
+      <button onClick={() => setCount(count + 1)}>
+        Increment
+      </button>
+    </div>
+  );
+}`
     },
     {
       icon: Brain,
       title: "Interactive Quizzes",
       desc: "Test your knowledge with engaging quizzes after each article.",
-      image: "/placeholder.jpg"
+      language: "javascript",
+      code: `function quizQuestion(question, options) {
+  return {
+    question: question,
+    options: options,
+    checkAnswer: (answer) => {
+      return answer === options[0];
+    }
+  };
+}
+
+const q1 = quizQuestion(
+  "What is React?",
+  ["A JavaScript library", "A database", "A server"]
+);`
     },
     {
       icon: Code,
       title: "Clean Architecture",
       desc: "Learn best practices for scalable and maintainable codebases.",
-      image: "/placeholder.jpg"
+      language: "typescript",
+      code: `interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+class UserService {
+  async getUser(id: number): Promise<User> {
+    // Implementation
+    return { id, name: "", email: "" };
+  }
+}`
     }
   ], [])
 
@@ -149,30 +442,9 @@ export default function Home() {
               From learning fundamentals to acing interviews. Practice DSA, solve coding challenges, and build real projects all in one place.
             </p>
           </div>
-          <div className="grid gap-px bg-border rounded-xl overflow-hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 shadow-lg">
+          <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
-              <div key={i} className="group relative bg-background p-6 md:p-8 hover:bg-muted/50 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative">
-                  <div className="mb-4 flex items-center gap-4">
-                    <div className="inline-flex p-3 rounded-xl bg-primary/5 text-primary ring-1 ring-inset ring-primary/10 group-hover:bg-primary/10 group-hover:ring-primary/20 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20">
-                    <feature.icon className="h-5 w-5 md:h-6 md:w-6" />
-                    </div>
-                    {feature.image && (
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border/50 bg-muted/50 group-hover:border-primary/50 transition-all duration-300">
-                        <img 
-                          src={feature.image} 
-                          alt={feature.title}
-                          loading="lazy"
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="text-base md:text-lg font-semibold mb-2 group-hover:text-primary transition-colors">{feature.title}</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
-                </div>
-              </div>
+              <CodeFeatureCard key={i} feature={feature} index={i} />
             ))}
           </div>
         </div>
