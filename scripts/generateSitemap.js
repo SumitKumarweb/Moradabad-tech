@@ -64,6 +64,7 @@ function generateSitemap() {
   addUrl('/articles', PRIORITY.category, CHANGEFREQ.category)
   addUrl('/quizzes', PRIORITY.category, CHANGEFREQ.category)
   addUrl('/javascript-questions', PRIORITY.category, CHANGEFREQ.category)
+  addUrl('/base-programming', PRIORITY.category, CHANGEFREQ.category)
   addUrl('/interview', PRIORITY.category, CHANGEFREQ.category)
   addUrl('/dsa', PRIORITY.category, CHANGEFREQ.category)
   addUrl('/top-dsa', PRIORITY.category, CHANGEFREQ.category)
@@ -71,6 +72,12 @@ function generateSitemap() {
   addUrl('/login', PRIORITY.main, CHANGEFREQ.main)
   addUrl('/signup', PRIORITY.main, CHANGEFREQ.main)
   addUrl('/profile', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/progress', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/about', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/contact', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/careers', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/privacy', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/terms', PRIORITY.main, CHANGEFREQ.main)
 
   // Article routes - extract from articles.jsx
   const articlesPath = join(__dirname, '..', 'src', 'lib', 'articles.jsx')
@@ -80,6 +87,16 @@ function generateSitemap() {
   )
   articleSlugs.forEach((slug) => {
     addUrl(`/articles/${slug}`, PRIORITY.article, CHANGEFREQ.article)
+  })
+
+  // Article category routes - extract unique categories
+  const articleCategories = extractSlugsFromFile(
+    articlesPath,
+    /category:\s*["']([^"']+)["']/g
+  )
+  const uniqueCategories = [...new Set(articleCategories.map(cat => cat.toLowerCase()))]
+  uniqueCategories.forEach((category) => {
+    addUrl(`/articles/category/${category}`, PRIORITY.category, CHANGEFREQ.category)
   })
 
   // Quiz routes - extract quiz IDs
@@ -106,6 +123,26 @@ function generateSitemap() {
   questionIds.forEach((questionId) => {
     addUrl(
       `/javascript-questions/${questionId}`,
+      PRIORITY.question,
+      CHANGEFREQ.question
+    )
+  })
+
+  // Base Programming Questions routes - extract question IDs
+  const baseProgrammingPath = join(
+    __dirname,
+    '..',
+    'src',
+    'lib',
+    'baseProgrammingQuestions.js'
+  )
+  const baseProgrammingQuestionIds = extractSlugsFromFile(
+    baseProgrammingPath,
+    /id:\s*["']([^"']+)["']/g
+  )
+  baseProgrammingQuestionIds.forEach((questionId) => {
+    addUrl(
+      `/base-programming/${questionId}`,
       PRIORITY.question,
       CHANGEFREQ.question
     )
@@ -221,10 +258,12 @@ ${urls
   console.log(`🔗 Total URLs: ${urls.length}`)
   console.log(`🌐 Base URL: ${BASE_URL}`)
   console.log('\n📊 Breakdown:')
-  console.log(`  - Static routes: 11`)
+  console.log(`  - Static routes: 18`) // Home + 17 other static routes
   console.log(`  - Articles: ${articleSlugs.length}`)
+  console.log(`  - Article Categories: ${uniqueCategories.length}`)
   console.log(`  - Quizzes: ${quizIds.length}`)
   console.log(`  - JavaScript Questions: ${questionIds.length}`)
+  console.log(`  - Base Programming Questions: ${baseProgrammingQuestionIds.length}`)
   console.log(`  - Editor Languages: ${editorLanguages.length}`)
   console.log(`  - Interview Sections: ${uniqueSectionIds.length}`)
   console.log(`  - Top DSA Problems: ${dsaSlugs.length}`)
