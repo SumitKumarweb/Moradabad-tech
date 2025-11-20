@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Mail, MessageSquare, Send, MapPin, Phone } from 'lucide-react'
 import { toast } from "sonner"
+import emailjs from '@emailjs/browser'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -27,12 +28,47 @@ export default function ContactPage() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simulate form submission
-    setTimeout(() => {
-      toast.success('Thank you for your message! We\'ll get back to you soon.')
-      setFormData({ name: '', email: '', subject: '', message: '' })
+    // Email.js configuration - these should be set in environment variables
+    const serviceId = 'service_x4scqdq'
+    const templateId = 'template_zpmprqd'
+    const publicKey = 'T2vQJZfmq4dXRIFGQ'
+
+    // Validate environment variables
+    if (!serviceId || !templateId || !publicKey) {
+      toast.error('Email service is not configured. Please contact the administrator.')
       setIsSubmitting(false)
-    }, 1000)
+      return
+    }
+
+    try {
+      // Initialize Email.js with public key
+      emailjs.init(publicKey)
+
+      // Send email using Email.js
+      const result = await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_name: 'Moradabads Team',
+        }
+      )
+
+      if (result.text === 'OK') {
+        toast.success('Thank you for your message! We\'ll get back to you soon.')
+        setFormData({ name: '', email: '', subject: '', message: '' })
+      } else {
+        throw new Error('Failed to send email')
+      }
+    } catch (error) {
+      console.error('Email.js error:', error)
+      toast.error('Failed to send message. Please try again later or contact us directly at support@moradabads.com')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (

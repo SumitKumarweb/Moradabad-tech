@@ -11,6 +11,7 @@
     "generate-sitemap": "node scripts/generateSitemap.js"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@hookform/resolvers": "^3.9.1",
     "@microsoft/clarity": "^1.0.0",
     "@monaco-editor/react": "^4.7.0",
