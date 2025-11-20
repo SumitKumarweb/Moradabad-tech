@@ -277,7 +277,6 @@ const getMonacoLanguage = (language) => {
 export function CodeEditor({ initialLanguage = "javascript" }) {
   const extension = getExtensionFromLanguage(initialLanguage)
   const indexFile = `index.${extension}`
-  const userFile = `user.${extension}`
   
   // User CRUD template based on language
   const getUserCrudTemplate = (lang) => {
@@ -882,15 +881,9 @@ console.log('All users:', userService.getAllUsers())`,
 
   const [files, setFiles] = React.useState(() => {
     const indexContent = languageTemplates[initialLanguage] || languageTemplates.javascript
-    const userContent = getUserCrudTemplate(initialLanguage)
     return {
       [indexFile]: {
         content: indexContent,
-        language: initialLanguage,
-      isDirty: false,
-    },
-      [userFile]: {
-        content: userContent,
         language: initialLanguage,
         isDirty: false,
       },
@@ -915,7 +908,6 @@ console.log('All users:', userService.getAllUsers())`,
     type: 'folder',
     children: {
       [indexFile]: { name: indexFile, type: 'file' },
-      [userFile]: { name: userFile, type: 'file' },
     }
   }))
   const [expandedFolders, setExpandedFolders] = React.useState(new Set(['root']))
@@ -1366,7 +1358,7 @@ console.log('All users:', userService.getAllUsers())`,
 
   const deleteFile = (fileName) => {
     // Prevent deletion of essential files
-    if (fileName === indexFile || fileName === userFile) {
+    if (fileName === indexFile) {
       return
     }
     
@@ -1768,7 +1760,7 @@ console.log('All users:', userService.getAllUsers())`,
                       <span className="ml-1 h-2 w-2 rounded-full bg-blue-500" />
                     )}
                     {/* Hide delete button for essential files */}
-                    {fileName !== indexFile && fileName !== userFile && (
+                    {fileName !== indexFile && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
