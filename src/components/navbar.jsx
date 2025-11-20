@@ -40,25 +40,25 @@ export const Navbar = memo(function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm dark:border-border/60 dark:shadow-lg dark:shadow-primary/5">
-      <div className="container flex h-16 items-center px-4 md:px-6">
-        <div className="mr-4 hidden md:flex items-center">
-          <Link to="/" className="mr-6 flex items-center gap-2 transition-opacity hover:opacity-80">
+      <div className="container flex h-16 items-center px-4 md:px-6 gap-4">
+        <div className="hidden md:flex items-center flex-1 min-w-0 gap-4">
+          <Link to="/" className="flex-shrink-0 flex items-center gap-2 transition-opacity hover:opacity-80">
             <img 
               src="/websitelogo.png" 
               alt={siteConfig.name}
               className="h-4 w-auto object-contain max-h-12 max-w-32"
             />
-            <span className="hidden font-bold text-lg sm:inline-block bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+            <span className="hidden font-bold text-lg lg:inline-block bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text whitespace-nowrap">
               {siteConfig.name}
             </span>
           </Link>
-          <nav className="flex items-center gap-6 text-sm font-medium">
+          <nav className="flex items-center gap-4 lg:gap-6 text-sm font-medium overflow-x-auto scrollbar-hide flex-1 min-w-0">
             {mainNavItems.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
                 className={cn(
-                  "transition-all hover:text-foreground/80 relative py-1",
+                  "transition-all hover:text-foreground/80 relative py-1 whitespace-nowrap flex-shrink-0",
                   pathname === item.href ? "text-foreground font-semibold" : "text-foreground/60"
                 )}
               >
@@ -143,7 +143,7 @@ export const Navbar = memo(function Navbar() {
             </div>
           </SheetContent>
         </Sheet>
-        <div className="flex flex-1 items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-2 flex-shrink-0">
           <ModeToggle />
           {currentUser ? (
             <DropdownMenu>

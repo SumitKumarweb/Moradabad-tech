@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { lazy, Suspense, useMemo } from "react"
-import { ArrowRight, Code, Terminal, BookOpen, Cpu, Globe, Zap, Brain } from 'lucide-react'
+import { ArrowRight, Code, Terminal, BookOpen, Cpu, Globe, Zap, Brain, Target } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { articles } from "@/lib/articles"
 import { ArticleCard } from "@/components/article-card"
@@ -131,9 +131,9 @@ export default function Home() {
       <section className="w-full py-16 md:py-20 lg:py-24 bg-muted/30 border-b">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="text-center mb-12 md:mb-16 space-y-4">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tighter">Everything you need to ship</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tighter">Everything you need to master coding</h2>
             <p className="mt-3 md:mt-4 text-sm md:text-base lg:text-lg xl:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              A complete toolkit for developers. Write, test, and learn in one unified platform.
+              From learning fundamentals to acing interviews. Practice DSA, solve coding challenges, and build real projects all in one place.
             </p>
           </div>
           <div className="grid gap-px bg-border rounded-xl overflow-hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 shadow-lg">

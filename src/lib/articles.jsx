@@ -69,7 +69,7 @@ export const articles = [
       <p>HTML attributes provide additional information about HTML elements. They are always specified in the start tag and come in name/value pairs like name="value".</p>
       
       <pre><code>&lt;!-- Link with href attribute --&gt;
-&lt;a href="https://moradabadtech.com" target="_blank"&gt;Visit our site&lt;/a&gt;
+&lt;a href="https://moradabads.com" target="_blank"&gt;Visit our site&lt;/a&gt;
 
 &lt;!-- Image with src and alt attributes --&gt;
 &lt;img src="image.jpg" alt="Description" width="500" height="300"&gt;

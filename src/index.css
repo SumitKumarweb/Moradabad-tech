@@ -230,6 +230,16 @@
     box-shadow: 0 0 10px oklch(0.7 0.2 250 / 0.2);
   }
   
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+  
   /* Animated gradient background for dark mode */
   .dark .bg-gradient-radial {
     background: radial-gradient(ellipse at top, oklch(0.15 0.08 280 / 0.3) 0%, transparent 50%),
