@@ -23,6 +23,8 @@ const TopDSAPage = lazy(() => import('@/pages/TopDSAPage'))
 const TopDSASolvePage = lazy(() => import('@/pages/TopDSASolvePage'))
 const JavaScriptQuestionsPage = lazy(() => import('@/pages/JavaScriptQuestionsPage'))
 const JavaScriptQuestionPage = lazy(() => import('@/pages/JavaScriptQuestionPage'))
+const BaseProgrammingPage = lazy(() => import('@/pages/BaseProgrammingPage'))
+const BaseProgrammingSolvePage = lazy(() => import('@/pages/BaseProgrammingSolvePage'))
 const InterviewPage = lazy(() => import('@/pages/InterviewPage'))
 const InterviewSectionPage = lazy(() => import('@/pages/InterviewSectionPage'))
 const InterviewTopicPage = lazy(() => import('@/pages/InterviewTopicPage'))
@@ -68,6 +70,8 @@ function App() {
                 <Route path="/top-dsa/:slug" element={<TopDSASolvePage />} />
                 <Route path="/javascript-questions" element={<JavaScriptQuestionsPage />} />
                 <Route path="/javascript-questions/:questionId" element={<JavaScriptQuestionPage />} />
+                <Route path="/base-programming" element={<BaseProgrammingPage />} />
+                <Route path="/base-programming/:questionId" element={<BaseProgrammingSolvePage />} />
                 <Route path="/interview" element={<InterviewPage />} />
                 <Route path="/interview/:sectionId" element={<InterviewSectionPage />} />
                 <Route path="/interview/:sectionId/:topicId" element={<InterviewTopicPage />} />
