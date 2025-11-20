@@ -12,7 +12,8 @@ import {
   Award,
   Target,
   BarChart3,
-  Zap
+  Zap,
+  RefreshCw
 } from 'lucide-react'
 import { useAdmin } from "@/contexts/AdminContext"
 import { toast } from "sonner"
@@ -59,6 +60,12 @@ export default function AdminDashboardPage() {
   const [showUserDialog, setShowUserDialog] = useState(false)
   const [userDetails, setUserDetails] = useState(null)
   const [loadingUserDetails, setLoadingUserDetails] = useState(false)
+  const [imageErrors, setImageErrors] = useState(new Set())
+
+  // Helper function to get display name from user object
+  const getDisplayName = (user) => {
+    return user?.name || user?.displayName || (user?.email ? user.email.split('@')[0] : 'Anonymous')
+  }
 
   useEffect(() => {
     loadData()
@@ -67,6 +74,7 @@ export default function AdminDashboardPage() {
   const loadData = async () => {
     try {
       setLoading(true)
+      setImageErrors(new Set()) // Reset image errors on refresh
       const [usersData, analyticsData] = await Promise.all([
         getAllUsers(),
         getAdminAnalytics()
@@ -93,12 +101,18 @@ export default function AdminDashboardPage() {
       setShowUserDialog(true)
       const details = await getUserById(userId)
       setUserDetails(details)
+      // Refresh the user list to get latest data
+      await loadData()
     } catch (error) {
       console.error('Error loading user details:', error)
       toast.error('Failed to load user details')
     } finally {
       setLoadingUserDetails(false)
     }
+  }
+
+  const handleImageError = (userId) => {
+    setImageErrors(prev => new Set(prev).add(userId))
   }
 
   const handleDeleteUser = async (userId, userName) => {
@@ -122,8 +136,9 @@ export default function AdminDashboardPage() {
 
   const filteredUsers = users.filter(user => {
     const query = searchQuery.toLowerCase()
+    const displayName = getDisplayName(user)
     return (
-      (user.name || '').toLowerCase().includes(query) ||
+      displayName.toLowerCase().includes(query) ||
       (user.email || '').toLowerCase().includes(query) ||
       (user.phone || '').toLowerCase().includes(query)
     )
@@ -140,12 +155,14 @@ export default function AdminDashboardPage() {
     .slice(-30)
     .map(([date, data]) => ({ 
       date, 
-      DSA: data.dsa, 
-      JavaScript: data.js 
+      DSA: data.dsa || 0, 
+      JavaScript: data.js || 0,
+      Quiz: data.quiz || 0,
+      'Base Programming': data.baseProgramming || 0
     })) : []
 
   const topUsersChartData = analytics?.topUsers.slice(0, 5).map(user => ({
-    name: user.name?.substring(0, 15) || 'User',
+    name: getDisplayName(user)?.substring(0, 15) || 'User',
     solves: user.totalSolved
   })) || []
 
@@ -173,10 +190,16 @@ export default function AdminDashboardPage() {
                 <p className="text-sm text-muted-foreground">Logged in as {adminEmail}</p>
               </div>
             </div>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={loadData} disabled={loading}>
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -197,7 +220,7 @@ export default function AdminDashboardPage() {
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -233,6 +256,32 @@ export default function AdminDashboardPage() {
                   <div className="text-2xl font-bold">{analytics?.totalJSSolved || 0}</div>
                   <p className="text-xs text-muted-foreground">
                     Avg {analytics?.avgJSPerUser || 0} per user
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Quizzes Solved</CardTitle>
+                  <Award className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{analytics?.totalQuizSolved || 0}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Total quizzes completed
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Base Programming Solved</CardTitle>
+                  <Code className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{analytics?.totalBaseProgrammingSolved || 0}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Total questions solved
                   </p>
                 </CardContent>
               </Card>
@@ -287,6 +336,8 @@ export default function AdminDashboardPage() {
                       <Legend />
                       <Bar dataKey="DSA" fill="#8884d8" />
                       <Bar dataKey="JavaScript" fill="#82ca9d" />
+                      <Bar dataKey="Quiz" fill="#ffc658" />
+                      <Bar dataKey="Base Programming" fill="#ff7300" />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -308,26 +359,34 @@ export default function AdminDashboardPage() {
                           {index + 1}
                         </div>
                         <div>
-                          <p className="font-medium">{user.name || 'Anonymous'}</p>
+                          <p className="font-medium">{getDisplayName(user)}</p>
                           <p className="text-sm text-muted-foreground">{user.email}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4 flex-wrap">
                         <div className="text-right">
-                          <p className="font-bold">{user.totalSolved}</p>
+                          <p className="font-bold">{user.totalSolved || 0}</p>
                           <p className="text-xs text-muted-foreground">Total</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium">{user.dsaCount}</p>
+                          <p className="font-medium">{user.dsaCount || 0}</p>
                           <p className="text-xs text-muted-foreground">DSA</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium">{user.jsCount}</p>
+                          <p className="font-medium">{user.jsCount || 0}</p>
                           <p className="text-xs text-muted-foreground">JS</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">{user.quizCount || 0}</p>
+                          <p className="text-xs text-muted-foreground">Quiz</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">{user.baseProgrammingCount || 0}</p>
+                          <p className="text-xs text-muted-foreground">Base</p>
                         </div>
                         <Badge variant="secondary">
                           <Award className="h-3 w-3 mr-1" />
-                          Streak: {user.currentStreak}
+                          Streak: {user.currentStreak || 0}
                         </Badge>
                       </div>
                     </div>
@@ -369,29 +428,37 @@ export default function AdminDashboardPage() {
                         className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
                       >
                         <div className="flex items-center gap-4 flex-1">
-                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            {user.photoUrl ? (
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                            {user.photoUrl && !imageErrors.has(user.id) ? (
                               <img
                                 src={user.photoUrl}
-                                alt={user.name || 'User'}
+                                alt={getDisplayName(user)}
                                 className="w-10 h-10 rounded-full object-cover"
+                                onError={() => handleImageError(user.id)}
+                                loading="lazy"
                               />
                             ) : (
                               <Users className="h-5 w-5 text-primary" />
                             )}
                           </div>
                           <div className="flex-1">
-                            <p className="font-medium">{user.name || 'No name'}</p>
+                            <p className="font-medium">{getDisplayName(user)}</p>
                             <p className="text-sm text-muted-foreground">{user.email}</p>
                             {user.phone && (
                               <p className="text-xs text-muted-foreground">{user.phone}</p>
                             )}
-                            <div className="flex gap-2 mt-1">
+                            <div className="flex gap-2 mt-1 flex-wrap">
                               <Badge variant="outline">
                                 DSA: {user.progress?.dsaCount || 0}
                               </Badge>
                               <Badge variant="outline">
                                 JS: {user.progress?.jsCount || 0}
+                              </Badge>
+                              <Badge variant="outline">
+                                Quiz: {user.progress?.quizCount || 0}
+                              </Badge>
+                              <Badge variant="outline">
+                                Base: {user.progress?.baseProgrammingCount || 0}
                               </Badge>
                               <Badge variant="secondary">
                                 Total: {user.progress?.totalSolved || 0}
@@ -417,7 +484,7 @@ export default function AdminDashboardPage() {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleDeleteUser(user.id, user.name || user.email)}
+                            onClick={() => handleDeleteUser(user.id, getDisplayName(user))}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -447,13 +514,34 @@ export default function AdminDashboardPage() {
             </div>
           ) : userDetails ? (
             <div className="space-y-6">
+              {/* Profile Photo */}
+              <div className="flex justify-center">
+                <div className="relative">
+                  <div className="h-24 w-24 rounded-full overflow-hidden border-4 border-primary/20 bg-muted flex items-center justify-center">
+                    {userDetails.photoUrl ? (
+                      <img
+                        src={userDetails.photoUrl}
+                        alt={getDisplayName(userDetails)}
+                        className="h-24 w-24 rounded-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                        }}
+                      />
+                    ) : null}
+                    {!userDetails.photoUrl && (
+                      <Users className="h-12 w-12 text-muted-foreground" />
+                    )}
+                  </div>
+                </div>
+              </div>
+              
               {/* Profile Info */}
               <div>
                 <h3 className="font-semibold mb-3">Profile Information</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Name</p>
-                    <p className="font-medium">{userDetails.name || 'N/A'}</p>
+                    <p className="font-medium">{getDisplayName(userDetails) || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Email</p>
@@ -497,7 +585,7 @@ export default function AdminDashboardPage() {
               {/* Progress Stats */}
               <div>
                 <h3 className="font-semibold mb-3">Progress Statistics</h3>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                   <Card>
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Total Solved</p>
@@ -514,6 +602,18 @@ export default function AdminDashboardPage() {
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">JS Questions</p>
                       <p className="text-2xl font-bold">{userDetails.progress?.jsCount || 0}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-4">
+                      <p className="text-sm text-muted-foreground">Quizzes</p>
+                      <p className="text-2xl font-bold">{userDetails.progress?.quizCount || 0}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-4">
+                      <p className="text-sm text-muted-foreground">Base Programming</p>
+                      <p className="text-2xl font-bold">{userDetails.progress?.baseProgrammingCount || 0}</p>
                     </CardContent>
                   </Card>
                   <Card>
@@ -535,11 +635,16 @@ export default function AdminDashboardPage() {
                         <div>
                           <Badge variant="outline">
                             {activity.type === 'dsa_solved' ? 'DSA Solved' : 
-                             activity.type === 'js_solved' ? 'JS Solved' : activity.type}
+                             activity.type === 'js_solved' ? 'JS Solved' :
+                             activity.type === 'quiz_solved' ? 'Quiz Solved' :
+                             activity.type === 'base_programming_solved' ? 'Base Programming Solved' :
+                             activity.type}
                           </Badge>
-                          {activity.problemId && (
+                          {(activity.problemId || activity.quizId || activity.questionId) && (
                             <span className="ml-2 text-sm text-muted-foreground">
-                              Problem: {activity.problemId}
+                              {activity.problemId ? `Problem: ${activity.problemId}` :
+                               activity.quizId ? `Quiz: ${activity.quizId}` :
+                               activity.questionId ? `Question: ${activity.questionId}` : ''}
                             </span>
                           )}
                         </div>

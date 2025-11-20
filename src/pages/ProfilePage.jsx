@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [photoPreview, setPhotoPreview] = useState(null)
+  const [imageError, setImageError] = useState(false)
   const [resumeFileName, setResumeFileName] = useState('')
   
   const [formData, setFormData] = useState({
@@ -65,8 +66,16 @@ export default function ProfilePage() {
             resumeUrl: profile.resumeUrl || ''
           })
           
+          // Set photo preview from Firestore, fallback to Firebase Auth
           if (profile.photoUrl) {
             setPhotoPreview(profile.photoUrl)
+            setImageError(false)
+          } else if (currentUser.photoURL) {
+            setPhotoPreview(currentUser.photoURL)
+            setImageError(false)
+          } else {
+            setPhotoPreview(null)
+            setImageError(false)
           }
           
           if (profile.resumeUrl) {
@@ -85,6 +94,15 @@ export default function ProfilePage() {
             photoUrl: '',
             resumeUrl: ''
           })
+          
+          // Fallback to Firebase Auth photoURL if no Firestore profile
+          if (currentUser.photoURL) {
+            setPhotoPreview(currentUser.photoURL)
+            setImageError(false)
+          } else {
+            setPhotoPreview(null)
+            setImageError(false)
+          }
         }
       } catch (error) {
         // Ignore AbortError - component may have unmounted
@@ -123,8 +141,16 @@ export default function ProfilePage() {
           resumeUrl: profile.resumeUrl || ''
         })
         
+        // Set photo preview from Firestore, fallback to Firebase Auth
         if (profile.photoUrl) {
           setPhotoPreview(profile.photoUrl)
+          setImageError(false)
+        } else if (currentUser.photoURL) {
+          setPhotoPreview(currentUser.photoURL)
+          setImageError(false)
+        } else {
+          setPhotoPreview(null)
+          setImageError(false)
         }
         
         if (profile.resumeUrl) {
@@ -133,19 +159,28 @@ export default function ProfilePage() {
           const fileName = urlParts[urlParts.length - 1].split('?')[0]
           setResumeFileName(fileName.replace(/^resume_\d+_/, ''))
         }
-      } else {
-        // Initialize with auth user data
-        setFormData({
-          name: currentUser.displayName || '',
-          email: currentUser.email || '',
-          phone: '',
-          gender: '',
-          linkedinId: '',
-          leetcodeId: '',
-          photoUrl: '',
-          resumeUrl: ''
-        })
-      }
+        } else {
+          // Initialize with auth user data
+          setFormData({
+            name: currentUser.displayName || '',
+            email: currentUser.email || '',
+            phone: '',
+            gender: '',
+            linkedinId: '',
+            leetcodeId: '',
+            photoUrl: '',
+            resumeUrl: ''
+          })
+          
+          // Fallback to Firebase Auth photoURL if no Firestore profile
+          if (currentUser.photoURL) {
+            setPhotoPreview(currentUser.photoURL)
+            setImageError(false)
+          } else {
+            setPhotoPreview(null)
+            setImageError(false)
+          }
+        }
     } catch (error) {
       // Ignore AbortError - it's harmless
       if (error.name !== 'AbortError' && error.code !== 'cancelled') {
@@ -186,6 +221,7 @@ export default function ProfilePage() {
       const reader = new FileReader()
       reader.onloadend = () => {
         setPhotoPreview(reader.result)
+        setImageError(false) // Reset error when new image is selected
       }
       reader.readAsDataURL(file)
     }
@@ -315,11 +351,19 @@ export default function ProfilePage() {
                 <div className="flex flex-col items-center gap-4 pb-6 border-b">
                   <div className="relative">
                     <div className="h-32 w-32 rounded-full overflow-hidden border-4 border-primary/20 bg-muted flex items-center justify-center">
-                      {photoPreview ? (
+                      {photoPreview && !imageError ? (
                         <img 
                           src={photoPreview} 
                           alt="Profile" 
                           className="h-full w-full object-cover"
+                          onError={() => {
+                            setImageError(true)
+                            // Fallback to Firebase Auth photoURL if Firestore photo fails
+                            if (currentUser?.photoURL && photoPreview !== currentUser.photoURL) {
+                              setPhotoPreview(currentUser.photoURL)
+                              setImageError(false)
+                            }
+                          }}
                         />
                       ) : (
                         <User className="h-16 w-16 text-muted-foreground" />

@@ -52,33 +52,124 @@ export const verifyAdminCredentials = async (email, password) => {
  */
 export const getAllUsers = async () => {
   try {
+    // Get all profiles
     const profilesRef = collection(db, PROFILES_COLLECTION)
-    const querySnapshot = await getDocs(profilesRef)
+    const profilesSnapshot = await getDocs(profilesRef)
     
-    const users = []
-    for (const docSnap of querySnapshot.docs) {
+    // Get all progress documents to find users who might not have profiles yet
+    const progressRef = collection(db, PROGRESS_COLLECTION)
+    const progressSnapshot = await getDocs(progressRef)
+    
+    const usersMap = new Map()
+    
+    // First, add users from profiles collection
+    for (const docSnap of profilesSnapshot.docs) {
       const profileData = docSnap.data()
       const userId = docSnap.id
       
       // Get user progress
-      const progressRef = doc(db, PROGRESS_COLLECTION, userId)
-      const progressSnap = await getDoc(progressRef)
-      const progress = progressSnap.exists() ? progressSnap.data() : null
+      const progressDocRef = doc(db, PROGRESS_COLLECTION, userId)
+      const progressSnap = await getDoc(progressDocRef)
+      let progress = progressSnap.exists() ? progressSnap.data() : null
       
-      users.push({
-        id: userId,
-        ...profileData,
-        progress: progress || {
+      // Ensure progress has all required fields with defaults
+      if (progress) {
+        progress = {
+          dsaSolved: progress.dsaSolved || [],
+          jsSolved: progress.jsSolved || [],
+          quizSolved: progress.quizSolved || [],
+          baseProgrammingSolved: progress.baseProgrammingSolved || [],
+          totalSolved: progress.totalSolved || 0,
+          dsaCount: progress.dsaCount || 0,
+          jsCount: progress.jsCount || 0,
+          quizCount: progress.quizCount || 0,
+          baseProgrammingCount: progress.baseProgrammingCount || 0,
+          currentStreak: progress.currentStreak || 0,
+          longestStreak: progress.longestStreak || 0,
+          lastActivityDate: progress.lastActivityDate || null,
+          createdAt: progress.createdAt || null,
+          updatedAt: progress.updatedAt || null
+        }
+      } else {
+        progress = {
           dsaSolved: [],
           jsSolved: [],
+          quizSolved: [],
+          baseProgrammingSolved: [],
           totalSolved: 0,
           dsaCount: 0,
           jsCount: 0,
+          quizCount: 0,
+          baseProgrammingCount: 0,
           currentStreak: 0,
           longestStreak: 0
         }
+      }
+      
+      // Helper function to get display name from profile data
+      const getDisplayName = (data) => {
+        return data.name || data.displayName || (data.email ? data.email.split('@')[0] : 'Anonymous')
+      }
+      
+      usersMap.set(userId, {
+        id: userId,
+        name: getDisplayName(profileData),
+        ...profileData,
+        progress
       })
     }
+    
+    // Then, add users from progress collection who don't have profiles
+    for (const docSnap of progressSnapshot.docs) {
+      const userId = docSnap.id
+      if (!usersMap.has(userId)) {
+        let progress = docSnap.data()
+        // Ensure progress has all required fields
+        progress = {
+          dsaSolved: progress.dsaSolved || [],
+          jsSolved: progress.jsSolved || [],
+          quizSolved: progress.quizSolved || [],
+          baseProgrammingSolved: progress.baseProgrammingSolved || [],
+          totalSolved: progress.totalSolved || 0,
+          dsaCount: progress.dsaCount || 0,
+          jsCount: progress.jsCount || 0,
+          quizCount: progress.quizCount || 0,
+          baseProgrammingCount: progress.baseProgrammingCount || 0,
+          currentStreak: progress.currentStreak || 0,
+          longestStreak: progress.longestStreak || 0,
+          lastActivityDate: progress.lastActivityDate || null,
+          createdAt: progress.createdAt || null,
+          updatedAt: progress.updatedAt || null
+        }
+        
+        // Try to get profile if it exists
+        const profileDocRef = doc(db, PROFILES_COLLECTION, userId)
+        const profileSnap = await getDoc(profileDocRef)
+        const profileData = profileSnap.exists() ? profileSnap.data() : {}
+        
+        // Helper function to get display name from profile data
+        const getDisplayName = (data) => {
+          return data.name || data.displayName || (data.email ? data.email.split('@')[0] : 'Anonymous')
+        }
+        
+        usersMap.set(userId, {
+          id: userId,
+          name: getDisplayName(profileData),
+          email: profileData.email || '',
+          phone: profileData.phone || '',
+          gender: profileData.gender || '',
+          linkedinId: profileData.linkedinId || '',
+          leetcodeId: profileData.leetcodeId || '',
+          photoUrl: profileData.photoUrl || '',
+          resumeUrl: profileData.resumeUrl || '',
+          createdAt: profileData.createdAt || progress.createdAt || new Date().toISOString(),
+          updatedAt: profileData.updatedAt || progress.updatedAt || new Date().toISOString(),
+          progress
+        })
+      }
+    }
+    
+    const users = Array.from(usersMap.values())
     
     return users.sort((a, b) => {
       const dateA = new Date(a.createdAt || 0)
@@ -110,7 +201,27 @@ export const getUserById = async (userId) => {
     // Get user progress
     const progressRef = doc(db, PROGRESS_COLLECTION, userId)
     const progressSnap = await getDoc(progressRef)
-    const progress = progressSnap.exists() ? progressSnap.data() : null
+    let progress = progressSnap.exists() ? progressSnap.data() : null
+    
+    // Ensure progress has all required fields with defaults
+    if (progress) {
+      progress = {
+        dsaSolved: progress.dsaSolved || [],
+        jsSolved: progress.jsSolved || [],
+        quizSolved: progress.quizSolved || [],
+        baseProgrammingSolved: progress.baseProgrammingSolved || [],
+        totalSolved: progress.totalSolved || 0,
+        dsaCount: progress.dsaCount || 0,
+        jsCount: progress.jsCount || 0,
+        quizCount: progress.quizCount || 0,
+        baseProgrammingCount: progress.baseProgrammingCount || 0,
+        currentStreak: progress.currentStreak || 0,
+        longestStreak: progress.longestStreak || 0,
+        lastActivityDate: progress.lastActivityDate || null,
+        createdAt: progress.createdAt || null,
+        updatedAt: progress.updatedAt || null
+      }
+    }
     
     // Get user activities
     const activitiesRef = collection(db, ACTIVITIES_COLLECTION)
@@ -129,20 +240,33 @@ export const getUserById = async (userId) => {
       })
     })
     
-    return {
-      id: userId,
-      ...profileData,
-      progress: progress || {
-        dsaSolved: [],
-        jsSolved: [],
-        totalSolved: 0,
-        dsaCount: 0,
-        jsCount: 0,
-        currentStreak: 0,
-        longestStreak: 0
-      },
-      activities
+    // Helper function to get display name from profile data
+    const getDisplayName = (data) => {
+      return data.name || data.displayName || (data.email ? data.email.split('@')[0] : 'Anonymous')
     }
+    
+      return {
+        id: userId,
+        name: getDisplayName(profileData),
+        ...profileData,
+        progress: progress || {
+          dsaSolved: [],
+          jsSolved: [],
+          quizSolved: [],
+          baseProgrammingSolved: [],
+          totalSolved: 0,
+          dsaCount: 0,
+          jsCount: 0,
+          quizCount: 0,
+          baseProgrammingCount: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          lastActivityDate: null,
+          createdAt: null,
+          updatedAt: null
+        },
+        activities
+      }
   } catch (error) {
     console.error('Error getting user by ID:', error)
     throw error
@@ -162,6 +286,8 @@ export const getAdminAnalytics = async () => {
     // Calculate statistics
     let totalDSASolved = 0
     let totalJSSolved = 0
+    let totalQuizSolved = 0
+    let totalBaseProgrammingSolved = 0
     let totalProblemsSolved = 0
     let usersWithProgress = 0
     let activeUsers = 0
@@ -184,6 +310,8 @@ export const getAdminAnalytics = async () => {
         usersWithProgress++
         totalDSASolved += user.progress.dsaCount || 0
         totalJSSolved += user.progress.jsCount || 0
+        totalQuizSolved += user.progress.quizCount || 0
+        totalBaseProgrammingSolved += user.progress.baseProgrammingCount || 0
         totalProblemsSolved += user.progress.totalSolved || 0
         
         // Check if user was active in last 7 days
@@ -201,12 +329,16 @@ export const getAdminAnalytics = async () => {
           if (activity.timestamp) {
             const date = new Date(activity.timestamp).toISOString().split('T')[0]
             if (!solveDataByDay[date]) {
-              solveDataByDay[date] = { dsa: 0, js: 0 }
+              solveDataByDay[date] = { dsa: 0, js: 0, quiz: 0, baseProgramming: 0 }
             }
             if (activity.type === 'dsa_solved') {
               solveDataByDay[date].dsa++
             } else if (activity.type === 'js_solved') {
               solveDataByDay[date].js++
+            } else if (activity.type === 'quiz_solved') {
+              solveDataByDay[date].quiz++
+            } else if (activity.type === 'base_programming_solved') {
+              solveDataByDay[date].baseProgramming++
             }
           }
         })
@@ -229,6 +361,8 @@ export const getAdminAnalytics = async () => {
         totalSolved: u.progress.totalSolved || 0,
         dsaCount: u.progress.dsaCount || 0,
         jsCount: u.progress.jsCount || 0,
+        quizCount: u.progress.quizCount || 0,
+        baseProgrammingCount: u.progress.baseProgrammingCount || 0,
         currentStreak: u.progress.currentStreak || 0
       }))
     
@@ -243,6 +377,8 @@ export const getAdminAnalytics = async () => {
       totalUsers,
       totalDSASolved,
       totalJSSolved,
+      totalQuizSolved,
+      totalBaseProgrammingSolved,
       totalProblemsSolved,
       usersWithProgress,
       activeUsers,

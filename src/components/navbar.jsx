@@ -1,5 +1,5 @@
 import * as React from "react"
-import { memo, useCallback, useMemo } from "react"
+import { memo, useCallback, useMemo, useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Menu, Code2, User, LogOut, TrendingUp, Home, BookOpen, Brain, FileText, Code, Target, Zap, ChevronRight, X } from 'lucide-react'
 
@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
+import { getUserProfile } from "@/lib/profileService"
 import { toast } from "sonner"
 
 export const Navbar = memo(function Navbar() {
@@ -25,6 +26,55 @@ export const Navbar = memo(function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
   const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState(null)
+  const [imageError, setImageError] = useState(false)
+
+  useEffect(() => {
+    const loadProfilePhoto = async () => {
+      if (currentUser) {
+        try {
+          const profile = await getUserProfile(currentUser.uid)
+          if (profile?.photoUrl) {
+            setProfilePhotoUrl(profile.photoUrl)
+            setImageError(false)
+          } else {
+            // Fallback to Firebase Auth photoURL
+            setProfilePhotoUrl(currentUser.photoURL || null)
+            setImageError(false)
+          }
+        } catch (error) {
+          console.error('Error loading profile photo:', error)
+          // Fallback to Firebase Auth photoURL
+          setProfilePhotoUrl(currentUser.photoURL || null)
+          setImageError(false)
+        }
+      } else {
+        setProfilePhotoUrl(null)
+        setImageError(false)
+      }
+    }
+
+    loadProfilePhoto()
+    
+    // Refresh profile photo when navigating to/from profile page
+    const handleFocus = () => {
+      if (currentUser && pathname !== '/profile') {
+        loadProfilePhoto()
+      }
+    }
+    
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [currentUser, pathname])
+
+  const handleImageError = useCallback(() => {
+    setImageError(true)
+    // Fallback to Firebase Auth photoURL if profile photo fails
+    if (currentUser?.photoURL && profilePhotoUrl !== currentUser.photoURL) {
+      setProfilePhotoUrl(currentUser.photoURL)
+      setImageError(false) // Reset error for the fallback image
+    }
+  }, [currentUser, profilePhotoUrl])
 
   const handleLogout = useCallback(async () => {
     try {
@@ -122,12 +172,14 @@ export const Navbar = memo(function Navbar() {
                   {/* User Profile Section */}
                   {currentUser && (
                     <div className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border/50">
-                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0">
-                        {currentUser.photoURL ? (
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        {profilePhotoUrl && !imageError ? (
                           <img 
-                            src={currentUser.photoURL} 
+                            src={profilePhotoUrl} 
                             alt={currentUser.displayName || 'User'} 
                             className="h-10 w-10 rounded-full object-cover"
+                            onError={handleImageError}
+                            loading="lazy"
                           />
                         ) : (
                           <User className="h-5 w-5 text-primary-foreground" />
@@ -272,13 +324,14 @@ export const Navbar = memo(function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    {currentUser.photoURL ? (
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                    {profilePhotoUrl && !imageError ? (
                       <img 
-                        src={currentUser.photoURL} 
+                        src={profilePhotoUrl} 
                         alt={currentUser.displayName || 'User'} 
                         loading="lazy"
                         className="h-8 w-8 rounded-full object-cover"
+                        onError={handleImageError}
                       />
                     ) : (
                       <User className="h-4 w-4 text-primary" />
