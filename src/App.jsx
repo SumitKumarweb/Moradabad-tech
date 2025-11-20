@@ -6,6 +6,7 @@ import { Footer } from '@/components/footer'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import AdminProtectedRoute from '@/components/AdminProtectedRoute'
 import ErrorBoundary from '@/components/ErrorBoundary'
+import ScrollToTop from '@/components/ScrollToTop'
 import { Button } from '@/components/ui/button'
 import { Toaster } from 'sonner'
 
@@ -113,6 +114,7 @@ function App() {
   return (
     <ErrorBoundary>
     <BrowserRouter>
+      <ScrollToTop />
       <ThemeProvider
         attribute="class"
         defaultTheme="light"
