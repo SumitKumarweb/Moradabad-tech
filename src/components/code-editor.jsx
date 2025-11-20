@@ -2,7 +2,7 @@ import * as React from "react"
 import { 
   Play, Trash2, Copy, Check, TerminalIcon, Download, Maximize2, 
   File, Folder, FolderOpen, Search, X, Plus, ChevronRight, ChevronDown,
-  FileCode, Monitor, Code2, Settings, FileText, Image, FileJson
+  FileCode, Monitor, Code2, Settings, FileText, Image, FileJson, ExternalLink
 } from 'lucide-react'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import Editor from '@monaco-editor/react'
@@ -1582,6 +1582,18 @@ console.log('All users:', userService.getAllUsers())`,
     URL.revokeObjectURL(url)
   }
 
+  const openPreviewInNewTab = () => {
+    if (htmlPreview) {
+      const blob = new Blob([htmlPreview], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
+      const newWindow = window.open(url, '_blank')
+      if (newWindow) {
+        // Clean up the blob URL after a delay to allow the window to load
+        setTimeout(() => URL.revokeObjectURL(url), 1000)
+      }
+    }
+  }
+
   const filteredFiles = React.useMemo(() => 
     Object.keys(files).filter(fileName =>
       fileName.toLowerCase().includes(fileSearchQuery.toLowerCase())
@@ -1605,7 +1617,7 @@ console.log('All users:', userService.getAllUsers())`,
   const searchResults = React.useMemo(() => searchInCode(searchQuery), [searchInCode, searchQuery])
 
   return (
-    <div className="flex-1 flex flex-col bg-[#1e1e1e] text-[#cccccc] rounded-lg overflow-hidden border border-[#333] min-h-0">
+    <div className="flex-1 flex flex-col bg-[#1e1e1e] text-[#cccccc] overflow-hidden min-h-0 h-full w-full">
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
           <div className="flex items-center gap-2">
@@ -1894,30 +1906,56 @@ console.log('All users:', userService.getAllUsers())`,
                       Terminal
                     </TabsTrigger>
                   </TabsList>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 text-gray-400 hover:text-white"
-                    onClick={() => {
-                      setShowPreview(false)
-                      setShowTerminal(false)
-                    }}
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    {(currentLanguage === 'html' || currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular') && htmlPreview && previewMode === 'preview' && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-gray-400 hover:text-white"
+                        onClick={openPreviewInNewTab}
+                        title="Open preview in new tab"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-gray-400 hover:text-white"
+                      onClick={() => {
+                        setShowPreview(false)
+                        setShowTerminal(false)
+                      }}
+                      title="Close panel"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
 
                 <TabsContent value="preview" className="flex-1 m-0 p-0">
                   {(currentLanguage === 'html' || currentLanguage === 'react' || currentLanguage === 'vue' || currentLanguage === 'angular') && htmlPreview ? (
-                    <div className="h-full bg-white">
-            <iframe
-              ref={iframeRef}
-              srcDoc={htmlPreview}
-              className="w-full h-full border-0"
-              title={`${currentLanguage} Preview`}
-              sandbox="allow-scripts allow-same-origin allow-forms"
-            />
-          </div>
+                    <div className="h-full bg-white relative">
+                      <div className="absolute top-2 right-2 z-10">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-xs bg-white/90 hover:bg-white border-gray-300 shadow-sm"
+                          onClick={openPreviewInNewTab}
+                          title="Open preview in new tab (if preview not showing)"
+                        >
+                          <ExternalLink className="h-3 w-3 mr-1" />
+                          Open in New Tab
+                        </Button>
+                      </div>
+                      <iframe
+                        ref={iframeRef}
+                        srcDoc={htmlPreview}
+                        className="w-full h-full border-0"
+                        title={`${currentLanguage} Preview`}
+                        sandbox="allow-scripts allow-same-origin allow-forms"
+                      />
+                    </div>
                   ) : (
                     <div className="h-full p-4 flex items-center justify-center text-gray-400">
                       <div className="text-center">
