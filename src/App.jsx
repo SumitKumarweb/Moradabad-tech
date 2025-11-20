@@ -34,6 +34,7 @@ const ContactPage = lazy(() => import('@/pages/ContactPage'))
 const CareerPage = lazy(() => import('@/pages/CareerPage'))
 const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'))
 const TermsPage = lazy(() => import('@/pages/TermsPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 // Loading fallback component
 const PageLoader = () => (
@@ -101,6 +102,7 @@ function App() {
                 <Route path="/careers" element={<CareerPage />} />
                 <Route path="/privacy" element={<PrivacyPolicyPage />} />
                 <Route path="/terms" element={<TermsPage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>
           </main>
