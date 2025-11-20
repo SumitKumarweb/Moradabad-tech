@@ -1,6 +1,6 @@
 import { Link, useParams, Navigate } from "react-router-dom"
 import { useState, useEffect } from "react"
-import { ChevronLeft, Calendar, Clock, Share2, Loader2 } from 'lucide-react'
+import { ChevronLeft, Calendar, Clock, Share2, Loader2, BookOpen } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { getArticleBySlug, getAllArticles } from "@/lib/articlesService"
@@ -204,12 +204,31 @@ export default function ArticlePage() {
           
           <div className="max-w-4xl mx-auto">
             <div className="space-y-4 md:space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
+                <BookOpen className="h-3 w-3" />
+                <span>{article.category}</span>
+              </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className="font-mono text-xs">{article.category}</Badge>
                 <Badge variant="outline" className="font-mono text-xs">{article.difficulty}</Badge>
               </div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
-                {article.title}
+                {(() => {
+                  const words = article.title.split(' ')
+                  if (words.length > 1) {
+                    const lastWord = words[words.length - 1]
+                    const restOfTitle = words.slice(0, -1).join(' ')
+                    return (
+                      <>
+                        {restOfTitle}{" "}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
+                          {lastWord}
+                        </span>
+                      </>
+                    )
+                  }
+                  return article.title
+                })()}
               </h1>
               <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed">
                 {article.description}

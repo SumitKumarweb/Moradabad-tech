@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { Link } from 'react-router-dom'
 import { getLeaderboard, getTotalUserCount, getUserRank } from '@/lib/leaderboardService'
 import { 
   Trophy, 
@@ -18,6 +19,15 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
+import StructuredData, { generateBreadcrumbSchema } from '@/components/StructuredData'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb'
 
 const MIN_USER_COUNT = 25
 
@@ -134,6 +144,12 @@ export default function LeaderboardPage() {
     )
   }
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "Leaderboard", url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
   return (
     <>
       <SEO
@@ -144,21 +160,41 @@ export default function LeaderboardPage() {
         ogDescription="See who's leading the pack in coding challenges"
         ogImage="/websitelogo.png"
       />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16 max-w-7xl">
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm mb-4">
-              <Trophy className="h-3 w-3" />
-              <span>Competition</span>
+        <div className="relative border-b border-border/40">
+          <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+          <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
+            <Breadcrumb className="mb-4 md:mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to="/">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Leaderboard</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl mx-auto lg:mx-0 mb-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
+                <Trophy className="h-3 w-3" />
+                <span>Competition</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
+                  Leaderboard
+                </span>
+              </h1>
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl">
+                Top performers ranked by problems solved, quizzes completed, and coding achievements
+              </p>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-2">
-              Leaderboard
-            </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Top performers ranked by problems solved, quizzes completed, and coding achievements
-            </p>
           </div>
+        </div>
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16 max-w-7xl">
 
           {/* User Rank Card */}
           {currentUser && userRank && userRank.rank && (

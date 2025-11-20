@@ -1,7 +1,16 @@
 import { Link } from "react-router-dom"
 import SEO from "@/components/SEO"
+import StructuredData, { generateBreadcrumbSchema } from "@/components/StructuredData"
 import { Button } from "@/components/ui/button"
 import { Briefcase, Users, Zap, Heart, ArrowRight, Code2, TrendingUp } from 'lucide-react'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb"
 
 export default function CareerPage() {
   const benefits = [
@@ -48,6 +57,12 @@ export default function CareerPage() {
     }
   ]
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "Careers", url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
   return (
     <>
       <SEO
@@ -55,14 +70,36 @@ export default function CareerPage() {
         description="Join the Moradabads team and help shape the future of coding education. Explore open positions and discover why developers love working with us."
         keywords="careers, jobs, hiring, employment, join our team"
       />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
       <div className="flex flex-col min-h-screen bg-background">
-        <section className="w-full py-12 md:py-20 lg:py-24 border-b">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
-            <div className="text-center mb-12 space-y-4">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Join Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600">Team</span>
+        <section className="w-full py-8 md:py-12 lg:py-16 border-b border-border/40 relative">
+          <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+          <div className="container relative mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
+            <Breadcrumb className="mb-4 md:mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to="/">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Careers</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl mx-auto lg:mx-0">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
+                <Briefcase className="h-3 w-3" />
+                <span>Join Us</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
+                Join Our{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
+                  Team
+                </span>
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                 Help us build the future of coding education and empower developers worldwide.
               </p>
             </div>

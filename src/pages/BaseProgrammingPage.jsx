@@ -8,8 +8,17 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Pagination } from "@/components/ui/pagination"
 import SEO from "@/components/SEO"
+import StructuredData, { generateBreadcrumbSchema } from "@/components/StructuredData"
 import { useAuth } from "@/contexts/AuthContext"
 import { isBaseProgrammingSolved } from "@/lib/progressService"
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb"
 
 const CATEGORIES = ["All", "Prime Numbers", "Digit Questions", "Series", "Print Patterns", "Conditionals"]
 
@@ -80,6 +89,12 @@ export default function BaseProgrammingPage() {
     }
   }
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "Base Programming Questions", url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
   return (
     <>
       <SEO
@@ -90,22 +105,40 @@ export default function BaseProgrammingPage() {
         ogDescription={`Practice ${totalQuestions} fundamental programming questions to build a strong coding foundation.`}
         ogImage="/websitelogo.png"
       />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
     <div className="min-h-screen bg-background">
       <div className="relative border-b border-border/40">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
-        <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center space-y-4 md:space-y-6">
-            <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 ring-1 ring-inset ring-primary/10 mb-4">
-              <Code className="h-8 w-8 text-primary" />
+        <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
+          <Breadcrumb className="mb-4 md:mb-6">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Base Programming Questions</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl mx-auto lg:mx-0">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
+              <Code className="h-3 w-3" />
+              <span>Fundamentals</span>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight">
-              Base Programming Questions
+            <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
+              Base Programming{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
+                Questions
+              </span>
             </h1>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl">
               Master fundamental programming concepts with {totalQuestions} basic programming questions. 
               Practice prime numbers, digit manipulation, series, patterns, and conditionals!
             </p>
-            <div className="flex items-center justify-center gap-4 flex-wrap">
+            <div className="flex items-center gap-4 flex-wrap pt-2">
               <Badge variant="outline" className="text-sm">
                 <BookOpen className="h-3 w-3 mr-1" />
                 {totalQuestions} Questions

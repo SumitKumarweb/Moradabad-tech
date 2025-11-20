@@ -1,8 +1,23 @@
 import { Link } from "react-router-dom"
 import SEO from "@/components/SEO"
+import StructuredData, { generateBreadcrumbSchema } from "@/components/StructuredData"
 import { Code2, Users, Target, Zap, Heart } from 'lucide-react'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb"
 
 export default function AboutPage() {
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "About", url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
   return (
     <>
       <SEO
@@ -10,14 +25,36 @@ export default function AboutPage() {
         description="Learn about Moradabads - your premier destination for full-stack development education. Empowering developers with comprehensive tutorials and powerful tools."
         keywords="about, company, mission, vision, web development education, coding platform"
       />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
       <div className="flex flex-col min-h-screen bg-background">
-        <section className="w-full py-12 md:py-20 lg:py-24 border-b">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
-            <div className="text-center mb-12 space-y-4">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                About Moradabads - Empowering Developers Worldwide
+        <section className="w-full py-8 md:py-12 lg:py-16 border-b border-border/40 relative">
+          <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+          <div className="container relative mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
+            <Breadcrumb className="mb-4 md:mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to="/">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>About</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl mx-auto lg:mx-0">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
+                <Users className="h-3 w-3" />
+                <span>Our Story</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
+                About{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
+                  Moradabads
+                </span>
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                 Empowering developers with comprehensive tutorials and powerful browser-based tools. Learn about our mission, vision, and commitment to making coding education accessible to everyone.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4">

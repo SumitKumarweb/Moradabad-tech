@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { 
   getUserProgress, 
   getUserActivities, 
@@ -22,6 +22,15 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
+import StructuredData, { generateBreadcrumbSchema } from '@/components/StructuredData'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb'
 
 export default function ProgressPage() {
   const { currentUser } = useAuth()
@@ -132,6 +141,12 @@ export default function ProgressPage() {
   const currentStreak = progress.currentStreak || 0
   const longestStreak = progress.longestStreak || 0
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "My Progress", url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
   return (
     <>
       <SEO
@@ -143,14 +158,42 @@ export default function ProgressPage() {
         ogImage="/websitelogo.png"
         robots="noindex, follow"
       />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16 max-w-7xl">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">My Progress</h1>
-            <p className="text-muted-foreground">
-              Track your coding journey and achievements
-            </p>
+        <div className="relative border-b border-border/40">
+          <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+          <div className="container relative mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 max-w-7xl">
+            <Breadcrumb className="mb-4 md:mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to="/">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>My Progress</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl mx-auto lg:mx-0 mb-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
+                <Activity className="h-3 w-3" />
+                <span>Your Journey</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
+                My{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
+                  Progress
+                </span>
+              </h1>
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl">
+                Track your coding journey and achievements
+              </p>
+            </div>
           </div>
+        </div>
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16 max-w-7xl">
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

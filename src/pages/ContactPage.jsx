@@ -1,12 +1,21 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import SEO from "@/components/SEO"
+import StructuredData, { generateBreadcrumbSchema } from "@/components/StructuredData"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Mail, MessageSquare, Send, MapPin, Phone } from 'lucide-react'
 import { toast } from "sonner"
 import emailjs from '@emailjs/browser'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -71,6 +80,12 @@ export default function ContactPage() {
     }
   }
 
+  // Generate breadcrumb items
+  const breadcrumbItems = [
+    { name: "Home", url: typeof window !== 'undefined' ? window.location.origin : '' },
+    { name: "Contact", url: typeof window !== 'undefined' ? window.location.href : '' }
+  ]
+
   return (
     <>
       <SEO
@@ -78,14 +93,36 @@ export default function ContactPage() {
         description="Get in touch with Moradabads. We'd love to hear from you - whether you have questions, feedback, or just want to say hello."
         keywords="contact, support, help, feedback, get in touch"
       />
+      <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
       <div className="flex flex-col min-h-screen bg-background">
-        <section className="w-full py-12 md:py-20 lg:py-24 border-b">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
-            <div className="text-center mb-12 space-y-4">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Contact Moradabads - Get in Touch With Us
+        <section className="w-full py-8 md:py-12 lg:py-16 border-b border-border/40 relative">
+          <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+          <div className="container relative mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
+            <Breadcrumb className="mb-4 md:mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to="/">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Contact</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="flex flex-col items-start gap-4 md:gap-6 max-w-3xl mx-auto lg:mx-0">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
+                <Mail className="h-3 w-3" />
+                <span>Get in Touch</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
+                Contact{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
+                  Us
+                </span>
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                 Have a question or feedback? We'd love to hear from you. Whether you need support, want to share ideas, or are interested in joining our team, we're here to help.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
