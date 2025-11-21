@@ -31,7 +31,11 @@ export const getUserProgress = async (userId) => {
       dsaCount: 0,
       jsCount: 0,
       quizCount: 0,
+      quizCount: 0,
       baseProgrammingCount: 0,
+      typingTestsTaken: 0,
+      maxWpm: 0,
+      avgWpm: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
@@ -522,3 +526,72 @@ export const getProgressStats = async (userId) => {
   }
 }
 
+/**
+ * Mark a typing test as completed
+ * @param {string} userId - The user's Firebase Auth UID
+ * @param {Object} stats - Test stats { wpm, accuracy, duration }
+ * @returns {Promise<void>}
+ */
+export const markTypingTestCompleted = async (userId, stats) => {
+  try {
+    const progressRef = doc(db, PROGRESS_COLLECTION, userId)
+    const progressSnap = await getDoc(progressRef)
+    
+    const now = new Date().toISOString()
+    const today = new Date().toISOString().split('T')[0]
+    
+    let progressData
+    if (progressSnap.exists()) {
+      progressData = progressSnap.data()
+      
+      // Update stats
+      const currentTests = progressData.typingTestsTaken || 0
+      const currentAvg = progressData.avgWpm || 0
+      const newAvg = Math.round(((currentAvg * currentTests) + stats.wpm) / (currentTests + 1))
+      
+      progressData.typingTestsTaken = currentTests + 1
+      progressData.maxWpm = Math.max(progressData.maxWpm || 0, stats.wpm)
+      progressData.avgWpm = newAvg
+      progressData.updatedAt = now
+      
+      // Update streak
+      progressData = updateStreak(progressData, today)
+      
+      await updateDoc(progressRef, progressData)
+    } else {
+      // Create new progress document
+      progressData = {
+        dsaSolved: [],
+        jsSolved: [],
+        quizSolved: [],
+        baseProgrammingSolved: [],
+        typingTestsTaken: 1,
+        maxWpm: stats.wpm,
+        avgWpm: stats.wpm,
+        currentStreak: 1,
+        longestStreak: 1,
+        lastActivityDate: today,
+        totalSolved: 0,
+        dsaCount: 0,
+        jsCount: 0,
+        quizCount: 0,
+        baseProgrammingCount: 0,
+        createdAt: now,
+        updatedAt: now
+      }
+      await setDoc(progressRef, progressData)
+    }
+    
+    // Add activity
+    await addActivity(userId, {
+      type: 'typing_test',
+      wpm: stats.wpm,
+      accuracy: stats.accuracy,
+      duration: stats.duration,
+      timestamp: now
+    })
+  } catch (error) {
+    console.error('Error marking typing test as completed:', error)
+    throw error
+  }
+}

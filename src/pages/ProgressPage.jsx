@@ -14,7 +14,8 @@ import {
   Github,
   FileText,
   Loader2,
-  Activity
+  Activity,
+  Keyboard
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -91,6 +92,8 @@ export default function ProgressPage() {
         return <Github className="h-4 w-4" />
       case 'article_read':
         return <FileText className="h-4 w-4" />
+      case 'typing_test':
+        return <Keyboard className="h-4 w-4" />
       default:
         return <Activity className="h-4 w-4" />
     }
@@ -108,6 +111,8 @@ export default function ProgressPage() {
         return `GitHub activity: ${activity.description || 'Repository updated'}`
       case 'article_read':
         return `Read article: ${activity.description || 'Article'}`
+      case 'typing_test':
+        return `Typing Test: ${activity.wpm} WPM (${activity.accuracy}% Acc)`
       default:
         return activity.description || `${activity.type} activity`
     }
@@ -245,6 +250,20 @@ export default function ProgressPage() {
                 <div className="text-2xl font-bold">{currentStreak}</div>
                 <p className="text-xs text-muted-foreground">
                   Best: {longestStreak} days
+                </p>
+              </CardContent>
+            </Card>
+
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Typing Stats</CardTitle>
+                <Keyboard className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{progress.maxWpm || 0} WPM</div>
+                <p className="text-xs text-muted-foreground">
+                  Best Speed • {progress.typingTestsTaken || 0} tests
                 </p>
               </CardContent>
             </Card>

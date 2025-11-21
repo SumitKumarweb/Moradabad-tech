@@ -43,6 +43,10 @@ export const siteConfig = {
       href: "/editor",
     },
     {
+      title: "Typing",
+      href: "/typing",
+    },
+    {
       title: "Community",
       href: "/community",
     },

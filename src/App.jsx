@@ -110,6 +110,11 @@ const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFoundPage'))
 const AdminLoginPage = lazyWithRetry(() => import('@/pages/AdminLoginPage'))
 const AdminDashboardPage = lazyWithRetry(() => import('@/pages/AdminDashboardPage'))
 const CommunityPage = lazyWithRetry(() => import('@/pages/CommunityPage'))
+const TypingPage = lazyWithRetry(() => import('@/pages/TypingPage'))
+const TypingLevelPage = lazyWithRetry(() => import('@/pages/TypingLevelPage'))
+const TypingChapterPage = lazyWithRetry(() => import('@/pages/TypingChapterPage'))
+const TypingGame = lazyWithRetry(() => import('@/pages/TypingGame'))
+const TypingTestPage = lazyWithRetry(() => import('@/pages/TypingTestPage'))
 
 function App() {
   return (
@@ -138,6 +143,11 @@ function App() {
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/quizzes" element={<QuizzesPage />} />
                 <Route path="/quiz/:quizId" element={<QuizPage />} />
+                <Route path="/typing" element={<TypingPage />} />
+                <Route path="/typing/level/:levelId" element={<TypingLevelPage />} />
+                <Route path="/typing/chapter/:chapterId" element={<TypingChapterPage />} />
+                <Route path="/typing/game" element={<TypingGame />} />
+                <Route path="/typing/test" element={<TypingTestPage />} />
                 <Route path="/dsa" element={<DSAPage />} />
                 <Route path="/dsa/:slug" element={<DSASolvePage />} />
                 <Route path="/top-dsa" element={<TopDSAPage />} />
