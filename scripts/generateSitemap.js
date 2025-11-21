@@ -78,6 +78,11 @@ function generateSitemap() {
   addUrl('/careers', PRIORITY.main, CHANGEFREQ.main)
   addUrl('/privacy', PRIORITY.main, CHANGEFREQ.main)
   addUrl('/terms', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/community', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/leaderboard', PRIORITY.main, CHANGEFREQ.main)
+  addUrl('/typing', PRIORITY.category, CHANGEFREQ.category)
+  addUrl('/typing/game', PRIORITY.category, CHANGEFREQ.category)
+  addUrl('/typing/test', PRIORITY.category, CHANGEFREQ.category)
 
   // Article routes - extract from articles.jsx
   const articlesPath = join(__dirname, '..', 'src', 'lib', 'articles.jsx')
@@ -231,6 +236,44 @@ function generateSitemap() {
     addUrl(`/top-dsa/${slug}`, PRIORITY.dsa, CHANGEFREQ.dsa)
   })
 
+  // DSA Problems routes - extract from generateDSAProblems.js
+  const generateDSAPath = join(__dirname, '..', 'src', 'lib', 'generateDSAProblems.js')
+  const dsaTitles = extractSlugsFromFile(
+    generateDSAPath,
+    /title:\s*["']([^"']+)["']/g
+  )
+  // Helper function to generate slug from title
+  function generateSlugFromTitle(title) {
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+  }
+  dsaTitles.forEach((title) => {
+    const slug = generateSlugFromTitle(title)
+    addUrl(`/dsa/${slug}`, PRIORITY.dsa, CHANGEFREQ.dsa)
+  })
+
+  // Typing level routes - extract from typingData.js
+  const typingDataPath = join(__dirname, '..', 'src', 'lib', 'typingData.js')
+  const typingContent = readFileSync(typingDataPath, 'utf8')
+  
+  // Extract level IDs (basic, intermediate, advanced, expert)
+  const levelIds = ['basic', 'intermediate', 'advanced', 'expert']
+  levelIds.forEach((levelId) => {
+    addUrl(`/typing/level/${levelId}`, PRIORITY.category, CHANGEFREQ.category)
+    
+    // Extract chapter IDs for this level (they start with levelId-)
+    const chapterPattern = new RegExp(`id:\\s*["'](${levelId}-[^"']+)["']`, 'g')
+    const chapterMatches = Array.from(typingContent.matchAll(chapterPattern))
+    const chapterIds = chapterMatches.map(m => m[1])
+    chapterIds.forEach((chapterId) => {
+      addUrl(`/typing/chapter/${chapterId}`, PRIORITY.category, CHANGEFREQ.category)
+    })
+  })
+
   // Generate XML
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -257,8 +300,16 @@ ${urls
   console.log(`📄 Location: ${outputPath}`)
   console.log(`🔗 Total URLs: ${urls.length}`)
   console.log(`🌐 Base URL: ${BASE_URL}`)
+  // Count typing chapters
+  let typingChaptersCount = 0
+  levelIds.forEach((levelId) => {
+    const chapterPattern = new RegExp(`id:\\s*["'](${levelId}-[^"']+)["']`, 'g')
+    const chapterMatches = Array.from(typingContent.matchAll(chapterPattern))
+    typingChaptersCount += chapterMatches.length
+  })
+
   console.log('\n📊 Breakdown:')
-  console.log(`  - Static routes: 18`) // Home + 17 other static routes
+  console.log(`  - Static routes: 21`) // Home + 20 other static routes
   console.log(`  - Articles: ${articleSlugs.length}`)
   console.log(`  - Article Categories: ${uniqueCategories.length}`)
   console.log(`  - Quizzes: ${quizIds.length}`)
@@ -267,6 +318,9 @@ ${urls
   console.log(`  - Editor Languages: ${editorLanguages.length}`)
   console.log(`  - Interview Sections: ${uniqueSectionIds.length}`)
   console.log(`  - Top DSA Problems: ${dsaSlugs.length}`)
+  console.log(`  - DSA Problems: ${dsaTitles.length}`)
+  console.log(`  - Typing Levels: ${levelIds.length}`)
+  console.log(`  - Typing Chapters: ${typingChaptersCount}`)
   console.log(
     `\n⚠️  Note: DSA problems from Firebase are not included. Add them manually if needed.`
   )
