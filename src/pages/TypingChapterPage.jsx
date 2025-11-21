@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { typingLevels } from '@/data/typingData';
+import { getTextById } from '@/data/typingData';
 import { ArrowLeft, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,9 +12,7 @@ const TypingChapterPage = () => {
   const navigate = useNavigate();
   
   // Find chapter data
-  const chapter = typingLevels
-    .flatMap(l => l.chapters)
-    .find(c => c.id === chapterId);
+  const chapter = getTextById(chapterId);
 
   const [input, setInput] = useState('');
   const [startTime, setStartTime] = useState(null);
@@ -39,7 +37,7 @@ const TypingChapterPage = () => {
     );
   }
 
-  const targetText = chapter.content;
+  const targetText = chapter.text;
 
   const handleInput = (e) => {
     const value = e.target.value;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { typingLevels } from '@/data/typingData';
+import { getAllLevels, getLevelInfo } from '@/data/typingData';
 import { Keyboard, Gamepad2, Trophy, ArrowRight, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -18,29 +18,32 @@ const TypingPage = () => {
       </div>
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-16">
-        {typingLevels.map((level) => (
-          <Card key={level.id} className="group hover:shadow-lg transition-all duration-300 border-primary/10 hover:border-primary/30 bg-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Keyboard className="w-6 h-6 text-primary" />
-              </div>
-              <CardTitle className="text-2xl">{level.title}</CardTitle>
-              <CardDescription>{level.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {level.chapters.length} Chapters
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Link to={`/typing/level/${level.id}`} className="w-full">
-                <Button className="w-full group-hover:bg-primary/90">
-                  Start Level <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </CardFooter>
-          </Card>
-        ))}
+        {getAllLevels().map((levelId) => {
+          const level = getLevelInfo(levelId);
+          return (
+            <Card key={levelId} className="group hover:shadow-lg transition-all duration-300 border-primary/10 hover:border-primary/30 bg-card/50 backdrop-blur-sm">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Keyboard className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="text-2xl">{level.name}</CardTitle>
+                <CardDescription>{level.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  {level.texts.length} Chapters
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Link to={`/typing/level/${levelId}`} className="w-full">
+                  <Button className="w-full group-hover:bg-primary/90">
+                    Start Level <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          );
+        })}
       </div>
 
       <div className="grid gap-8 md:grid-cols-2 mb-16">
