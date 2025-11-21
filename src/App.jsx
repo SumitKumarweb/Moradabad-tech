@@ -109,6 +109,7 @@ const TermsPage = lazyWithRetry(() => import('@/pages/TermsPage'))
 const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFoundPage'))
 const AdminLoginPage = lazyWithRetry(() => import('@/pages/AdminLoginPage'))
 const AdminDashboardPage = lazyWithRetry(() => import('@/pages/AdminDashboardPage'))
+const CommunityPage = lazyWithRetry(() => import('@/pages/CommunityPage'))
 
 function App() {
   return (
@@ -168,6 +169,7 @@ function App() {
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/careers" element={<CareerPage />} />
+                <Route path="/community" element={<CommunityPage />} />
                 <Route path="/privacy" element={<PrivacyPolicyPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/admin/login" element={<AdminLoginPage />} />

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { memo, useCallback, useMemo, useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Menu, Code2, User, LogOut, TrendingUp, Home, BookOpen, Brain, FileText, Code, Target, Zap, ChevronRight, X } from 'lucide-react'
+import { Menu, Code2, User, LogOut, TrendingUp, Home, BookOpen, Brain, FileText, Code, Target, Zap, ChevronRight, X, MessageSquare } from 'lucide-react'
 
 import { siteConfig } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
@@ -208,6 +208,7 @@ export const Navbar = memo(function Navbar() {
                         if (title.includes('interview')) return <Target className="h-5 w-5" />
                         if (title.includes('dsa')) return <Zap className="h-5 w-5" />
                         if (title.includes('editor') || title.includes('code')) return <Code2 className="h-5 w-5" />
+                        if (title.includes('community')) return <MessageSquare className="h-5 w-5" />
                         return <ChevronRight className="h-5 w-5" />
                       }
                       
