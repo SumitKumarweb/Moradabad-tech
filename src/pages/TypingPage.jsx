@@ -51,8 +51,8 @@ const TypingPage = () => {
           <div className="absolute inset-0 bg-grid-white/5 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10" />
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="space-y-4 max-w-xl">
-              <div className="inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-sm text-purple-300">
-                <Gamepad2 className="mr-2 h-4 w-4" />
+              <div className="inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-sm text-purple-400">
+                <Gamepad2 className="mr-2 h-4 w-4 text-purple-400" />
                 <span>New Feature</span>
               </div>
               <h2 className="text-3xl font-bold tracking-tight">Typing Bubble Game</h2>
@@ -76,8 +76,8 @@ const TypingPage = () => {
           <div className="absolute inset-0 bg-grid-white/5 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10" />
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="space-y-4 max-w-xl">
-              <div className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-sm text-emerald-300">
-                <Timer className="mr-2 h-4 w-4" />
+              <div className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-sm text-emerald-400">
+                <Timer className="mr-2 h-4 w-4 text-emerald-400" />
                 <span>Benchmark</span>
               </div>
               <h2 className="text-3xl font-bold tracking-tight">Speed Test</h2>
