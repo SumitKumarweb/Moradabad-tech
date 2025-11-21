@@ -1,12 +1,61 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllLevels, getLevelInfo } from '@/data/typingData';
 import { Keyboard, Gamepad2, Trophy, ArrowRight, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import SEO from '@/components/SEO';
+import StructuredData, { generateLearningResourceSchema, generateItemListSchema, generateWebPageSchema } from '@/components/StructuredData';
 
 const TypingPage = () => {
+  const levels = getAllLevels();
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com';
+  
+  // Generate ItemList schema for typing levels
+  const typingLevelsSchema = useMemo(() => generateItemListSchema({
+    name: "Typing Levels",
+    description: "Structured typing lessons from basic to expert level",
+    items: levels.map(levelId => {
+      const level = getLevelInfo(levelId);
+      return {
+        name: level.name,
+        url: `${siteUrl}/typing/level/${levelId}`,
+        description: level.description
+      };
+    })
+  }), [levels, siteUrl]);
+
+  // Generate LearningResource schema for typing course
+  const typingCourseSchema = useMemo(() => generateLearningResourceSchema({
+    name: "Typing Skills Course",
+    title: "Master Your Typing Skills",
+    description: "Level up your typing speed and accuracy with our structured lessons and interactive games. Practice with multiple difficulty levels from basic to expert.",
+    type: "Course",
+    level: "All Levels",
+    teaches: ["Touch Typing", "Typing Speed", "Typing Accuracy", "Keyboard Skills"]
+  }), []);
+
+  // Generate WebPage schema
+  const pageSchema = useMemo(() => generateWebPageSchema({
+    name: "Typing Practice",
+    title: "Master Your Typing Skills",
+    description: "Level up your typing speed and accuracy with our structured lessons and interactive games.",
+    image: `${siteUrl}/websitelogo.png`
+  }), [siteUrl]);
+
   return (
+    <>
+      <SEO
+        title="Typing Practice"
+        description="Master your typing skills with structured lessons, interactive games, and speed tests. Practice typing from basic to expert level and track your progress."
+        keywords="typing practice, typing speed, typing test, touch typing, keyboard skills, typing lessons, typing game, WPM test"
+        ogTitle="Master Your Typing Skills - Moradabads"
+        ogDescription="Level up your typing speed and accuracy with our structured lessons and interactive games."
+        ogImage="/websitelogo.png"
+      />
+      <StructuredData data={typingCourseSchema} />
+      <StructuredData data={typingLevelsSchema} />
+      <StructuredData data={pageSchema} />
     <div className="container mx-auto py-12 px-4">
       <div className="text-center mb-12 space-y-4">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent animate-gradient">
@@ -98,6 +147,7 @@ const TypingPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

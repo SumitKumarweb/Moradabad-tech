@@ -5,13 +5,54 @@ import { Button } from "@/components/ui/button"
 import { articles } from "@/lib/articles"
 import { ArticleCard } from "@/components/article-card"
 import SEO from "@/components/SEO"
-import StructuredData, { generateOrganizationSchema, generateWebSiteSchema } from "@/components/StructuredData"
+import StructuredData, { generateOrganizationSchema, generateWebSiteSchema, generateItemListSchema } from "@/components/StructuredData"
 
 // Lazy load heavy 3D component
 const Hero3D = lazy(() => import('@/components/hero-3d').then(module => ({ default: module.Hero3D })))
 
 export default function Home() {
   const featuredArticles = useMemo(() => articles.slice(0, 3), [])
+  
+  // Generate ItemList schema for features
+  const featuresSchema = useMemo(() => {
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+    return generateItemListSchema({
+      name: "Platform Features",
+      description: "Key features of Moradabads learning platform",
+      items: [
+        {
+          name: "Comprehensive Guides",
+          url: `${siteUrl}/articles`,
+          description: "Deep dive into web technologies with our structured learning paths."
+        },
+        {
+          name: "Browser IDE",
+          url: `${siteUrl}/editor`,
+          description: "Write and execute JavaScript, C++, and Python directly in your browser."
+        },
+        {
+          name: "Interactive Quizzes",
+          url: `${siteUrl}/quizzes`,
+          description: "Test your knowledge with engaging quizzes after each article."
+        },
+        {
+          name: "Coding Challenges",
+          url: `${siteUrl}/dsa`,
+          description: "Practice with DSA problems and coding challenges."
+        },
+        {
+          name: "Typing Practice",
+          url: `${siteUrl}/typing`,
+          description: "Improve your typing speed and accuracy."
+        },
+        {
+          name: "Interview Preparation",
+          url: `${siteUrl}/interview`,
+          description: "Prepare for technical interviews with our comprehensive guides."
+        }
+      ]
+    })
+  }, [])
   
   const features = useMemo(() => [
     {
@@ -64,6 +105,7 @@ export default function Home() {
       />
       <StructuredData data={generateOrganizationSchema()} />
       <StructuredData data={generateWebSiteSchema()} />
+      <StructuredData data={featuresSchema} />
       <div className="flex flex-col min-h-screen bg-background">
       <section className="relative w-full py-12 md:py-20 lg:py-32 xl:py-40 overflow-hidden border-b">
         <div className="absolute inset-0 bg-grid-black/5 dark:bg-grid-white/5 [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]" />
