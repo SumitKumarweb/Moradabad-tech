@@ -115,6 +115,10 @@ const TypingLevelPage = lazyWithRetry(() => import('@/pages/TypingLevelPage'))
 const TypingChapterPage = lazyWithRetry(() => import('@/pages/TypingChapterPage'))
 const TypingGame = lazyWithRetry(() => import('@/pages/TypingGame'))
 const TypingTestPage = lazyWithRetry(() => import('@/pages/TypingTestPage'))
+const ReactMachineCodingPage = lazyWithRetry(() => import('@/pages/ReactMachineCodingPage'))
+const ReactMachineCodingSolvePage = lazyWithRetry(() => import('@/pages/ReactMachineCodingSolvePage'))
+const JavaScriptMachineCodingPage = lazyWithRetry(() => import('@/pages/JavaScriptMachineCodingPage'))
+const JavaScriptMachineCodingSolvePage = lazyWithRetry(() => import('@/pages/JavaScriptMachineCodingSolvePage'))
 
 function App() {
   return (
@@ -156,6 +160,10 @@ function App() {
                 <Route path="/javascript-questions/:questionId" element={<JavaScriptQuestionPage />} />
                 <Route path="/base-programming" element={<BaseProgrammingPage />} />
                 <Route path="/base-programming/:questionId" element={<BaseProgrammingSolvePage />} />
+                <Route path="/react-machine-coding" element={<ReactMachineCodingPage />} />
+                <Route path="/react-machine-coding/:id" element={<ReactMachineCodingSolvePage />} />
+                <Route path="/javascript-machine-coding" element={<JavaScriptMachineCodingPage />} />
+                <Route path="/javascript-machine-coding/:id" element={<JavaScriptMachineCodingSolvePage />} />
                 <Route path="/interview" element={<InterviewPage />} />
                 <Route path="/interview/:sectionId" element={<InterviewSectionPage />} />
                 <Route path="/interview/:sectionId/:topicId" element={<InterviewTopicPage />} />

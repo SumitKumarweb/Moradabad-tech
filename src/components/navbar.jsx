@@ -104,21 +104,24 @@ export const Navbar = memo(function Navbar() {
             </span>
           </Link>
           <nav className="flex items-center gap-4 lg:gap-6 text-sm font-medium overflow-x-auto scrollbar-hide">
-            {mainNavItems.map((item) => (
+            {mainNavItems.map((item) => {
+              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'))
+              return (
               <Link
                 key={item.href}
                 to={item.href}
                 className={cn(
                   "transition-all hover:text-foreground/80 relative py-1 whitespace-nowrap flex-shrink-0",
-                  pathname === item.href ? "text-foreground font-semibold" : "text-foreground/60"
+                    isActive ? "text-foreground font-semibold" : "text-foreground/60"
                 )}
               >
                 {item.title}
-                {pathname === item.href && (
+                  {isActive && (
                   <span className="absolute -bottom-[17px] left-0 right-0 h-0.5 bg-primary rounded-full dark:shadow-[0_0_8px_rgba(100,200,255,0.6)]" />
                 )}
               </Link>
-            ))}
+              )
+            })}
           </nav>
         </div>
         
@@ -197,7 +200,7 @@ export const Navbar = memo(function Navbar() {
                 <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4">
                   <nav className="flex flex-col gap-1">
                     {mainNavItems.map((item, index) => {
-                      const isActive = pathname === item.href
+                      const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'))
                       const getIcon = () => {
                         const title = item.title.toLowerCase()
                         if (title.includes('home')) return <Home className="h-5 w-5" />
@@ -205,6 +208,8 @@ export const Navbar = memo(function Navbar() {
                         if (title.includes('quiz')) return <Brain className="h-5 w-5" />
                         if (title.includes('js question') || title.includes('javascript')) return <FileText className="h-5 w-5" />
                         if (title.includes('base programming')) return <Code className="h-5 w-5" />
+                        if (title.includes('react mc') || title.includes('react machine')) return <Code2 className="h-5 w-5" />
+                        if (title.includes('js mc') || title.includes('javascript machine')) return <Code className="h-5 w-5" />
                         if (title.includes('interview')) return <Target className="h-5 w-5" />
                         if (title.includes('dsa')) return <Zap className="h-5 w-5" />
                         if (title.includes('editor') || title.includes('code')) return <Code2 className="h-5 w-5" />
