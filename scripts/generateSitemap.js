@@ -83,6 +83,9 @@ function generateSitemap() {
   addUrl('/typing', PRIORITY.category, CHANGEFREQ.category)
   addUrl('/typing/game', PRIORITY.category, CHANGEFREQ.category)
   addUrl('/typing/test', PRIORITY.category, CHANGEFREQ.category)
+  addUrl('/react-machine-coding', PRIORITY.category , CHANGEFREQ.category)
+  addUrl('/javascript-machine-coding', PRIORITY.category , CHANGEFREQ.category)
+
 
   // Article routes - extract from articles.jsx
   const articlesPath = join(__dirname, '..', 'src', 'lib', 'articles.jsx')
