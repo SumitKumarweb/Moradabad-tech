@@ -230,26 +230,7 @@ export default function JavaScriptMachineCodingPage() {
                         <ChevronRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-1" />
                       </Link>
                     </Button>
-                    {(question.watchLink || question.codeLink) && (
-                      <div className="flex gap-2">
-                        {question.watchLink && (
-                          <Button asChild variant="outline" size="sm" className="flex-1 text-xs">
-                            <a href={question.watchLink} target="_blank" rel="noopener noreferrer">
-                              <Play className="h-3 w-3 mr-1" />
-                              Watch
-                            </a>
-                          </Button>
-                        )}
-                        {question.codeLink && (
-                          <Button asChild variant="outline" size="sm" className="flex-1 text-xs">
-                            <a href={question.codeLink} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-3 w-3 mr-1" />
-                              Code
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                 
                   </div>
                 </div>
               </Card>

@@ -26,14 +26,14 @@ export const siteConfig = {
       title: "Base Programming",
       href: "/base-programming",
     },
-    // {
-    //   title: "React MC",
-    //   href: "/react-machine-coding",
-    // },
-    // {
-    //   title: "JS MC",
-    //   href: "/javascript-machine-coding",
-    // },
+    {
+      title: "React MC",
+      href: "/react-machine-coding",
+    },
+    {
+      title: "JS MC",
+      href: "/javascript-machine-coding",
+    },
     {
       title: "Interview",
       href: "/interview",
