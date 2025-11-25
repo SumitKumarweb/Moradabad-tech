@@ -169,72 +169,77 @@ export default function ReactMachineCodingPage() {
           </div>
 
           <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {questions.map((question) => (
-              <Card
-                key={question.id}
-                className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative p-4 md:p-6">
-                  <div className="flex items-start justify-between mb-3 md:mb-4 gap-2">
-                    <Badge 
-                      variant={getDifficultyBadgeVariant(question.difficulty)}
-                      className="font-mono text-xs"
-                    >
-                      {question.difficulty || 'Basic'}
-                    </Badge>
-                    <div className="p-1.5 md:p-2 rounded-lg bg-primary/10 text-primary ring-1 ring-inset ring-primary/20 group-hover:scale-110 transition-transform shrink-0">
-                      <Code className="h-4 w-4 md:h-5 md:w-5" />
-                    </div>
-                  </div>
+            {questions.map((question) => {
+              const apiText = question.title;
+              const route = apiText.toLowerCase().trim().replace(/\s+/g, '-');
 
-                  <h3 className="text-base md:text-lg font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                    {question.title}
-                  </h3>
-
-                  <p className="text-sm text-muted-foreground mb-3 md:mb-4 line-clamp-3">
-                    {question.description}
-                  </p>
-
-                  {question.duration && (
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        <span>{question.duration}</span>
+              return (
+                <Card
+                  key={question.id}
+                  className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="relative p-4 md:p-6">
+                    <div className="flex items-start justify-between mb-3 md:mb-4 gap-2">
+                      <Badge 
+                        variant={getDifficultyBadgeVariant(question.difficulty)}
+                        className="font-mono text-xs"
+                      >
+                        {question.difficulty || 'Basic'}
+                      </Badge>
+                      <div className="p-1.5 md:p-2 rounded-lg bg-primary/10 text-primary ring-1 ring-inset ring-primary/20 group-hover:scale-110 transition-transform shrink-0">
+                        <Code className="h-4 w-4 md:h-5 md:w-5" />
                       </div>
-                      {question.createdOn && (
-                        <span>{question.createdOn.split(',')[0]}</span>
-                      )}
                     </div>
-                  )}
-
-                  {question.tags && question.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {question.tags.slice(0, 3).map((tag, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {question.tags.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{question.tags.length - 3}
-                        </Badge>
-                      )}
+  
+                    <h3 className="text-base md:text-lg font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      {question.title}
+                    </h3>
+  
+                    <p className="text-sm text-muted-foreground mb-3 md:mb-4 line-clamp-3">
+                      {question.description}
+                    </p>
+  
+                    {question.duration && (
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          <span>{question.duration}</span>
+                        </div>
+                        {question.createdOn && (
+                          <span>{question.createdOn.split(',')[0]}</span>
+                        )}
+                      </div>
+                    )}
+  
+                    {question.tags && question.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {question.tags.slice(0, 3).map((tag, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {question.tags.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{question.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+  
+                    <div className="flex flex-col gap-2">
+                      <Button asChild className="w-full group/btn text-sm">
+                        <Link to={`/react-machine-coding/${route}`}>
+                          View Problem
+                          <ChevronRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-1" />
+                        </Link>
+                      </Button>
+                     
                     </div>
-                  )}
-
-                  <div className="flex flex-col gap-2">
-                    <Button asChild className="w-full group/btn text-sm">
-                      <Link to={`/react-machine-coding/${question.id}`}>
-                        View Problem
-                        <ChevronRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-1" />
-                      </Link>
-                    </Button>
-                   
                   </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              )
+            })}
           </div>
 
           {/* Pagination */}
