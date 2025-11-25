@@ -1,16 +1,18 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/websitelogo.png" />
-    <link rel="apple-touch-icon" href="/websitelogo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
-    <title>Moradabads</title>
-    <meta name="description" content="The premier platform for modern web development education." />
-    <meta name="google-site-verification" content="brn33KQhsN9YF6sQHIGwzwDjMm007Rise3UiStnuBGo" />
-    
-    <!-- Schema.org Structured Data for SEO -->
-    <script type="application/ld+json">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/websitelogo.png" />
+  <link rel="apple-touch-icon" href="/websitelogo.png" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  <title>Moradabads</title>
+  <meta name="description" content="The premier platform for modern web development education." />
+  <meta name="google-site-verification" content="brn33KQhsN9YF6sQHIGwzwDjMm007Rise3UiStnuBGo" />
+
+  <!-- Schema.org Structured Data for SEO -->
+  <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
@@ -35,7 +37,7 @@
       ]
     }
     </script>
-    <script type="application/ld+json">
+  <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
@@ -55,7 +57,7 @@
       }
     }
     </script>
-    <script type="application/ld+json">
+  <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "EducationalOrganization",
@@ -151,63 +153,75 @@
       }
     }
     </script>
-    
-    <!-- Google Fonts - Inter for UI, JetBrains Mono for code -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <style>
-      /* Font loading optimization */
-      @font-face {
-        font-family: 'Inter';
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'JetBrains Mono';
-        font-display: swap;
-      }
-    </style>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDBN4HRGB"></script>
-    <script>
+
+  <!-- Google Fonts - Inter for UI, JetBrains Mono for code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* Font loading optimization */
+    @font-face {
+      font-family: 'Inter';
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'JetBrains Mono';
+      font-display: swap;
+    }
+  </style>
+  <!-- Analytics and Ads (Production Only) -->
+  <script>
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      // Google Analytics (G-7MDBN4HRGB)
+      const gaScript = document.createElement('script');
+      gaScript.async = true;
+      gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-7MDBN4HRGB';
+      document.head.appendChild(gaScript);
+
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag() { dataLayer.push(arguments); }
       gtag('js', new Date());
       gtag('config', 'G-7MDBN4HRGB');
-    </script>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-363847073">
-</script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'AW-363847073');
-</script>
-    <script type="text/javascript">
-      (function(c,l,a,r,i,t,y){
-          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      // Google Ads (AW-363847073)
+      const adsScript = document.createElement('script');
+      adsScript.async = true;
+      adsScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-363847073';
+      document.head.appendChild(adsScript);
+      gtag('config', 'AW-363847073');
+
+      // Clarity
+      (function (c, l, a, r, i, t, y) {
+        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+        t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
       })(window, document, "clarity", "script", "u967niut6w");
-  </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141314854363213"
-     crossorigin="anonymous"></script>
-<!-- ads 1 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-8141314854363213"
-     data-ad-slot="6102439147"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-  </body>
-</html>
 
+      // AdSense Script
+      const adSenseScript = document.createElement('script');
+      adSenseScript.async = true;
+      adSenseScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141314854363213';
+      adSenseScript.crossOrigin = 'anonymous';
+      document.head.appendChild(adSenseScript);
+    }
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+
+  <!-- ads 1 -->
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8141314854363213" data-ad-slot="6102439147"
+    data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    }
+  </script>
+</body>
+
+</html>
