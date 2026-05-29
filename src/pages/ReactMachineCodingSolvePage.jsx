@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/breadcrumb"
 
 export default function ReactMachineCodingSolvePage() {
-  const { id } = useParams()
+  const { id: routeParam } = useParams()
   const { currentUser } = useAuth()
-  const question = getReactMachineCodingQuestionById(id)
+  const question = getReactMachineCodingQuestionById(routeParam)
+  const questionId = question?.id
   const allQuestions = getAllReactMachineCodingQuestions()
   const [elapsedTime, setElapsedTime] = useState(0)
   const [code, setCode] = useState("")
@@ -35,7 +36,9 @@ export default function ReactMachineCodingSolvePage() {
   const [savedCode, setSavedCode] = useState(null)
   const iframeRef = useRef(null)
   
-  const currentIndex = allQuestions.findIndex(q => q.id === id)
+  const currentIndex = questionId
+    ? allQuestions.findIndex((q) => q.id === questionId)
+    : -1
   const prevQuestion = currentIndex > 0 ? allQuestions[currentIndex - 1] : null
   const nextQuestion = currentIndex < allQuestions.length - 1 ? allQuestions[currentIndex + 1] : null
 
@@ -61,11 +64,13 @@ export default ${componentName};`
 
   // Load saved code on mount (from localStorage and Firebase)
   useEffect(() => {
+    if (!questionId) return
+
     const loadCode = async () => {
       // First try Firebase if user is logged in
       if (currentUser) {
         try {
-          const submission = await getSubmission(currentUser.uid, id, 'react')
+          const submission = await getSubmission(currentUser.uid, questionId, 'react')
           if (submission && submission.code) {
             setCode(submission.code)
             setSavedCode(submission.code)
@@ -78,7 +83,7 @@ export default ${componentName};`
       }
       
       // Fallback to localStorage
-      const key = `react-mc-code-${id}`
+      const key = `react-mc-code-${questionId}`
       const localSavedCode = localStorage.getItem(key)
       if (localSavedCode) {
         setCode(localSavedCode)
@@ -88,7 +93,7 @@ export default ${componentName};`
     }
     
     loadCode()
-  }, [id, reactTemplate, currentUser])
+  }, [questionId, reactTemplate, currentUser])
 
   // Generate React preview HTML
   const generateReactPreview = (reactCode) => {
@@ -166,11 +171,12 @@ export default ${componentName};`
 
   // Save code to localStorage
   useEffect(() => {
+    if (!questionId) return
     if (code && code !== reactTemplate) {
-      const key = `react-mc-code-${id}`
+      const key = `react-mc-code-${questionId}`
       localStorage.setItem(key, code)
     }
-  }, [code, id, reactTemplate])
+  }, [code, questionId, reactTemplate])
 
   const openPreviewInNewTab = () => {
     if (htmlPreview) {
@@ -197,7 +203,7 @@ export default ${componentName};`
     try {
       await saveOrUpdateSubmission(
         currentUser.uid,
-        id,
+        questionId,
         'react',
         code,
         {
@@ -225,7 +231,7 @@ export default ${componentName};`
     }
 
     try {
-      const submission = await getSubmission(currentUser.uid, id, 'react')
+      const submission = await getSubmission(currentUser.uid, questionId, 'react')
       if (submission && submission.code) {
         setCode(submission.code)
         setSavedCode(submission.code)
@@ -242,21 +248,23 @@ export default ${componentName};`
 
   // Save elapsed time to localStorage
   useEffect(() => {
+    if (!questionId) return
     if (elapsedTime > 0 && elapsedTime % 10 === 0) { // Save every 10 seconds
-      const key = `react-mc-time-${id}`
+      const key = `react-mc-time-${questionId}`
       localStorage.setItem(key, elapsedTime.toString())
     }
-  }, [elapsedTime, id])
+  }, [elapsedTime, questionId])
 
   // Load saved time on mount
   useEffect(() => {
-    const key = `react-mc-time-${id}`
+    if (!questionId) return
+    const key = `react-mc-time-${questionId}`
     const savedTime = localStorage.getItem(key)
     if (savedTime) {
       const saved = parseInt(savedTime, 10)
       setElapsedTime(saved)
     }
-  }, [id])
+  }, [questionId])
 
   if (!question) {
     return (

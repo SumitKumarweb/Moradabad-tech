@@ -169,11 +169,7 @@ export default function ReactMachineCodingPage() {
           </div>
 
           <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {questions.map((question) => {
-              const apiText = question.title;
-              const route = apiText.toLowerCase().trim().replace(/\s+/g, '-');
-
-              return (
+            {questions.map((question) => (
                 <Card
                   key={question.id}
                   className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
@@ -229,7 +225,7 @@ export default function ReactMachineCodingPage() {
   
                     <div className="flex flex-col gap-2">
                       <Button asChild className="w-full group/btn text-sm">
-                        <Link to={`/react-machine-coding/${route}`}>
+                        <Link to={`/react-machine-coding/${question.id}`}>
                           View Problem
                           <ChevronRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-1" />
                         </Link>
@@ -238,8 +234,7 @@ export default function ReactMachineCodingPage() {
                     </div>
                   </div>
                 </Card>
-              )
-            })}
+            ))}
           </div>
 
           {/* Pagination */}

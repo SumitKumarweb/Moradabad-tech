@@ -3,6 +3,8 @@
  * 100+ React machine coding problems from basic to advanced
  */
 
+import { generateSlug } from "@/lib/utils"
+
 export const reactMachineCodingQuestions = [
   // Basic Level (1-30)
   {
@@ -1915,8 +1917,11 @@ export function getAllReactMachineCodingQuestions() {
   return reactMachineCodingQuestions;
 }
 
-export function getReactMachineCodingQuestionById(id) {
-  return reactMachineCodingQuestions.find(q => q.id === id);
+export function getReactMachineCodingQuestionById(idOrSlug) {
+  if (!idOrSlug) return undefined
+  return reactMachineCodingQuestions.find(
+    (q) => q.id === idOrSlug || generateSlug(q.title) === idOrSlug
+  )
 }
 
 export function getReactMachineCodingQuestionByNumber(number) {
