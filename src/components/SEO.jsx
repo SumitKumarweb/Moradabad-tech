@@ -4,7 +4,7 @@ export default function SEO({
   title,
   description,
   keywords,
-  author = "Moradabads",
+  author = "jiocoder",
   ogTitle,
   ogDescription,
   ogImage,
@@ -14,7 +14,7 @@ export default function SEO({
   robots = "index, follow",
   type = "website"
 }) {
-  const siteName = "Moradabads"
+  const siteName = "jiocoder"
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : ''
   const fullTitle = title ? `${title} | ${siteName}` : siteName
   const fullOgTitle = ogTitle || title || siteName

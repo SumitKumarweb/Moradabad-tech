@@ -6,8 +6,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 // Base URL - Update this with your actual domain
-// You can also set it via environment variable: SITE_URL=https://moradabads.com npm run generate-sitemap
-const BASE_URL = process.env.SITE_URL || 'https://moradabads.com'
+// You can also set it via environment variable: SITE_URL=https://jiocoder.com npm run generate-sitemap
+const BASE_URL = process.env.SITE_URL || 'https://jiocoder.com'
 
 // Priority and changefreq settings
 const PRIORITY = {

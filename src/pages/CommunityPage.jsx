@@ -308,7 +308,7 @@ export default function CommunityPage() {
   return (
     <>
       <SEO
-        title="Community - Moradabads"
+        title="Community - jiocoder"
         description="Join our community! Share your thoughts, ask questions, and connect with fellow developers."
         keywords="community, discussion, forum, developers, coding"
       />

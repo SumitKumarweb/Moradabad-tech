@@ -7,7 +7,7 @@ export default function NotFoundPage() {
     <>
       <SEO
         title="404 - Page Not Found"
-        description="The page you're looking for doesn't exist. Return to Moradabads homepage or explore our articles, tutorials, and coding resources."
+        description="The page you're looking for doesn't exist. Return to jiocoder homepage or explore our articles, tutorials, and coding resources."
         keywords="404, page not found, error"
       />
       <div className="flex flex-col items-center justify-center min-h-[60vh] py-12 md:py-20 lg:py-24 px-4">

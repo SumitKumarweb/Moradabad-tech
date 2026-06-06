@@ -36,17 +36,17 @@ function greet(name) {
   return \`Hello, \${name}!\`;
 }
 
-console.log(greet("Moradabads"));`,
+console.log(greet("jiocoder"));`,
   python: `# Write your Python code here
 def greet(name):
     return f"Hello, {name}!"
 
-print(greet("Moradabads"))`,
+print(greet("jiocoder"))`,
   c: `// Write your C code here
 #include <stdio.h>
 
 int main() {
-    printf("Hello, Moradabads!\\n");
+    printf("Hello, jiocoder!\\n");
     return 0;
 }`,
   cpp: `// Write your C++ code here
@@ -54,7 +54,7 @@ int main() {
 using namespace std;
 
 int main() {
-    cout << "Hello, Moradabads!" << endl;
+    cout << "Hello, jiocoder!" << endl;
     return 0;
 }`,
   html: `<!DOCTYPE html>
@@ -76,7 +76,7 @@ int main() {
     </style>
 </head>
 <body>
-    <h1>Hello, Moradabads!</h1>
+    <h1>Hello, jiocoder!</h1>
     <script>
         console.log("Hello from JavaScript!");
     </script>
@@ -85,7 +85,7 @@ int main() {
   java: `// Write your Java code here
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, Moradabads!");
+        System.out.println("Hello, jiocoder!");
     }
 }`,
   react: `// React Component Example
@@ -96,7 +96,7 @@ function App() {
 
   return (
     <div className="app">
-      <h1>Hello, Moradabads!</h1>
+      <h1>Hello, jiocoder!</h1>
       <p>Count: {count}</p>
       <button onClick={() => setCount(count + 1)}>
         Increment
@@ -113,7 +113,7 @@ import { Component } from '@angular/core';
   selector: 'app-root',
   template: \`
     <div class="app">
-      <h1>Hello, Moradabads!</h1>
+      <h1>Hello, jiocoder!</h1>
       <p>Count: {{ count }}</p>
       <button (click)="increment()">Increment</button>
     </div>
@@ -135,7 +135,7 @@ export class AppComponent {
   vue: `<!-- Vue Component Example -->
 <template>
   <div class="app">
-    <h1>Hello, Moradabads!</h1>
+    <h1>Hello, jiocoder!</h1>
     <p>Count: {{ count }}</p>
     <button @click="increment">Increment</button>
   </div>
@@ -168,7 +168,7 @@ const http = require('http');
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello, Moradabads!\\n');
+  res.end('Hello, jiocoder!\\n');
 });
 
 const PORT = 3000;

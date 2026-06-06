@@ -2,11 +2,11 @@ import { useEffect } from 'react'
 
 // Helper functions to generate schema data
 export const generateOrganizationSchema = () => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Moradabads",
+    "name": "jiocoder",
     "url": siteUrl,
     "logo": {
       "@type": "ImageObject",
@@ -18,7 +18,7 @@ export const generateOrganizationSchema = () => {
     "foundingDate": "2024",
     "founder": {
       "@type": "Person",
-      "name": "Moradabads Team"
+      "name": "jiocoder Team"
     },
     "contactPoint": {
       "@type": "ContactPoint",
@@ -41,19 +41,19 @@ export const generateOrganizationSchema = () => {
 }
 
 export const generateWebSiteSchema = () => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Moradabads",
-    "alternateName": "Moradabads - Learn Web Development",
+    "name": "jiocoder",
+    "alternateName": "jiocoder - Learn Web Development",
     "url": siteUrl,
     "description": "The premier platform for modern web development education. Master HTML, CSS, JavaScript, and React with our interactive tools and expert guides.",
     "inLanguage": "en-US",
     "isAccessibleForFree": true,
     "publisher": {
       "@type": "Organization",
-      "name": "Moradabads",
+      "name": "jiocoder",
       "logo": {
         "@type": "ImageObject",
         "url": `${siteUrl}/websitelogo.png`
@@ -78,11 +78,11 @@ export const generateArticleSchema = (article) => ({
   "image": article.image || (typeof window !== 'undefined' ? `${window.location.origin}/websitelogo.png` : ''),
   "author": {
     "@type": "Person",
-    "name": article.author || "Moradabads Team"
+    "name": article.author || "jiocoder Team"
   },
   "publisher": {
     "@type": "Organization",
-    "name": "Moradabads",
+    "name": "jiocoder",
     "logo": {
       "@type": "ImageObject",
       "url": typeof window !== 'undefined' ? `${window.location.origin}/websitelogo.png` : ''
@@ -110,7 +110,7 @@ export const generateBreadcrumbSchema = (items) => ({
 })
 
 export const generateCourseSchema = (course) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "Course",
@@ -118,7 +118,7 @@ export const generateCourseSchema = (course) => {
     "description": course.description,
     "provider": {
       "@type": "Organization",
-      "name": "Moradabads",
+      "name": "jiocoder",
       "url": siteUrl,
       "logo": {
         "@type": "ImageObject",
@@ -136,7 +136,7 @@ export const generateCourseSchema = (course) => {
 }
 
 export const generateLearningResourceSchema = (resource) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "LearningResource",
@@ -149,7 +149,7 @@ export const generateLearningResourceSchema = (resource) => {
     "url": typeof window !== 'undefined' ? window.location.href : '',
     "provider": {
       "@type": "Organization",
-      "name": "Moradabads",
+      "name": "jiocoder",
       "url": siteUrl
     },
     "teaches": resource.teaches || [],
@@ -161,7 +161,7 @@ export const generateLearningResourceSchema = (resource) => {
 }
 
 export const generateEducationalOccupationalProgramSchema = (program) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "EducationalOccupationalProgram",
@@ -172,7 +172,7 @@ export const generateEducationalOccupationalProgramSchema = (program) => {
     "occupationalCategory": "Web Development",
     "provider": {
       "@type": "Organization",
-      "name": "Moradabads",
+      "name": "jiocoder",
       "url": siteUrl
     },
     "timeRequired": program.duration,
@@ -231,7 +231,7 @@ export const generatePersonSchema = (person) => ({
   "jobTitle": person.jobTitle,
   "worksFor": {
     "@type": "Organization",
-    "name": "Moradabads"
+    "name": "jiocoder"
   },
   "url": person.url
 })
@@ -253,7 +253,7 @@ export const generateItemListSchema = (list) => ({
 })
 
 export const generateCollectionPageSchema = (page) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -262,7 +262,7 @@ export const generateCollectionPageSchema = (page) => {
     "url": typeof window !== 'undefined' ? window.location.href : '',
     "isPartOf": {
       "@type": "WebSite",
-      "name": "Moradabads",
+      "name": "jiocoder",
       "url": siteUrl
     },
     "mainEntity": {
@@ -279,7 +279,7 @@ export const generateCollectionPageSchema = (page) => {
 }
 
 export const generateWebPageSchema = (page) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -289,7 +289,7 @@ export const generateWebPageSchema = (page) => {
     "inLanguage": "en-US",
     "isPartOf": {
       "@type": "WebSite",
-      "name": "Moradabads",
+      "name": "jiocoder",
       "url": siteUrl
     },
     "about": {
@@ -313,11 +313,11 @@ export const generateWebPageSchema = (page) => {
 }
 
 export const generateSoftwareApplicationSchema = (app) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": app.name || "Moradabads Code Editor",
+    "name": app.name || "jiocoder Code Editor",
     "description": app.description || "Online code editor for web development",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web Browser",
@@ -335,14 +335,14 @@ export const generateSoftwareApplicationSchema = (app) => {
     "url": typeof window !== 'undefined' ? window.location.href : '',
     "publisher": {
       "@type": "Organization",
-      "name": "Moradabads",
+      "name": "jiocoder",
       "url": siteUrl
     }
   }
 }
 
 export const generateQuestionSchema = (question) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "Question",
@@ -354,7 +354,7 @@ export const generateQuestionSchema = (question) => {
       "text": question.answer,
       "author": {
         "@type": "Person",
-        "name": question.author || "Moradabads Team"
+        "name": question.author || "jiocoder Team"
       }
     } : undefined,
     "suggestedAnswer": question.suggestedAnswers?.map(ans => ({
@@ -362,20 +362,20 @@ export const generateQuestionSchema = (question) => {
       "text": ans.text,
       "author": {
         "@type": "Person",
-        "name": ans.author || "Moradabads Team"
+        "name": ans.author || "jiocoder Team"
       }
     })) || [],
     "upvoteCount": question.upvotes || 0,
     "dateCreated": question.dateCreated || new Date().toISOString(),
     "author": {
       "@type": "Person",
-      "name": question.author || "Moradabads Team"
+      "name": question.author || "jiocoder Team"
     }
   }
 }
 
 export const generateQAPageSchema = (page) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "QAPage",
@@ -398,13 +398,13 @@ export const generateQAPageSchema = (page) => {
 }
 
 export const generateReviewSchema = (review) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "Review",
     "itemReviewed": {
       "@type": "Thing",
-      "name": review.itemName || "Moradabads Platform"
+      "name": review.itemName || "jiocoder Platform"
     },
     "reviewRating": {
       "@type": "Rating",
@@ -422,7 +422,7 @@ export const generateReviewSchema = (review) => {
 }
 
 export const generateVideoSchema = (video) => {
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
   return {
     "@context": "https://schema.org",
     "@type": "VideoObject",
@@ -435,7 +435,7 @@ export const generateVideoSchema = (video) => {
     "duration": video.duration,
     "publisher": {
       "@type": "Organization",
-      "name": "Moradabads",
+      "name": "jiocoder",
       "logo": {
         "@type": "ImageObject",
         "url": `${siteUrl}/websitelogo.png`

@@ -22,7 +22,7 @@ export default function AboutPage() {
     <>
       <SEO
         title="About Us"
-        description="Learn about Moradabads - your premier destination for full-stack development education. Empowering developers with comprehensive tutorials and powerful tools."
+        description="Learn about jiocoder - your premier destination for full-stack development education. Empowering developers with comprehensive tutorials and powerful tools."
         keywords="about, company, mission, vision, web development education, coding platform"
       />
       <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
@@ -51,7 +51,7 @@ export default function AboutPage() {
               <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
                 About{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
-                  Moradabads
+                  jiocoder
                 </span>
               </h1>
               <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl">
@@ -76,7 +76,7 @@ export default function AboutPage() {
               <div className="space-y-4">
                 <h2 className="text-2xl md:text-3xl font-bold">Our Mission</h2>
                 <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
-                  At Moradabads, we believe that learning to code should be accessible, engaging, and practical. 
+                  At jiocoder, we believe that learning to code should be accessible, engaging, and practical. 
                   Our mission is to provide developers of all skill levels with the tools, knowledge, and resources 
                   they need to succeed in the ever-evolving world of web development. Whether you're exploring our 
                   <Link to="/articles" className="text-primary hover:underline mx-1">comprehensive articles</Link> or 
@@ -159,7 +159,7 @@ export default function AboutPage() {
                 <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
                   Whether you're just starting your coding journey or looking to level up your skills, 
                   we're here to support you every step of the way. Join thousands of developers who are 
-                  learning, practicing, and growing with Moradabads.
+                  learning, practicing, and growing with jiocoder.
                 </p>
                 <div className="flex flex-wrap gap-4 mt-6">
                   <Link to="/articles" className="text-primary hover:underline font-medium focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1 transition-all">Explore Articles</Link>

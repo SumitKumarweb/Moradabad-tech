@@ -6,7 +6,7 @@ export default function TermsPage() {
     <>
       <SEO
         title="Terms and Conditions"
-        description="Read Moradabads' Terms and Conditions to understand the rules and regulations for using our platform."
+        description="Read jiocoder' Terms and Conditions to understand the rules and regulations for using our platform."
         keywords="terms and conditions, terms of service, user agreement, legal"
       />
       <div className="flex flex-col min-h-screen bg-background">
@@ -14,10 +14,10 @@ export default function TermsPage() {
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12 space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Terms and Conditions - Moradabads User Agreement
+                Terms and Conditions - jiocoder User Agreement
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Read our terms and conditions to understand the rules and regulations for using the Moradabads platform and services.
+                Read our terms and conditions to understand the rules and regulations for using the jiocoder platform and services.
               </p>
               <p className="text-sm text-muted-foreground">
                 Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -40,7 +40,7 @@ export default function TermsPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Agreement to Terms</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    By accessing or using Moradabads ("the Service"), you agree to be bound by these Terms 
+                    By accessing or using jiocoder ("the Service"), you agree to be bound by these Terms 
                     and Conditions. If you disagree with any part of these terms, you may not access the Service.
                   </p>
                 </div>
@@ -48,7 +48,7 @@ export default function TermsPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Use License</h2>
                   <p className="text-muted-foreground leading-relaxed mb-4">
-                    Permission is granted to temporarily access the materials on Moradabads for personal, 
+                    Permission is granted to temporarily access the materials on jiocoder for personal, 
                     non-commercial transitory viewing only. This is the grant of a license, not a transfer 
                     of title, and under this license you may not:
                   </p>
@@ -90,7 +90,7 @@ export default function TermsPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Intellectual Property</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    The Service and its original content, features, and functionality are owned by Moradabads 
+                    The Service and its original content, features, and functionality are owned by jiocoder 
                     and are protected by international copyright, trademark, patent, trade secret, and other 
                     intellectual property laws.
                   </p>
@@ -108,7 +108,7 @@ export default function TermsPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Disclaimer</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    The materials on Moradabads are provided on an 'as is' basis. Moradabads makes no 
+                    The materials on jiocoder are provided on an 'as is' basis. jiocoder makes no 
                     warranties, expressed or implied, and hereby disclaims and negates all other warranties 
                     including, without limitation, implied warranties or conditions of merchantability, 
                     fitness for a particular purpose, or non-infringement of intellectual property or other 
@@ -119,10 +119,10 @@ export default function TermsPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Limitations</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    In no event shall Moradabads or its suppliers be liable for any damages (including, 
+                    In no event shall jiocoder or its suppliers be liable for any damages (including, 
                     without limitation, damages for loss of data or profit, or due to business interruption) 
-                    arising out of the use or inability to use the materials on Moradabads, even if 
-                    Moradabads or a Moradabads authorized representative has been notified orally or in writing 
+                    arising out of the use or inability to use the materials on jiocoder, even if 
+                    jiocoder or a jiocoder authorized representative has been notified orally or in writing 
                     of the possibility of such damage.
                   </p>
                 </div>
@@ -130,8 +130,8 @@ export default function TermsPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Accuracy of Materials</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    The materials appearing on Moradabads could include technical, typographical, or 
-                    photographic errors. Moradabads does not warrant that any of the materials on its 
+                    The materials appearing on jiocoder could include technical, typographical, or 
+                    photographic errors. jiocoder does not warrant that any of the materials on its 
                     website are accurate, complete, or current.
                   </p>
                 </div>
@@ -139,16 +139,16 @@ export default function TermsPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Links</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    Moradabads has not reviewed all of the sites linked to its website and is not 
+                    jiocoder has not reviewed all of the sites linked to its website and is not 
                     responsible for the contents of any such linked site. The inclusion of any link does 
-                    not imply endorsement by Moradabads of the site.
+                    not imply endorsement by jiocoder of the site.
                   </p>
                 </div>
 
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Modifications</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    Moradabads may revise these terms of service for its website at any time without notice. 
+                    jiocoder may revise these terms of service for its website at any time without notice. 
                     By using this website you are agreeing to be bound by the then current version of these 
                     terms of service.
                   </p>
@@ -167,7 +167,7 @@ export default function TermsPage() {
                   <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
                   <p className="text-muted-foreground leading-relaxed">
                     If you have any questions about these Terms and Conditions, please contact us at 
-                    <Link to="/contact" className="text-primary hover:underline ml-1 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">support@moradabads.com</Link> 
+                    <Link to="/contact" className="text-primary hover:underline ml-1 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">support@jiocoder.com</Link> 
                     or visit our <Link to="/contact" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">contact page</Link>. 
                     For more information about our platform, check out our <Link to="/about" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">About page</Link> or 
                     browse our <Link to="/articles" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">learning resources</Link>.

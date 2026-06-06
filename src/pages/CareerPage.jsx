@@ -67,7 +67,7 @@ export default function CareerPage() {
     <>
       <SEO
         title="Careers"
-        description="Join the Moradabads team and help shape the future of coding education. Explore open positions and discover why developers love working with us."
+        description="Join the jiocoder team and help shape the future of coding education. Explore open positions and discover why developers love working with us."
         keywords="careers, jobs, hiring, employment, join our team"
       />
       <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
@@ -112,7 +112,7 @@ export default function CareerPage() {
               <div className="space-y-6">
                 <h2 className="text-2xl md:text-3xl font-bold">Why Work With Us</h2>
                 <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
-                  At Moradabads, we're building something meaningful. We're passionate about making 
+                  At jiocoder, we're building something meaningful. We're passionate about making 
                   coding education accessible to everyone, and we're looking for talented individuals 
                   who share our vision.
                 </p>

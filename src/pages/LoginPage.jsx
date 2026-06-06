@@ -59,17 +59,17 @@ export default function LoginPage() {
     <>
       <SEO
         title="Login"
-        description="Sign in to your Moradabads account to access personalized learning, track your progress, save your code, and unlock premium features."
-        keywords="login, sign in, account login, Moradabads login, programming account, coding account, web development account"
-        ogTitle="Login - Moradabads"
-        ogDescription="Sign in to your Moradabads account to continue your learning journey."
+        description="Sign in to your jiocoder account to access personalized learning, track your progress, save your code, and unlock premium features."
+        keywords="login, sign in, account login, jiocoder login, programming account, coding account, web development account"
+        ogTitle="Login - jiocoder"
+        ogDescription="Sign in to your jiocoder account to continue your learning journey."
         ogImage="/websitelogo.png"
         robots="noindex, follow"
       />
       <StructuredData data={generateWebPageSchema({
         name: "Login",
-        title: "Login - Moradabads",
-        description: "Sign in to your Moradabads account to access personalized learning, track your progress, save your code, and unlock premium features."
+        title: "Login - jiocoder",
+        description: "Sign in to your jiocoder account to access personalized learning, track your progress, save your code, and unlock premium features."
       })} />
     <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Background elements */}
@@ -83,12 +83,12 @@ export default function LoginPage() {
           <Link to="/" className="inline-flex items-center gap-2 mb-4 group">
             <img 
               src="/websitelogo.png" 
-              alt="Moradabads"
+              alt="jiocoder"
               className="h-6 w-auto object-contain max-h-20 max-w-48 transition-transform group-hover:scale-110"
             />
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground">Login to Moradabads - Welcome Back</h1>
-          <p className="text-muted-foreground text-base">Sign in to your Moradabads account to access personalized learning, track your progress, and continue your coding journey.</p>
+          <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground">Login to jiocoder - Welcome Back</h1>
+          <p className="text-muted-foreground text-base">Sign in to your jiocoder account to access personalized learning, track your progress, and continue your coding journey.</p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-3 text-sm">
             <Link to="/articles" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Browse Articles</Link>
             <span className="text-muted-foreground">•</span>

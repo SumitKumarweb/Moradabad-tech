@@ -62,7 +62,7 @@ export default function ContactPage() {
           from_email: formData.email,
           subject: formData.subject,
           message: formData.message,
-          to_name: 'Moradabads Team',
+          to_name: 'jiocoder Team',
         }
       )
 
@@ -74,7 +74,7 @@ export default function ContactPage() {
       }
     } catch (error) {
       console.error('Email.js error:', error)
-      toast.error('Failed to send message. Please try again later or contact us directly at support@moradabads.com')
+      toast.error('Failed to send message. Please try again later or contact us directly at support@jiocoder.com')
     } finally {
       setIsSubmitting(false)
     }
@@ -90,7 +90,7 @@ export default function ContactPage() {
     <>
       <SEO
         title="Contact Us"
-        description="Get in touch with Moradabads. We'd love to hear from you - whether you have questions, feedback, or just want to say hello."
+        description="Get in touch with jiocoder. We'd love to hear from you - whether you have questions, feedback, or just want to say hello."
         keywords="contact, support, help, feedback, get in touch"
       />
       <StructuredData data={generateBreadcrumbSchema(breadcrumbItems)} />
@@ -173,7 +173,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Email</h3>
-                      <p className="text-muted-foreground">support@moradabads.com</p>
+                      <p className="text-muted-foreground">support@jiocoder.com</p>
                     </div>
                   </div>
 

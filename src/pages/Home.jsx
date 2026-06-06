@@ -15,10 +15,10 @@ export default function Home() {
   
   // Generate ItemList schema for features
   const featuresSchema = useMemo(() => {
-    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com'
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com'
     return generateItemListSchema({
       name: "Platform Features",
-      description: "Key features of Moradabads learning platform",
+      description: "Key features of jiocoder learning platform",
       items: [
         {
           name: "Comprehensive Guides",
@@ -97,9 +97,9 @@ export default function Home() {
     <>
       <SEO
         title="Home"
-        description="Moradabads is your premier destination for full-stack development. Master HTML, CSS, JavaScript, React, and more with our interactive browser IDE, comprehensive articles, coding challenges, and quizzes."
+        description="jiocoder is your premier destination for full-stack development. Master HTML, CSS, JavaScript, React, and more with our interactive browser IDE, comprehensive articles, coding challenges, and quizzes."
         keywords="web development, programming, coding, HTML, CSS, JavaScript, React, full-stack development, learn to code, coding tutorials, programming education, web development courses, browser IDE, code editor, coding challenges, DSA problems, interview preparation"
-        ogTitle="Moradabads - Master Modern Coding"
+        ogTitle="jiocoder - Master Modern Coding"
         ogDescription="Premier platform for full-stack development education. Learn HTML, CSS, JavaScript, React, and more with interactive tools and expert guides."
         ogImage="/websitelogo.png"
       />
@@ -120,7 +120,7 @@ export default function Home() {
                   </span>
                 </h1>
                 <p className="mx-auto lg:mx-0 max-w-[600px] text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed">
-                  Moradabads is your premier destination for full-stack development. 
+                  jiocoder is your premier destination for full-stack development. 
                   From HTML basics to advanced React patterns, we empower the next generation of developers.
                 </p>
               </div>

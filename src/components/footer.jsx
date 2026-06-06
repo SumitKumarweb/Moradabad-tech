@@ -77,7 +77,7 @@ export function Footer() {
         <div className="border-t border-border/40 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
             <p className="text-center sm:text-left">
-              © {new Date().getFullYear()} Moradabads. All rights reserved.
+              © {new Date().getFullYear()} jiocoder. All rights reserved.
             </p>
             <div className="flex items-center gap-4 justify-center">
               <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>

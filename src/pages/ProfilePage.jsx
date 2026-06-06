@@ -335,7 +335,7 @@ export default function ProfilePage() {
         title="Profile Settings"
         description="Manage your profile information and preferences. Update your personal details, professional links, and upload your resume."
         keywords="profile, account settings, user profile, profile management, update profile, resume upload, LinkedIn profile, LeetCode profile"
-        ogTitle="Profile Settings - Moradabads"
+        ogTitle="Profile Settings - jiocoder"
         ogDescription="Manage your profile information and preferences."
         ogImage="/websitelogo.png"
         robots="noindex, follow"

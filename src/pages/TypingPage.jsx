@@ -9,7 +9,7 @@ import StructuredData, { generateLearningResourceSchema, generateItemListSchema,
 
 const TypingPage = () => {
   const levels = getAllLevels();
-  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://moradabads.com';
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://jiocoder.com';
   
   // Generate ItemList schema for typing levels
   const typingLevelsSchema = useMemo(() => generateItemListSchema({
@@ -49,7 +49,7 @@ const TypingPage = () => {
         title="Typing Practice"
         description="Master your typing skills with structured lessons, interactive games, and speed tests. Practice typing from basic to expert level and track your progress."
         keywords="typing practice, typing speed, typing test, touch typing, keyboard skills, typing lessons, typing game, WPM test"
-        ogTitle="Master Your Typing Skills - Moradabads"
+        ogTitle="Master Your Typing Skills - jiocoder"
         ogDescription="Level up your typing speed and accuracy with our structured lessons and interactive games."
         ogImage="/websitelogo.png"
       />

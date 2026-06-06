@@ -6,7 +6,7 @@ export default function PrivacyPolicyPage() {
     <>
       <SEO
         title="Privacy Policy"
-        description="Read Moradabads' Privacy Policy to understand how we collect, use, and protect your personal information."
+        description="Read jiocoder' Privacy Policy to understand how we collect, use, and protect your personal information."
         keywords="privacy policy, data protection, privacy, user data"
       />
       <div className="flex flex-col min-h-screen bg-background">
@@ -14,10 +14,10 @@ export default function PrivacyPolicyPage() {
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12 space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Privacy Policy - Moradabads Data Protection
+                Privacy Policy - jiocoder Data Protection
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Learn how Moradabads collects, uses, and protects your personal information. Your privacy is important to us.
+                Learn how jiocoder collects, uses, and protects your personal information. Your privacy is important to us.
               </p>
               <p className="text-sm text-muted-foreground">
                 Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -40,7 +40,7 @@ export default function PrivacyPolicyPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Introduction</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    At Moradabads ("we," "our," or "us"), we are committed to protecting your privacy. 
+                    At jiocoder ("we," "our," or "us"), we are committed to protecting your privacy. 
                     This Privacy Policy explains how we collect, use, disclose, and safeguard your information 
                     when you use our website and services.
                   </p>
@@ -146,7 +146,7 @@ export default function PrivacyPolicyPage() {
                   <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
                   <p className="text-muted-foreground leading-relaxed">
                     If you have any questions about this Privacy Policy, please contact us at 
-                    <Link to="/contact" className="text-primary hover:underline ml-1 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">support@moradabads.com</Link> 
+                    <Link to="/contact" className="text-primary hover:underline ml-1 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">support@jiocoder.com</Link> 
                     or visit our <Link to="/contact" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">contact page</Link>. 
                     You can also learn more about us on our <Link to="/about" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">About page</Link> or 
                     explore our <Link to="/articles" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-1">educational content</Link>.

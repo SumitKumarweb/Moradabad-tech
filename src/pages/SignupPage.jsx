@@ -87,17 +87,17 @@ export default function SignupPage() {
     <>
       <SEO
         title="Sign Up"
-        description="Create your free Moradabads account to start your coding journey. Access personalized learning paths, track your progress, save your code, and unlock premium features."
-        keywords="sign up, create account, register, Moradabads signup, programming account, coding account, web development account, free account"
-        ogTitle="Sign Up - Moradabads"
-        ogDescription="Create your free account and start your coding journey with Moradabads."
+        description="Create your free jiocoder account to start your coding journey. Access personalized learning paths, track your progress, save your code, and unlock premium features."
+        keywords="sign up, create account, register, jiocoder signup, programming account, coding account, web development account, free account"
+        ogTitle="Sign Up - jiocoder"
+        ogDescription="Create your free account and start your coding journey with jiocoder."
         ogImage="/websitelogo.png"
         robots="noindex, follow"
       />
       <StructuredData data={generateWebPageSchema({
         name: "Sign Up",
-        title: "Sign Up - Moradabads",
-        description: "Create your free Moradabads account to start your coding journey. Access personalized learning paths, track your progress, save your code, and unlock premium features."
+        title: "Sign Up - jiocoder",
+        description: "Create your free jiocoder account to start your coding journey. Access personalized learning paths, track your progress, save your code, and unlock premium features."
       })} />
     <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Background elements */}
@@ -111,12 +111,12 @@ export default function SignupPage() {
           <Link to="/" className="inline-flex items-center gap-2 mb-4 group">
             <img 
               src="/websitelogo.png" 
-              alt="Moradabads"
+              alt="jiocoder"
               className="h-6 w-auto object-contain max-h-20 max-w-48 transition-transform group-hover:scale-110"
             />
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Sign Up for Moradabads - Create Your Account</h1>
-          <p className="text-muted-foreground">Start your coding journey with Moradabads. Access personalized learning, track progress, and unlock premium features.</p>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Sign Up for jiocoder - Create Your Account</h1>
+          <p className="text-muted-foreground">Start your coding journey with jiocoder. Access personalized learning, track progress, and unlock premium features.</p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-3 text-sm">
             <Link to="/articles" className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded px-2 py-1">Browse Articles</Link>
             <span className="text-muted-foreground">•</span>
