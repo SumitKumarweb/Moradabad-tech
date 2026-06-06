@@ -127,7 +127,7 @@ function App() {
       <ScrollToTop />
       <ThemeProvider
         attribute="class"
-        defaultTheme="light"
+        defaultTheme="dark"
         enableSystem
         disableTransitionOnChange
       >
